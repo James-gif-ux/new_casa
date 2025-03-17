@@ -267,7 +267,7 @@ $_SESSION['active_menu'] = 'dashboard';
             </form>
         </div>
     </div>
-    <a href="../../index.php" class="home-link">
+    <a href="home.php" class="home-link">
         <i class="fas fa-home"></i>
     </a>
 </body>
