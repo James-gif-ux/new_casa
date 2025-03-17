@@ -13,10 +13,12 @@
                                         <span>Marcos</span>
                                         resort & villas.
                                     </h1>
-                                    <p>This is Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam eius
-                                        vel tempore consectetur nesciunt? Nam eius tenetur recusandae optio aperiam.</p>
+                                    <p>your luxurious escape in a beautiful setting. 
+                                       Our dedicated team ensures an exceptional stay with options to relax, enjoy the spa, explore, or dine.
+                                       We look forward to exceeding your expectations!
+                                    </p>
                                     <div class="banner-btn mt-4">
-                                        <a href="#menu" class="sec-btn">Check our Menu</a>
+                                        <a href="rooms.php" class="sec-btn">Check our Rooms</a>
                                     </div>
                                 </div>
                             </div>
@@ -38,15 +40,16 @@
                         <div class="col-lg-12">
                             <div class="sec-title text-center mb-5">
                                 <p class="sec-sub-title mb-3">About Us</p>
-                                <h2 class="h2-title">Discover our <span>restaurant story</span></h2>
+                                <h2 class="h2-title">Discover our <span>resort & villas story</span></h2>
                                 <div class="sec-title-shape mb-4">
                                     <img src="assets/images/title-shape.svg" alt="">
                                 </div>
-                                <p>This is Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe dolore at
-                                    aspernatur eveniet temporibus placeat voluptatum quaerat accusamus possimus
-                                    cupiditate, quidem impedit sed libero id perspiciatis esse earum repellat quam.
-                                    Dolore modi temporibus quae possimus accusantium, cum corrupti sed deserunt iusto at
-                                    sapiente nihil sint iste similique soluta dolor! Quod.</p>
+                                <p> At Casa Marcos, we believe in creating extraordinary experiences through exceptional care and attention to detail. 
+                                    Our dedicated team works tirelessly to ensure every guest feels welcomed and valued, combining professional 
+                                    service with genuine Filipino warmth.We pride ourselves on understanding and anticipating our guests' needs, offering personalized services that 
+                                    make every stay memorable. Our commitment to excellence extends beyond luxury amenities to create meaningful 
+                                    connections and experiences that will last a lifetime
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -110,35 +113,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/1.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Fresh Chicken Veggies</h3>
-                                            <p>120 calories</p>
-                                        </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        </div> 
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 499</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱499.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -151,35 +133,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/2.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4.3
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Grilled Chicken</h3>
-                                            <p>80 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>1</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 359</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱359.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -191,35 +152,15 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/3.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4
-                                            <i class="uil uil-star"></i>
-                                        </div>
+                                        
                                         <div class="dish-title">
                                             <h3 class="h3-title">Panner Noodles</h3>
-                                            <p>100 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 149</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱149.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -232,35 +173,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/4.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4.5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Chicken Noodles</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 379</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱379.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -273,35 +193,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/5.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Bread Boiled Egg</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 99</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱99.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -313,35 +212,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/6.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Immunity Dish</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 159</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱159.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -360,33 +238,10 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="sec-title text-center mb-5">
-                                    <p class="sec-sub-title mb-3">Book Table</p>
-                                    <h2 class="h2-title">Opening Table</h2>
+                                    <p class="sec-sub-title mb-3">Our Rooms</p>
+                                    <h2 class="h2-title">Enjoy yoor Stay!</h2>
                                     <div class="sec-title-shape mb-4">
                                         <img src="../assets/images/title-shape.svg" alt="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="book-table-info">
-                            <div class="row align-items-center">
-                                <div class="col-lg-4">
-                                    <div class="table-title text-center">
-                                        <h3>Monday to Thrusday</h3>
-                                        <p>9:00 am - 22:00 pm</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="call-now text-center">
-                                        <i class="uil uil-phone"></i>
-                                        <a href="tel:+91-8866998866">+91 - 8866998866</a>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="table-title text-center">
-                                        <h3>Friday to Sunday</h3>
-                                        <p>11::00 am to 20:00 pm</p>
                                     </div>
                                 </div>
                             </div>
@@ -396,25 +251,25 @@
                             <div class="col-lg-10 m-auto">
                                 <div class="book-table-img-slider" id="icon">
                                     <div class="swiper-wrapper">
-                                        <a href="../assets/images/bt1.jpg" data-fancybox="table-slider"
+                                        <a href="../assets/images/villas.jpg" data-fancybox="table-slider"
                                             class="book-table-img back-img swiper-slide"
                                             style="background-image: url(../assets/images/villas.jpg)"></a>
-                                        <a href="../assets/images/bt2.jpg" data-fancybox="table-slider"
+                                        <a href="../assets/images/history.jpg" data-fancybox="table-slider"
                                             class="book-table-img back-img swiper-slide"
                                             style="background-image: url(../assets/images/history.jpg)"></a>
-                                        <a href="../assets/images/bt3.jpg" data-fancybox="table-slider"
+                                        <a href="../assets/images/room.jpg" data-fancybox="table-slider"
                                             class="book-table-img back-img swiper-slide"
                                             style="background-image: url(../assets/images/room.jpg)"></a>
-                                        <a href="../assets/images/bt4.jpg" data-fancybox="table-slider"
+                                        <a href="../assets/images/mp.jpg" data-fancybox="table-slider"
                                             class="book-table-img back-img swiper-slide"
                                             style="background-image: url(../assets/images/mp.jpg)"></a>
-                                        <a href="../assets/images/bt1.jpg" data-fancybox="table-slider"
+                                        <a href="../assets/images/CV4.jpg" data-fancybox="table-slider"
                                             class="book-table-img back-img swiper-slide"
                                             style="background-image: url(../assets/images/CV4.jpg)"></a>
-                                        <a href="../assets/images/bt2.jpg" data-fancybox="table-slider"
+                                        <a href="../assets/images/CVP.jpg" data-fancybox="table-slider"
                                             class="book-table-img back-img swiper-slide"
                                             style="background-image: url(../assets/images/CVP.jpg)"></a>
-                                        <a href="../assets/images/bt3.jpg" data-fancybox="table-slider"
+                                        <a href="../assets/images/barkada.jpg" data-fancybox="table-slider"
                                             class="book-table-img back-img swiper-slide"
                                             style="background-image: url(../assets/images/barkada.jpg)"></a>
                                     </div>
@@ -445,7 +300,7 @@
                             <div class="col-lg-12">
                                 <div class="sec-title text-center mb-5">
                                     <p class="sec-sub-title mb-3">Our Team</p>
-                                    <h2 class="h2-title">Meet our Chefs</h2>
+                                    <h2 class="h2-title">Meet our leadership team</h2>
                                     <div class="sec-title-shape mb-4">
                                         <img src="../assets/images/title-shape.svg" alt="">
                                     </div>

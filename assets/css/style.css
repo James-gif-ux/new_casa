@@ -724,25 +724,6 @@ p {
     display: inline-block !important;
 }
 
-.dish-box-wp {
-    display: none;
-}
-
-.dish-box {
-    border-radius: 30px;
-    background: linear-gradient(145deg, #ececec, #ffffff);
-    box-shadow: 28px 28px 45px #d4d4d4, -28px -28px 45px #ffffff;
-    display: flow-root;
-    padding: 0 30px 40px;
-    padding-top: 0;
-    margin: 130px 0 30px;
-    transition: 0.8s cubic-bezier(0.22, 0.78, 0.45, 1.02);
-}
-
-.dish-box:hover {
-    transform: scale(1.03);
-}
-
 .dist-img {
     margin-top: -130px;
     margin-bottom: 30px;
@@ -754,73 +735,8 @@ p {
     overflow: hidden;
 }
 
-.dish-rating {
-    font-size: 20px;
-    margin-bottom: 15px;
-}
-
-.dish-title {
-    padding: 0 30px;
-}
-
-.dish-title .h3-title {
-    text-transform: capitalize;
-    margin-bottom: 5px;
-    font-family: 'Playfair Display', serif;
-    font-weight: bold;
-    color: #0d0d25;
-    transition: 0.3s;
-    min-height: 76px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-weight: 900;
-}
-
-.dish-title p {
-    color: #bfbfbf;
-}
-
-.dish-info ul, .dist-bottom-row ul {
-    display: flex;
-    justify-content: space-between;
-    text-align: left;
-}
-
-.dish-info ul li {
-    display: inline-block;
-    flex: 1;
-}
-
-.dish-info ul li:last-child {
-    text-align: right;
-    border-left: 2px solid rgb(204 204 204 / 30%);
-}
-
 .dist-bottom-row ul li:last-child {
     text-align: right;
-}
-
-.dish-info ul li p {
-    font-size: 18px;
-    text-transform: capitalize;
-    margin-bottom: 2px;
-    font-weight: 300;
-}
-
-.dish-info ul li b {
-    font-weight: 600;
-}
-
-.dish-info, .dist-bottom-row {
-    padding: 0 30px;
-}
-
-.dish-info {
-    border-bottom: 2px solid rgb(204 204 204 / 30%);
-    margin: 30px 0 30px;
-    padding-bottom: 30px;
 }
 
 .dist-bottom-row ul li {
@@ -830,26 +746,6 @@ p {
 
 .dist-bottom-row ul li b {
     font-size: 30px;
-}
-
-.dish-add-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 10px;
-    color: #ffffff;
-    transition: 0.3s;
-    background: linear-gradient(145deg, #ffc954, #ffbc00);
-    box-shadow: inset 4px 4px 8px #d6a029, inset -4px -4px 8px #ffd837;
-}
-
-.dish-add-btn i {
-    color: #ffffff;
-    font-size: 22px;
-}
-
-.dish-add-btn:hover {
-    background: linear-gradient(145deg, #e3a92b, #ffc933);
 }
 
 /* ************ */
@@ -1351,9 +1247,6 @@ p {
     .banner-img-wp {
         height: 360px;
     }
-    .dish-box {
-        padding: 0 0 40px;
-    }
     .dist-img img {
         width: 220px;
     }
@@ -1521,11 +1414,6 @@ p {
     .swiper-pagination-bullet-active {
         width: 16px;
     }
-    .dish-title .h3-title {
-        display: block;
-        min-height: auto;
-        margin-bottom: 12px;
-    }
     .menu-img {
         width: 180px;
         margin-inline: auto;
@@ -1560,9 +1448,6 @@ p {
     }
     .menu-tab-wp {
         margin-bottom: 60px;
-    }
-    .dish-box {
-        margin: 80px 0 30px;
     }
     .book-table-img {
         min-height: 340px;

@@ -6,15 +6,16 @@
                         <div class="col-lg-12">
                             <div class="sec-title text-center mb-5">
                                 <p class="sec-sub-title mb-3">About Us</p>
-                                <h2 class="h2-title">Discover our <span>restaurant story</span></h2>
+                                <h2 class="h2-title">Discover our <span>resort & villas story</span></h2>
                                 <div class="sec-title-shape mb-4">
                                     <img src="assets/images/title-shape.svg" alt="">
                                 </div>
-                                <p>This is Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe dolore at
-                                    aspernatur eveniet temporibus placeat voluptatum quaerat accusamus possimus
-                                    cupiditate, quidem impedit sed libero id perspiciatis esse earum repellat quam.
-                                    Dolore modi temporibus quae possimus accusantium, cum corrupti sed deserunt iusto at
-                                    sapiente nihil sint iste similique soluta dolor! Quod.</p>
+                                <p> At Casa Marcos, we believe in creating extraordinary experiences through exceptional care and attention to detail. 
+                                   Our dedicated team works tirelessly to ensure every guest feels welcomed and valued, combining professional 
+                                   service with genuine Filipino warmth.We pride ourselves on understanding and anticipating our guests' needs, offering personalized services that 
+                                   make every stay memorable. Our commitment to excellence extends beyond luxury amenities to create meaningful 
+                                   connections and experiences that will last a lifetime
+                                </p>
                             </div>
                         </div>
                     </div>
