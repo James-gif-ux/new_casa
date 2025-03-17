@@ -32,16 +32,16 @@
                     </div>
                 </div>
                 <div class="col-lg-10">
-                    <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
                     <div class="main-navigation">
-                        <button class="menu-toggle"><span></span><span></span></button>
+                        <button class="menu-toggle"></button>
                         <nav class="header-menu">
                             <ul class="menu food-nav-menu">
-                                <li><a href="home.php"class="<?php echo ($current_page == 'home.php') ? 'active' : ''; ?>">Home</a></li>
-                                <li><a href="about.php"class="<?php echo ($current_page == 'about.php') ? 'active' : ''; ?>">About</a></li>
-                                <li><a href="menu.php"class="<?php echo ($current_page == 'menu.php') ? 'active' : ''; ?>">Food Menu</a></li>
-                                <li><a href="rooms.php"class="<?php echo ($current_page == 'rooms.php') ? 'active' : ''; ?>">Our Rooms</a></li>
-                                <li><a href="contact.php" class="<?php echo ($current_page == 'contact.php') ? 'active' : ''; ?>">Contact</a></li>
+                                <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
+                                <li><a href="home.php" class="<?php echo ($current_page == 'home.php') ? 'active-menu' : ''; ?>">Home</a></li>
+                                <li><a href="about.php" class="<?php echo ($current_page == 'about.php') ? 'active-menu' : ''; ?>">About</a></li>
+                                <li><a href="menu.php" class="<?php echo ($current_page == 'menu.php') ? 'active-menu' : ''; ?>">Food Menu</a></li>
+                                <li><a href="rooms.php" class="<?php echo ($current_page == 'rooms.php') ? 'active-menu' : ''; ?>">Our Rooms</a></li>
+                                <li><a href="contact.php" class="<?php echo ($current_page == 'contact.php') ? 'active-menu' : ''; ?>">Contact</a></li>
                             </ul>
                         </nav>
                         <div class="header-right">

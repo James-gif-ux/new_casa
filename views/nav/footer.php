@@ -51,13 +51,21 @@
                                         <div class="footer-menu food-nav-menu">
                                             <h3 class="h3-title">Links</h3>
                                             <ul class="column-2">
-                                                <li>
-                                                   <a href="home.php" class="footer-active-menu">Home</a>
-                                                </li>
-                                                <li><a href="about.php">About</a></li>
-                                                <li><a href="menu.php">Food Menu</a></li>
-                                                <li><a href="rooms.php">Our Rooms</a></li>
-                                                <li><a href="contact.php">Contact</a></li>
+                                                <?php 
+                                                $current_page = basename($_SERVER['PHP_SELF']);
+                                                $menu_items = [
+                                                    'home.php' => 'Home',
+                                                    'about.php' => 'About',
+                                                    'menu.php' => 'Food Menu',
+                                                    'rooms.php' => 'Our Rooms',
+                                                    'contact.php' => 'Contact'
+                                                ];
+                                                
+                                                foreach ($menu_items as $page => $label) {
+                                                    $active_class = ($current_page === $page) ? 'footer-active-menu' : '';
+                                                    echo "<li><a href=\"$page\" class=\"$active_class\">$label</a></li>";
+                                                }
+                                                ?>
                                             </ul>
                                         </div>
                                         <div class="footer-menu">
