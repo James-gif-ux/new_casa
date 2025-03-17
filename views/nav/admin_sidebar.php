@@ -511,7 +511,7 @@
                       <span class="fw-bold">Admin</span>
                     </span>
                   </a>
-                  <ul class="dropdown-menu dropdown-menu-end">
+                  <ul class="dropdown-menu dropdown-menu-end" style="border-radius: 10px; box-shadow: 0px 0px 30px 50px rgba(207, 74, 74, 0.5);">
                     <li>
                       <a class="dropdown-item" href="../pages/authentication.php?sub_page=login">
                         <i class="bi bi-power"></i>
