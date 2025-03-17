@@ -8,10 +8,9 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="banner-text">
-                                    <h1 class="h1-title">
+                                    <h1 class="h1-title" style="font-size: 5.5rem; line-height: 1.2;">
                                         Welcome to Casa
-                                        <span>Marcos</span>
-                                        resort & villas.
+                                        <span style="font-size: 4.8rem;">Marcos</span> resort & villas.
                                     </h1>
                                     <p>your luxurious escape in a beautiful setting. 
                                        Our dedicated team ensures an exceptional stay with options to relax, enjoy the spa, explore, or dine.
@@ -232,14 +231,13 @@
             </section>
 
             <section class="book-table section bg-light">
-
                 <div class="sec-wp">
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="sec-title text-center mb-5">
-                                    <p class="sec-sub-title mb-3">Our Rooms</p>
-                                    <h2 class="h2-title">Enjoy yoor Stay!</h2>
+                                    <p class="sec-sub-title mb-3">Book Now</p>
+                                    <h2 class="h2-title">Enjoy your Stay!</h2>
                                     <div class="sec-title-shape mb-4">
                                         <img src="../assets/images/title-shape.svg" alt="">
                                     </div>
@@ -251,27 +249,71 @@
                             <div class="col-lg-10 m-auto">
                                 <div class="book-table-img-slider" id="icon">
                                     <div class="swiper-wrapper">
-                                        <a href="../assets/images/villas.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/villas.jpg)"></a>
-                                        <a href="../assets/images/history.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/history.jpg)"></a>
-                                        <a href="../assets/images/room.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/room.jpg)"></a>
-                                        <a href="../assets/images/mp.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/mp.jpg)"></a>
-                                        <a href="../assets/images/CV4.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/CV4.jpg)"></a>
-                                        <a href="../assets/images/CVP.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/CVP.jpg)"></a>
-                                        <a href="../assets/images/barkada.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/barkada.jpg)"></a>
+                                        <style>
+                                            .room-info {
+                                                opacity: 0;
+                                                transition: opacity 0.3s ease;
+                                            }
+                                            .book-table-img:hover .room-info {
+                                                opacity: 1;
+                                            }
+                                        </style>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/villas.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius:25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Sapphira Villa 6 pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱8,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">A two story villa with 1 Queen-size bed & 4 single beds, 2 private bathrooms, large private living room, TV, Wi-Fi & air conditioning.</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/history.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Sapphira Villas 8 Pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱11,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">A two story villa with 1 Queen-size bed & 8 single-size beds, 2 private bathrooms, large private living room, TV, Wi-Fi & air conditioning.</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/room.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Matrimonial</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱4,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">Queen-size bed, private bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/mp.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Matrimonial Plus</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱5,399.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">Queen-size bed, larger room, larger private bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/CV4.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">CV Room 4 Pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱3,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">2 Queen-sized bed, Shared bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/CVP.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">CV Room 8 Pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱5,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">8 Single-sized bed, shared bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/barkada.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Barkada</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱7,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">4 Twin-sized bed, private bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="swiper-button-wp">
@@ -286,11 +328,8 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
-
             </section>
 
             <section class="our-team section">
@@ -300,103 +339,89 @@
                             <div class="col-lg-12">
                                 <div class="sec-title text-center mb-5">
                                     <p class="sec-sub-title mb-3">Our Team</p>
-                                    <h2 class="h2-title">Meet our leadership team</h2>
+                                    <h2 class="h2-title">Meet our leadership!</h2>
                                     <div class="sec-title-shape mb-4">
                                         <img src="../assets/images/title-shape.svg" alt="">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row team-slider">
-                            <div class="swiper-wrapper">
-                                <div class="col-lg-4 swiper-slide">
-                                    <div class="team-box text-center">
-                                        <div style="background-image: url(../assets/images/chef/owner.jpg);"
-                                            class="team-img back-img">
-
-                                        </div>
-                                        <h3 class="h3-title">Maritess Cayaco Marcos</h3>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li>
-                                                    <a href="#"><i class="uil uil-facebook-f"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-youtube"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="team-box text-center">
+                                    <div style="background-image: url(../assets/images/chef/owner.jpg);"
+                                        class="team-img back-img">
                                     </div>
-                                </div>
-                                <div class="col-lg-4 swiper-slide">
-                                    <div class="team-box text-center">
-                                        <div style="background-image: url(../assets/images/chef/manager.jpg);"
-                                            class="team-img back-img">
-
-                                        </div>
-                                        <h3 class="h3-title">Nicole Marie Marcos</h3>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li>
-                                                    <a href="#"><i class="uil uil-facebook-f"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-youtube"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 swiper-slide">
-                                    <div class="team-box text-center">
-                                        <div style="background-image: url(../assets/images/chef/cashier.jpg);"
-                                            class="team-img back-img">
-
-                                        </div>
-                                        <h3 class="h3-title">Myca Jacinto</h3>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li>
-                                                    <a href="#"><i class="uil uil-facebook-f"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-youtube"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                    <h3 class="h3-title">Maritess Cayaco Marcos</h3>
+                                    <div class="social-icon">
+                                        <ul>
+                                            <li>
+                                                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-instagram"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-youtube"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                            <div class="swiper-button-wp">
-                                <div class="swiper-button-prev swiper-button">
-                                    <i class="uil uil-angle-left"></i>
-                                </div>
-                                <div class="swiper-button-next swiper-button">
-                                    <i class="uil uil-angle-right"></i>
+                            <div class="col-lg-4">
+                                <div class="team-box text-center">
+                                    <div style="background-image: url(../assets/images/chef/manager.jpg);"
+                                        class="team-img back-img">
+                                    </div>
+                                    <h3 class="h3-title">Nicole Marie Marcos</h3>
+                                    <div class="social-icon">
+                                        <ul>
+                                            <li>
+                                                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-instagram"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-youtube"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="swiper-pagination"></div>
+                            <div class="col-lg-4">
+                                <div class="team-box text-center">
+                                    <div style="background-image: url(../assets/images/chef/cashier.jpg);"
+                                        class="team-img back-img">
+                                    </div>
+                                    <h3 class="h3-title">Myca Jacinto</h3>
+                                    <div class="social-icon">
+                                        <ul>
+                                            <li>
+                                                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-instagram"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-youtube"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

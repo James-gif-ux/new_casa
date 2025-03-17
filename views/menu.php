@@ -1,5 +1,6 @@
-<?php include 'nav/header.php'; ?>            
-            
+<?php include 'nav/header.php'; ?>  
+
+
             <section style="background-image: url(../assets/images/menu-bg.png);"
                 class="our-menu section bg-light repeat-img" id="menu">
                 <div class="sec-wp">
@@ -166,5 +167,6 @@
                     </div>
                 </div>
             </section>
+
 
 <?php include 'nav/footer.php'; ?>               

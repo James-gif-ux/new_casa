@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-lg-2">
                     <div class="header-logo">
-                        <a href="index.html">
+                        <a>
                             <img src="../images/logo.jpg" width="50" height="50" alt="Logo" style="border-radius: 50%;">
                         </a>
                     </div>
