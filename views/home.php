@@ -8,15 +8,16 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="banner-text">
-                                    <h1 class="h1-title">
+                                    <h1 class="h1-title" style="font-size: 5.5rem; line-height: 1.2;">
                                         Welcome to Casa
-                                        <span>Marcos</span>
-                                        resort & villas.
+                                        <span style="font-size: 4.8rem;">Marcos</span> resort & villas.
                                     </h1>
-                                    <p>This is Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam eius
-                                        vel tempore consectetur nesciunt? Nam eius tenetur recusandae optio aperiam.</p>
+                                    <p>your luxurious escape in a beautiful setting. 
+                                       Our dedicated team ensures an exceptional stay with options to relax, enjoy the spa, explore, or dine.
+                                       We look forward to exceeding your expectations!
+                                    </p>
                                     <div class="banner-btn mt-4">
-                                        <a href="#menu" class="sec-btn">Check our Menu</a>
+                                        <a href="rooms.php" class="sec-btn">Check our Rooms</a>
                                     </div>
                                 </div>
                             </div>
@@ -38,15 +39,16 @@
                         <div class="col-lg-12">
                             <div class="sec-title text-center mb-5">
                                 <p class="sec-sub-title mb-3">About Us</p>
-                                <h2 class="h2-title">Discover our <span>restaurant story</span></h2>
+                                <h2 class="h2-title">Discover our <span>resort & villas story</span></h2>
                                 <div class="sec-title-shape mb-4">
                                     <img src="assets/images/title-shape.svg" alt="">
                                 </div>
-                                <p>This is Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe dolore at
-                                    aspernatur eveniet temporibus placeat voluptatum quaerat accusamus possimus
-                                    cupiditate, quidem impedit sed libero id perspiciatis esse earum repellat quam.
-                                    Dolore modi temporibus quae possimus accusantium, cum corrupti sed deserunt iusto at
-                                    sapiente nihil sint iste similique soluta dolor! Quod.</p>
+                                <p> At Casa Marcos, we believe in creating extraordinary experiences through exceptional care and attention to detail. 
+                                    Our dedicated team works tirelessly to ensure every guest feels welcomed and valued, combining professional 
+                                    service with genuine Filipino warmth.We pride ourselves on understanding and anticipating our guests' needs, offering personalized services that 
+                                    make every stay memorable. Our commitment to excellence extends beyond luxury amenities to create meaningful 
+                                    connections and experiences that will last a lifetime
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -110,35 +112,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/1.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Fresh Chicken Veggies</h3>
-                                            <p>120 calories</p>
-                                        </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        </div> 
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 499</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱499.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -151,35 +132,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/2.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4.3
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Grilled Chicken</h3>
-                                            <p>80 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>1</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 359</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱359.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -191,35 +151,15 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/3.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4
-                                            <i class="uil uil-star"></i>
-                                        </div>
+                                        
                                         <div class="dish-title">
                                             <h3 class="h3-title">Panner Noodles</h3>
-                                            <p>100 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 149</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱149.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -232,35 +172,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/4.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4.5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Chicken Noodles</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 379</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱379.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -273,35 +192,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/5.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Bread Boiled Egg</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 99</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱99.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -313,35 +211,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/6.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Immunity Dish</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 159</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱159.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -354,39 +231,15 @@
             </section>
 
             <section class="book-table section bg-light">
-
                 <div class="sec-wp">
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="sec-title text-center mb-5">
-                                    <p class="sec-sub-title mb-3">Book Table</p>
-                                    <h2 class="h2-title">Opening Table</h2>
+                                    <p class="sec-sub-title mb-3">Book Now</p>
+                                    <h2 class="h2-title">Enjoy your Stay!</h2>
                                     <div class="sec-title-shape mb-4">
                                         <img src="../assets/images/title-shape.svg" alt="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="book-table-info">
-                            <div class="row align-items-center">
-                                <div class="col-lg-4">
-                                    <div class="table-title text-center">
-                                        <h3>Monday to Thrusday</h3>
-                                        <p>9:00 am - 22:00 pm</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="call-now text-center">
-                                        <i class="uil uil-phone"></i>
-                                        <a href="tel:+91-8866998866">+91 - 8866998866</a>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="table-title text-center">
-                                        <h3>Friday to Sunday</h3>
-                                        <p>11::00 am to 20:00 pm</p>
                                     </div>
                                 </div>
                             </div>
@@ -396,27 +249,71 @@
                             <div class="col-lg-10 m-auto">
                                 <div class="book-table-img-slider" id="icon">
                                     <div class="swiper-wrapper">
-                                        <a href="../assets/images/bt1.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/villas.jpg)"></a>
-                                        <a href="../assets/images/bt2.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/history.jpg)"></a>
-                                        <a href="../assets/images/bt3.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/room.jpg)"></a>
-                                        <a href="../assets/images/bt4.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/mp.jpg)"></a>
-                                        <a href="../assets/images/bt1.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/CV4.jpg)"></a>
-                                        <a href="../assets/images/bt2.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/CVP.jpg)"></a>
-                                        <a href="../assets/images/bt3.jpg" data-fancybox="table-slider"
-                                            class="book-table-img back-img swiper-slide"
-                                            style="background-image: url(../assets/images/barkada.jpg)"></a>
+                                        <style>
+                                            .room-info {
+                                                opacity: 0;
+                                                transition: opacity 0.3s ease;
+                                            }
+                                            .book-table-img:hover .room-info {
+                                                opacity: 1;
+                                            }
+                                        </style>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/villas.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius:25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Sapphira Villa 6 pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱8,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">A two story villa with 1 Queen-size bed & 4 single beds, 2 private bathrooms, large private living room, TV, Wi-Fi & air conditioning.</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/history.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Sapphira Villas 8 Pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱11,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">A two story villa with 1 Queen-size bed & 8 single-size beds, 2 private bathrooms, large private living room, TV, Wi-Fi & air conditioning.</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/room.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Matrimonial</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱4,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">Queen-size bed, private bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/mp.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Matrimonial Plus</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱5,399.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">Queen-size bed, larger room, larger private bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/CV4.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">CV Room 4 Pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱3,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">2 Queen-sized bed, Shared bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/CVP.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">CV Room 8 Pax</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱5,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">8 Single-sized bed, shared bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
+                                        <div class="book-table-img back-img swiper-slide"
+                                            style="background-image: url(../assets/images/barkada.jpg)">
+                                            <div class="room-info" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: rgba(0,0,0,0.7); border-radius: 25px;">
+                                                <h3 style="margin: 0; font-size: 1.5rem; color: white; font-family: impact; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Barkada</h3>
+                                                <p style="margin: 5px 0; font-size: 1.2rem; color: #ffc107; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">₱7,999.00/night</p>
+                                                <p style="margin: 0; font-size: 0.9rem; color: white;">4 Twin-sized bed, private bathroom, TV, Wi-Fi, air conditioning</p>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="swiper-button-wp">
@@ -431,11 +328,8 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
-
             </section>
 
             <section class="our-team section">
@@ -445,103 +339,89 @@
                             <div class="col-lg-12">
                                 <div class="sec-title text-center mb-5">
                                     <p class="sec-sub-title mb-3">Our Team</p>
-                                    <h2 class="h2-title">Meet our Chefs</h2>
+                                    <h2 class="h2-title">Meet our leadership!</h2>
                                     <div class="sec-title-shape mb-4">
                                         <img src="../assets/images/title-shape.svg" alt="">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row team-slider">
-                            <div class="swiper-wrapper">
-                                <div class="col-lg-4 swiper-slide">
-                                    <div class="team-box text-center">
-                                        <div style="background-image: url(../assets/images/chef/owner.jpg);"
-                                            class="team-img back-img">
-
-                                        </div>
-                                        <h3 class="h3-title">Maritess Cayaco Marcos</h3>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li>
-                                                    <a href="#"><i class="uil uil-facebook-f"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-youtube"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="team-box text-center">
+                                    <div style="background-image: url(../assets/images/chef/owner.jpg);"
+                                        class="team-img back-img">
                                     </div>
-                                </div>
-                                <div class="col-lg-4 swiper-slide">
-                                    <div class="team-box text-center">
-                                        <div style="background-image: url(../assets/images/chef/manager.jpg);"
-                                            class="team-img back-img">
-
-                                        </div>
-                                        <h3 class="h3-title">Nicole Marie Marcos</h3>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li>
-                                                    <a href="#"><i class="uil uil-facebook-f"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-youtube"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 swiper-slide">
-                                    <div class="team-box text-center">
-                                        <div style="background-image: url(../assets/images/chef/cashier.jpg);"
-                                            class="team-img back-img">
-
-                                        </div>
-                                        <h3 class="h3-title">Myca Jacinto</h3>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li>
-                                                    <a href="#"><i class="uil uil-facebook-f"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="uil uil-youtube"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                    <h3 class="h3-title">Maritess Cayaco Marcos</h3>
+                                    <div class="social-icon">
+                                        <ul>
+                                            <li>
+                                                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-instagram"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-youtube"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                            <div class="swiper-button-wp">
-                                <div class="swiper-button-prev swiper-button">
-                                    <i class="uil uil-angle-left"></i>
-                                </div>
-                                <div class="swiper-button-next swiper-button">
-                                    <i class="uil uil-angle-right"></i>
+                            <div class="col-lg-4">
+                                <div class="team-box text-center">
+                                    <div style="background-image: url(../assets/images/chef/manager.jpg);"
+                                        class="team-img back-img">
+                                    </div>
+                                    <h3 class="h3-title">Nicole Marie Marcos</h3>
+                                    <div class="social-icon">
+                                        <ul>
+                                            <li>
+                                                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-instagram"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-youtube"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="swiper-pagination"></div>
+                            <div class="col-lg-4">
+                                <div class="team-box text-center">
+                                    <div style="background-image: url(../assets/images/chef/cashier.jpg);"
+                                        class="team-img back-img">
+                                    </div>
+                                    <h3 class="h3-title">Myca Jacinto</h3>
+                                    <div class="social-icon">
+                                        <ul>
+                                            <li>
+                                                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-instagram"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="uil uil-youtube"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
-<?php include 'nav/header.php'; ?>            
-            
+<?php include 'nav/header.php'; ?>  
+
+
             <section style="background-image: url(../assets/images/menu-bg.png);"
                 class="our-menu section bg-light repeat-img" id="menu">
                 <div class="sec-wp">
@@ -49,35 +50,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/1.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Fresh Chicken Veggies</h3>
-                                            <p>120 calories</p>
-                                        </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        </div> 
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 499</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱499.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -90,35 +70,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/2.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4.3
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Grilled Chicken</h3>
-                                            <p>80 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>1</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 359</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱359.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -130,35 +89,15 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/3.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4
-                                            <i class="uil uil-star"></i>
-                                        </div>
+                                        
                                         <div class="dish-title">
                                             <h3 class="h3-title">Panner Noodles</h3>
-                                            <p>100 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 149</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱149.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -171,35 +110,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/4.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            4.5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Chicken Noodles</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 379</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱379.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -212,35 +130,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/5.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Bread Boiled Egg</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Non Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 99</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱99.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -252,35 +149,14 @@
                                         <div class="dist-img">
                                             <img src="../assets/images/dish/6.png" alt="">
                                         </div>
-                                        <div class="dish-rating">
-                                            5
-                                            <i class="uil uil-star"></i>
-                                        </div>
                                         <div class="dish-title">
                                             <h3 class="h3-title">Immunity Dish</h3>
-                                            <p>120 calories</p>
                                         </div>
-                                        <div class="dish-info">
-                                            <ul>
-                                                <li>
-                                                    <p>Type</p>
-                                                    <b>Veg</b>
-                                                </li>
-                                                <li>
-                                                    <p>Persons</p>
-                                                    <b>2</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <hr>
                                         <div class="dist-bottom-row">
                                             <ul>
                                                 <li>
-                                                    <b>Rs. 159</b>
-                                                </li>
-                                                <li>
-                                                    <button class="dish-add-btn">
-                                                        <i class="uil uil-plus"></i>
-                                                    </button>
+                                                    <b> ₱159.00</b>
                                                 </li>
                                             </ul>
                                         </div>
@@ -291,5 +167,6 @@
                     </div>
                 </div>
             </section>
+
 
 <?php include 'nav/footer.php'; ?>               
