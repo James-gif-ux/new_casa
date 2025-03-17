@@ -502,30 +502,22 @@
                   </div>
                 </li>
 
-                <li class="nav-item topbar-user dropdown hidden-caret">
-                  <a
-                    class="dropdown-toggle profile-pic"
-                    data-bs-toggle="dropdown"
-                    href="#"
-                    aria-expanded="false"
-                  >
+                <li class="nav-item topbar-user dropdown hidden-caret submenu">
+                <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#dropdown-item" aria-expanded="false">
                     <div class="avatar-sm">
-                      <img
-                        src="../images/logo.jpg"
-                        alt="..."
-                        class="avatar-img rounded-circle"
-                      />
+                      <img src="../images/logo.jpg" alt="..." class="avatar-img rounded-circle">
                     </div>
                     <span class="profile-username">
                       <span class="fw-bold">Admin</span>
                     </span>
                   </a>
-                  <ul class="dropdown-menu dropdown-user animated fadeIn">
-                    <div class="dropdown-user-scroll scrollbar-outer">
-                      <li>
-                        <a class="dropdown-item" href="#">Logout</a>
-                      </li>
-                    </div>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="../pages/authentication.php?sub_page=login">
+                        <i class="bi bi-power"></i>
+                        <span class="align-middle">Log Out</span>
+                      </a>
+                    </li>
                   </ul>
                 </li>
               </ul>
