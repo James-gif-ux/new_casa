@@ -43,7 +43,7 @@
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="admin.php" class="logo">
+            <a href="../pages/admin.php?sub_page=admin" class="logo">
               <img
                 src="../images/casa.png"
                 alt="navbar brand"
@@ -82,7 +82,7 @@
                 <div class="collapse" id="dashboard">
                   <ul class="nav nav-collapse">
                     <li class="active">
-                      <a href="admin.php">
+                      <a href="../pages/admin.php?sub_page=admin">
                         <span class="sub-item">Admin Dashboard</span>
                       </a>
                     </li>
@@ -105,12 +105,12 @@
                 <div class="collapse" id="sidebarLayouts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="booking.php">
+                      <a href="../pages/admin.php?sub_page=booking">
                         <span class="sub-item">Approved Bookings</span>
                       </a>
                     </li>
                     <li>
-                      <a href="reservedBooking.php">
+                      <a href="../pages/admin.php?sub_page=reservedBooking">
                         <span class="sub-item">Reserved Bookings</span>
                       </a>
                     </li>
