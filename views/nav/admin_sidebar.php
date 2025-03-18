@@ -124,7 +124,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#">
+                <a href="../pages/admin.php?sub_page=admin_food">
                 <i class="bi bi-card-checklist"></i>
                 <span class="sub-item">Food Menu</span>
                 </a>

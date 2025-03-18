@@ -26,14 +26,14 @@ require_once 'server.php';
 					//pre sql statement
                     $sql = "INSERT INTO `services_tb`(`services_name`,`services_image`,`services_description`,`services_price`) VALUES (?, ?, ?, ?)";
 
-                    $query = $this->conn->prepare($sql);
+					$stmt = $this->getConnection()->prepare($sql);
         
-                    $query->bindParam(1, $service['name']);
-                    $query->bindParam(2,$filename);
-                    $query->bindParam(3, $service['desc']);
-                    $query->bindParam(4, $service['prices']);
+                    $stmt->bindParam(1, $service['name']);
+                    $stmt->bindParam(2,$filename);
+                    $stmt->bindParam(3, $service['desc']);
+                    $stmt->bindParam(4, $service['prices']);
         
-                    $query->execute();
+                    $stmt->execute();
 					
 				}
 				else{
@@ -53,40 +53,40 @@ require_once 'server.php';
         }
 		function service_delete($service_delete){
 			$sql = "DELETE FROM `services_tb` WHERE `services_id` = ?";
-			$query = $this->conn->prepare($sql);
-			$query->bindParam(1, $service_delete['services_id']);
-			$query->execute();
-			$query->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = $this->getConnection()->prepare($sql);
+			$stmt->bindParam(1, $service_delete['services_id']);
+			$stmt->execute();
+			$stmt->fetchAll(PDO::FETCH_ASSOC);
 		}
 		
 
         function get_service(){
             $sql = "SELECT * FROM `services_tb` ";
 			//prepare query
-			$query = $this->conn->prepare($sql);
+			$stmt = $this->getConnection()->prepare($sql);
 			
 			//execute query
-			$query->execute();
+			$stmt->execute();
 			//return
-			return $query->fetchAll(PDO::FETCH_ASSOC);
+			return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
 		function get_images(){
             $sql = "SELECT * FROM `image _tb` ";
 			//prepare query
-			$query = $this->conn->prepare($sql);
+			$stmt = $this->getConnection()->prepare($sql);
 			
 			//execute query
-			$query->execute();
+			$stmt->execute();
 			//return
-			return $query->fetchAll(PDO::FETCH_ASSOC);
+			return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
 		function service_update(){
 			try{
 				$query = "UPDATE `services_tb` SET `services_name` = '{$_POST['services_name_input']}', `services_description` = '{$_POST['services_description_input']}' WHERE `services_id` = '{$_POST['services_id']}'";
 	
-				$stmt = $this->conn->prepare($query);
+				$stmt = $this->getConnection()->prepare($query);
 	
 				$stmt->execute();
 	
