@@ -143,7 +143,7 @@
 
                                 <div style="display: flex; gap: 10px; justify-content: space-between;">
                                     <button type="submit" class="submit-btn" style="width: 48%;">Make Reservation</button>
-                                    <button type="button" onclick="window.location.href='books.php'" 
+                                    <button type="button" onclick="window.location.href='roombooking.php'" 
                                         class="submit-btn" 
                                         style="width: 48%; background-color: #8B7355;">
                                         Cancel

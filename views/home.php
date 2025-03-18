@@ -444,7 +444,7 @@
                         <div class="row">
                             <div class="col-lg-5">
                                 <div class="testimonials-img">
-                                    <img src="../assets/images/testimonial-img.png" alt="">
+                                    <img src="../assets/images/abouts.jpg" alt="">
                                 </div>
                             </div>
                             <div class="col-lg-7">
