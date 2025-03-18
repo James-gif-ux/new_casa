@@ -1,0 +1,241 @@
+  /* Root variables */
+  :root {
+    --primary-color: #a0784d;
+    --accent-color: #d4aa7d;
+    --secondary-color: #8b6b3d;
+    --font-family-heading: 'Playfair Display', serif;
+    --font-family-body: 'Poppins', sans-serif;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Keyframes for animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Service List Styles */
+.service-list {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+    gap: 5rem;
+}
+
+.service-item {
+    display: flex;
+    background: #ffffff;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    min-height: 550px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    animation: scaleIn 0.6s ease-out forwards;
+}
+
+.service-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+}
+
+.service-item:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.service-item:hover::before {
+    opacity: 0.05;
+}
+
+/* Service Image Styles */
+.service-image {
+    width: 45%;
+    height: 550px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+    position: relative;
+    filter: brightness(1.02);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.service-image:hover {
+    transform: scale(1.08);
+    filter: brightness(1.1);
+}
+
+/* Service Content Styles */
+.service-content {
+    width: 55%;
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #fff, #fafafa);
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+.service-item h3 {
+    font-family: var(--font-family-heading);
+    font-size: 2.4rem;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    padding-top: 0.5rem;
+    text-shadow: 2px 2px 3px rgba(0,0,0,0.05);
+    letter-spacing: 0.5px;
+    animation: fadeInUp 0.6s ease-out 0.4s forwards;
+}
+
+.description {
+    font-size: 1.25rem;
+    color: #444;
+    line-height: 1.9;
+    margin-bottom: 2.8rem;
+    padding-right: 2rem;
+    position: relative;
+    animation: fadeInUp 0.6s ease-out 0.6s forwards;
+}
+
+/* Price Styles */
+.service-price {
+    font-size: 2.2rem;
+    color: var(--secondary-color);
+    font-weight: 700;
+    font-family: var(--font-family-heading);
+    margin-bottom: 2rem;
+    padding-top: 1.2rem;
+    border-top: 2px solid rgba(160, 120, 77, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeInUp 0.6s ease-out 0.8s forwards;
+}
+
+.service-price::before {
+    content: '₱';
+    font-size: 1.8rem;
+    color: var(--accent-color);
+}
+
+/* Button Styles */
+.readmore {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #ffffff;
+    padding: 20px 40px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-family: var(--font-family-body);
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.4s ease;
+    display: inline-block;
+    text-align: center;
+    width: fit-content;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 20px rgba(160, 120, 77, 0.25);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out 1s forwards;
+}
+
+.readmore::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.readmore:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(160, 120, 77, 0.35);
+}
+
+.readmore:hover::before {
+    opacity: 1;
+}
+
+.readmore span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+    .service-list {
+        padding: 4rem 1.5rem;
+        gap: 4rem;
+    }
+
+    .service-item {
+        min-height: 500px;
+    }
+
+    .service-image {
+        height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .service-item {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .service-image {
+        width: 100%;
+        height: 350px;
+    }
+
+    .service-content {
+        width: 100%;
+        padding: 2.8rem;
+    }
+
+    .service-item h3 {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .description {
+        font-size: 1.15rem;
+        margin-bottom: 2.2rem;
+        padding-right: 1rem;
+    }
+
+    .service-price {
+        font-size: 2rem;
+        margin-bottom: 1.8rem;
+    }
+}

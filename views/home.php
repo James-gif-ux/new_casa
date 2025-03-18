@@ -17,7 +17,7 @@
                                        We look forward to exceeding your expectations!
                                     </p>
                                     <div class="banner-btn mt-4">
-                                        <a href="rooms.php" class="sec-btn">Check our Rooms</a>
+                                        <a href="roombooking.php" class="sec-btn">Book Now</a>
                                     </div>
                                 </div>
                             </div>

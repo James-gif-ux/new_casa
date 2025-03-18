@@ -33,7 +33,7 @@
                 </div>
                 <div class="col-lg-10">
                     <div class="main-navigation">
-                        <button class="menu-toggle"></button>
+                        <button class="menu-toggle"><span></span><span></span></button>
                         <nav class="header-menu">
                             <ul class="menu food-nav-menu">
                                 <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
