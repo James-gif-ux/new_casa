@@ -40,12 +40,14 @@
 		function admin(){
 			include '../views/admin.php';
 		}
-		function booking(){
-			include '../views/booking.php';
+		function admin_booking(){
+			include '../views/admin_booking.php';
 		}
 		function reservedBooking(){
 			include '../views/reservedBooking.php';
 		}
-        
+        function admin_rooms(){
+			include '../views/admin_rooms.php';
+		}
 	}
 ?>

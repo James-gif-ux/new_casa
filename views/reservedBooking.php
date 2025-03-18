@@ -1,6 +1,14 @@
 <?php include 'nav/admin_sidebar.php'; ?>
 
+
         <div class="container">
+          <div class="mb-3">
+              <select id="statusFilter" class="select" style="float: right; margin-right: 70px; margin-top: 22px; border:1px solid gray; padding: 9px; border-radius: 5px;" aria-label="Reserved status selection">
+                  <option value="">All Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Cancelled">Cancelled</option>
+              </select>
+          </div>
           <div class="page-inner">
             <div class="page-header">
               <h3 class="fw-bold mb-3">Reserved Bookings</h3>
@@ -13,35 +21,85 @@
                   </div>
                   <div class="card-body">
                     <div class="table-responsive">
-                      <table id="basic-datatables" class="display table table-striped table-hover">
+                      <table id="exampleTable" class="display table table-striped table-hover">
                         <thead>
                             <tr>
                               <th>Name</th>
-                              <th>Position</th>
-                              <th>Office</th>
-                              <th>Age</th>
-                              <th>Start date</th>
-                              <th>Salary</th>
+                              <th>Email</th>
+                              <th>Number</th>
+                              <th>Check In</th>
+                              <th>Check Out</th>
+                              <th>Messages</th>
+                              <th>Status</th>
+                              <th>Action</th>
                             </tr>
                           </thead>
                           <tfoot>
-                            <tr>
-                              <th>Name</th>
-                              <th>Position</th>
-                              <th>Office</th>
-                              <th>Age</th>
-                              <th>Start date</th>
-                              <th>Salary</th>
-                              </tr>
-                              </tfoot>
-                              <tbody>
                               <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Number</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Messages</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                              </tr>
+                          </tfoot>
+                          <tbody>
+                            <tr>
                               <td>Tiger Nixon</td>
                               <td>System Architect</td>
                               <td>Edinburgh</td>
-                              <td>61</td>
                               <td>2011/04/25</td>
-                              <td>$320,800</td>
+                              <td>2011/04/25</td>
+                              <td>hello</td>
+                              <td><span class="badge me-1 px-2" style="color:#171817; font-weight:bold; font-size:15px; background-color:#a9f0a7;">Pending</span></td>
+                              <td>
+                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="bi bi-three-dots-vertical p-2"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a href="#" class="dropdown-item"><i class="bi bi-hourglass-split"></i> Pending</a>
+                                  <a href="#" class="dropdown-item"><i class="bi bi-x-circle"></i> Cancel</a>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Tiger Nixon</td>
+                              <td>System Architect</td>
+                              <td>Edinburgh</td>
+                              <td>2011/04/25</td>
+                              <td>2011/04/25</td>
+                              <td>hello</td>
+                              <td><span class="badge me-1 px-2" style="color:#171817; font-weight:bold; font-size:15px; background-color:#f5c6b9;">Cancelled</span></td>
+                              <td>
+                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="bi bi-three-dots-vertical p-2"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a href="#" class="dropdown-item"><i class="bi bi-hourglass-split"></i> Pending</a>
+                                  <a href="#" class="dropdown-item"><i class="bi bi-x-circle"></i></i> Cancel</a>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Tiger Nixon</td>
+                              <td>System Architect</td>
+                              <td>Edinburgh</td>
+                              <td>2011/04/25</td>
+                              <td>2011/04/25</td>
+                              <td>hello</td>
+                              <td><span class="badge me-1 px-2" style="color:#171817; font-weight:bold; font-size:15px; background-color:#a9f0a7;">Pending</span></td>
+                              <td>
+                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="bi bi-three-dots-vertical p-2"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a href="#" class="dropdown-item"><i class="bi bi-hourglass-split"></i> Pending</a>
+                                  <a href="#" class="dropdown-item"><i class="bi bi-x-circle"></i> Cancel</a>
+                                </div>
+                              </td>
                             </tr>
                         </tbody>
                       </table>
@@ -344,5 +402,39 @@
         });
       });
     </script>
+     <script>
+          $(document).ready(function() {
+          // Initialize DataTable
+          var reservedTable = $('#exampleTable').DataTable({
+              order: [[6, 'desc']], // Sort by status column by default
+              language: {
+                  search: "Search:"
+              }
+          });
+          
+          // Status colors for reference
+          const STATUS_COLORS = {
+              'pending': '#a9f0a7',
+              'cancelled': '#f5c6b9'
+          };
+
+          // Status filter handler
+          $('#statusFilter').on('change', function() {
+              let selectedStatus = $(this).val();
+              
+              // If "All Status" is selected, clear the filter
+              if (!selectedStatus) {
+                  reservedTable.column(6).search('').draw();
+                  return;
+              }
+              
+              // Convert status for searching
+              selectedStatus = selectedStatus.toLowerCase();
+              
+              // Apply filter to status column (index 6)
+              reservedTable.column(6).search(selectedStatus).draw();
+          });
+      });
+      </script>
   </body>
 </html>

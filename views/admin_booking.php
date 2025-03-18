@@ -1,6 +1,14 @@
 <?php include 'nav/admin_sidebar.php'; ?>
-
+     
         <div class="container">
+          <div class="mb-3">
+              <select id="statusFilter" class="select" style="float: right; margin-right: 70px; margin-top: 22px; border:1px solid gray; padding: 9px; border-radius: 5px;" aria-label="Booking status selection">
+                  <option value="">All Status</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Check In">Check In</option>
+                  <option value="Check Out">Check Out</option>
+              </select>
+          </div>
           <div class="page-inner">
             <div class="page-header">
               <h3 class="fw-bold mb-3">Approved Bookings</h3>
@@ -48,15 +56,19 @@
                               <td>$320,800</td>
                               <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#cfb9f6;">Approved</span></td>
                               <td>
-                                <button type="button" class="btn btn-success btn-sm" title="Approve">
+                                <button type="button" class="btn btn-success btn-sm" title="Approve" >
                                   <i class="bi bi-check-circle"></i>
                                 </button>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
                                   <i class="bi bi-three-dots-vertical p-2"></i>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <a href="#" class="dropdown-item"><i class="bi bi-box-arrow-in-left"></i> Check In</a>
-                                  <a href="#" class="dropdown-item"><i class="bi bi-box-arrow-in-right"></i> Check Out</a>
+                                <div class="dropdown-menu">
+                                  <a href="#" class="dropdown-item" >
+                                    <i class="bi bi-box-arrow-in-left"></i> Check In
+                                  </a>
+                                  <a href="#" class="dropdown-item">
+                                    <i class="bi bi-box-arrow-in-right"></i> Check Out
+                                  </a>
                                 </div>
                               </td>
                             </tr>
@@ -69,15 +81,19 @@
                               <td>$320,800</td>
                               <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#93edf1;">Checked In</span></td>
                               <td>
-                                <button type="button" class="btn btn-success btn-sm" title="Approve">
+                                <button type="button" class="btn btn-success btn-sm" title="Approve" >
                                   <i class="bi bi-check-circle"></i>
                                 </button>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
                                   <i class="bi bi-three-dots-vertical p-2"></i>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <a href="#" class="dropdown-item"><i class="bi bi-box-arrow-in-left"></i> Check In</a>
-                                  <a href="#" class="dropdown-item"><i class="bi bi-box-arrow-in-right"></i> Check Out</a>
+                                <div class="dropdown-menu">
+                                  <a href="#" class="dropdown-item" >
+                                    <i class="bi bi-box-arrow-in-left"></i> Check In
+                                  </a>
+                                  <a href="#" class="dropdown-item">
+                                    <i class="bi bi-box-arrow-in-right"></i> Check Out
+                                  </a>
                                 </div>
                               </td>
                             </tr>
@@ -88,17 +104,21 @@
                               <td>2011/04/25</td>
                               <td>2011/04/25</td>
                               <td>$320,800</td>
-                              <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#f5cc8b;">Checked Out</span></td>
+                              <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#f5cc8b;" id="modalStatus">Checked Out</span></td>
                               <td>
-                                <button type="button" class="btn btn-success btn-sm" title="Approve">
+                                <button type="button" class="btn btn-success btn-sm" title="Approve" >
                                   <i class="bi bi-check-circle"></i>
                                 </button>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
                                   <i class="bi bi-three-dots-vertical p-2"></i>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <a href="#" class="dropdown-item"><i class="bi bi-box-arrow-in-left"></i> Check In</a>
-                                  <a href="#" class="dropdown-item"><i class="bi bi-box-arrow-in-right"></i> Check Out</a>
+                                <div class="dropdown-menu">
+                                  <a href="#" class="dropdown-item" >
+                                    <i class="bi bi-box-arrow-in-left"></i> Check In
+                                  </a>
+                                  <a href="#" class="dropdown-item">
+                                    <i class="bi bi-box-arrow-in-right"></i> Check Out
+                                  </a>
                                 </div>
                               </td>
                             </tr>
@@ -403,5 +423,61 @@
         });
       });
     </script>
+    <script>
+      $(document).ready(function() {
+          // Initialize DataTable with correct ID
+          var bookingTable = $('#basic-datatables').DataTable();
+          
+          // Status colors
+          const STATUS_COLORS = {
+              'approved': '#cfb9f6',
+              'check_in': '#93edf1',
+              'check_out': '#f5cc8b'
+          };
+
+          // Status update handler
+          $('.btn-success, .dropdown-item').on('click', function(e) {
+              e.preventDefault();
+              
+              let newStatus;
+              let bookingId = $(this).closest('tr').data('booking-id');
+              
+              if ($(this).hasClass('btn-success')) {
+                  newStatus = 'approved';
+              } else {
+                  newStatus = $(this).text().trim().toLowerCase().replace(' ', '_');
+              }
+              
+              $.ajax({
+                  url: '../ajax/update_booking_status.php',
+                  method: 'POST',
+                  data: {
+                      booking_id: bookingId,
+                      status: newStatus
+                  },
+                  success: function(response) {
+                      response = JSON.parse(response);
+                      if (response.success) {
+                          // Update status badge
+                          const statusBadge = $(`tr[data-booking-id="${bookingId}"] .badge`);
+                          statusBadge.css('background-color', STATUS_COLORS[newStatus]);
+                          statusBadge.text(newStatus.replace('_', ' ').toUpperCase());
+                          
+                          // Refresh table
+                          bookingTable.draw(false);
+                      } else {
+                          alert('Error updating status');
+                      }
+                  }
+              });
+          });
+
+          // Status filter
+          $('#statusFilter').on('change', function() {
+              let selectedStatus = $(this).val().toLowerCase();
+              bookingTable.column(6).search(selectedStatus).draw();
+          });
+      });
+      </script>
   </body>
 </html>
