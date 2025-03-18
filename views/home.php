@@ -17,7 +17,7 @@
                                        We look forward to exceeding your expectations!
                                     </p>
                                     <div class="banner-btn mt-4">
-                                        <a href="rooms.php" class="sec-btn">Check our Rooms</a>
+                                        <a href="roombooking.php" class="sec-btn">Book Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -444,7 +444,7 @@
                         <div class="row">
                             <div class="col-lg-5">
                                 <div class="testimonials-img">
-                                    <img src="../assets/images/testimonial-img.png" alt="">
+                                    <img src="../assets/images/abouts.jpg" alt="">
                                 </div>
                             </div>
                             <div class="col-lg-7">
