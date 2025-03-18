@@ -105,7 +105,7 @@
                 <div class="collapse" id="sidebarLayouts">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="../pages/admin.php?sub_page=booking">
+                      <a href="../pages/admin.php?sub_page=admin_booking">
                         <span class="sub-item">Approved Bookings</span>
                       </a>
                     </li>
@@ -118,13 +118,13 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a href="#">
+                <a href="../pages/admin.php?sub_page=admin_rooms">
                 <i class="fas fa-door-open"></i>
                 <span class="sub-item">Rooms</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#">
+                <a href="../pages/admin.php?sub_page=admin_food">
                 <i class="bi bi-card-checklist"></i>
                 <span class="sub-item">Food Menu</span>
                 </a>
@@ -151,25 +151,10 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#reports">
+                <a href="#">
                 <i class="bi bi-calendar3"></i>
-                  <p>Reports</p>
-                  <span class="caret"></span>
+                <span class="sub-item">Reports</span>
                 </a>
-                <div class="collapse" id="reports">
-                  <ul class="nav nav-collapse">
-                    <li>
-                        <a href="#">
-                            <span class="sub-item">Daily Reports</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span class="sub-item">Monthly Reports</span>
-                        </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
             </ul>
           </div>

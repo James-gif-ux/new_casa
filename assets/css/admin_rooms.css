@@ -1,0 +1,19 @@
+      /* Backdrop styles */
+      #editmodal::backdrop {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: opacity 0.3s ease;
+    }
+    
+    /* Modal animation */
+    #editmodal[popover] {
+        opacity: 0;
+        transform: scale(0.95);
+        transition: opacity 0.2s ease, transform 0.5s ease;
+    }
+    
+    #editmodal[popover]:popover-open {
+        opacity: 1;
+        transform: scale(1);
+    }

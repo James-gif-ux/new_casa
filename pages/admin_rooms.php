@@ -1,15 +1,15 @@
 <?php
 	//import model
 
-	$page_info['page'] = 'admin'; //for page that needs to be called
-	$page_info['sub_page'] = isset($_GET['sub_page'])? $_GET['sub_page'] : 'admin'; //for function to be loaded
+	$page_info['page'] = 'admin_rooms'; //for page that needs to be called
+	$page_info['sub_page'] = isset($_GET['sub_page'])? $_GET['sub_page'] : 'admin_rooms'; //for function to be loaded
 		
 	
 	try {//used try to catch unfortunate errors
 		//check for active function
 		
 		//no active function, use the default page to view
-		new admin($page_info);
+		new admin_rooms($page_info);
 		
 	}catch (Throwable $e){ //get the encountered error
 		echo '<h1>ERROR 404</h1>';
@@ -20,7 +20,7 @@
 	//-----------------------//
 	//--  Class Navigation --//
 	//-----------------------//
-	class admin{
+	class admin_rooms{
 		//set default page info
 		private $page = '';
 		private $sub_page = '';
@@ -37,20 +37,9 @@
 		
 		//-----------------------------//
 		//--   function start here   --//
-		function admin(){
-			include '../views/admin.php';
-		}
-		function admin_booking(){
-			include '../views/admin_booking.php';
-		}
-		function reservedBooking(){
-			include '../views/reservedBooking.php';
-		}
-        function admin_rooms(){
+		function admin_rooms(){
 			include '../views/admin_rooms.php';
 		}
-		function admin_food(){
-			include '../views/admin_food.php';
-		}
+        
 	}
 ?>
