@@ -1,49 +1,64 @@
 <?php 
     include 'nav/admin_sidebar.php';
     require_once '../model/server.php';
-    require_once '../model/Booking_Model.php';
+    require_once '../model/image_model.php';
     
-    $model = new Booking_Model();
-    $imagesModel = new Booking_Model();
-    $connector = new Connector(); // Add database connection
+    $model = new image_model();
+    $images = $model->getimages();
+    $connector = new Connector(); 
 
-    // Handle form submission for adding new room
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $description = $_POST['description'];
-        $name = $_POST['image_name'];
-        $price = $_POST['image_price'];
-        $image_id = $_POST['image_id'];
+     // Handle form submission for adding new room
+     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Check if the required POST variables exist
+        $description = isset($_POST['image_description']) ? $_POST['image_description'] : '';
+        $name = isset($_POST['image_name']) ? $_POST['image_name'] : '';
+        $price = isset($_POST['image_price']) ? $_POST['image_price'] : 0;
         
-        // Get current image
-        $sql = "SELECT image_img FROM image_tb WHERE image_id = ?";
-        $stmt = $connector->getConnection()->prepare($sql);
-        $stmt->execute([$image_id]);
-        $current_image = $stmt->fetchColumn();
-        
-        // Handle file upload
-        if (!empty($_FILES['image_img']['name'])) {
-            $image = $_FILES['image_img']['name'];
-            $target = "../images/" . basename($image);
-            // Delete old image if exists
-            if ($current_image && file_exists("../images/" . $current_image)) {
-                unlink("../images/" . $current_image);
+        if (isset($_POST['image_id'])) {
+            // Edit operation
+            $image_id = $_POST['image_id'];
+            
+            // Get current image
+            $sql = "SELECT image_img FROM image_tb WHERE image_id = ?";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$image_id]);
+            $current_image = $stmt->fetchColumn();
+            
+            // Handle file upload
+            if (!empty($_FILES['image_img']['name'])) {
+                $image = $_FILES['image_img']['name'];
+                $target = "../images/" . basename($image);
+                // Delete old image if exists
+                if ($current_image && file_exists("../images/" . $current_image)) {
+                    unlink("../images/" . $current_image);
+                }
+                move_uploaded_file($_FILES['image_img']['tmp_name'], $target);
+            } else {
+                $image = $current_image;
             }
-            move_uploaded_file($_FILES['image_img']['tmp_name'], $target);
+
+            $sql = "UPDATE image_tb SET image_description = ?, image_name = ?, image_price = ?, image_img = ? WHERE image_id = ?";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$description, $name, $price, $image, $image_id]);
         } else {
-            $image = $current_image;
+            // Add operation
+            $image = '';
+            if (!empty($_FILES['image_img']['name'])) {
+                $image = $_FILES['image_img']['name'];
+                $target = "../images/" . basename($image);
+                move_uploaded_file($_FILES['image_img']['tmp_name'], $target);
+            }
+
+            // Insert new room
+            $sql = "INSERT INTO image_tb (image_description, image_name, image_price, image_img) VALUES (?, ?, ?, ?)";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$description, $name, $price, $image]);
+            
+            // Use JavaScript redirect instead of header()
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "';</script>";
+            exit();
         }
-
-        $sql = "UPDATE image_tb SET image_description = ?, image_name = ?, image_price = ?, image_image = ? WHERE image_id = ?";
-        $stmt = $connector->getConnection()->prepare($sql);
-        $stmt->execute([$description, $name, $price, $image, $image_id]);
     }
-
-    // Fetch existing rooms
-    $sql = "SELECT * FROM image_tb";
-    $stmt = $connector->getConnection()->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $images = $imagesModel->get_images();
 ?>
 
 <link rel="stylesheet" href="../assets/css/admin_rooms.css">
@@ -51,18 +66,18 @@
 <div class="container" id="carouselMultiItemExample" data-mdb-carousel-init class="carousel slide carousel-dark text-center" data-mdb-ride="carousel">
   <!-- Inner -->
     <div class="page-inner carousel-inner py-4">
-        <form action="admin_food.php" method="POST" enctype="multipart/form-data">
+        <form action="" method="POST" enctype="multipart/form-data">
             <div>
-                <input type="text" class="form-control" placeholder="Food Name" aria-label="Food Name">
+                <input type="text" name="image_name" class="form-control" placeholder="Food Name" >
             </div>
             <div>
-                <textarea type="text" class="form-control" placeholder="Description" aria-label="Description"></textarea>
+                <textarea type="text" name="image_description" class="form-control" placeholder="Description" ></textarea>
             </div>
             <div>
-                <input type="number" class="form-control" placeholder="Food Price" aria-label="Food Price">
+                <input type="number" name="image_price" class="form-control" placeholder="Food Price" >
             </div>
             <div>
-                <input type="file" class="form-control" placeholder="Food Image" aria-label="Food Image">
+                <input type="file" name="image_img" class="form-control" placeholder="Food Image" >
             </div>
             <button type="submit" class="btn btn-primary">Add Room</button>
         </form>
@@ -109,22 +124,22 @@
                                     </div>
                                     <div class="modal-body">
                                         <form action="" method="POST" enctype="multipart/form-data">
-                                            <input type="hidden" name="services_id" value="<?php echo $img['image_id']?>">
+                                            <input type="hidden" name="image_id" value="<?php echo $img['image_id']?>">
                                             <div class="mb-3">
-                                                <label class="form-label">Room Name</label>
-                                                <input type="text" class="form-control" name="food_name" 
+                                                <label class="form-label">Food Name</label>
+                                                <input type="text" class="form-control" name="image_name" 
                                                        value="<?php echo $img['image_name']?>">
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Description</label>
-                                                <textarea class="form-control" name="description" 
+                                                <textarea class="form-control" name="image_description" 
                                                           rows="3"><?php echo $img['image_description']?></textarea>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Price</label>
                                                 <div class="input-group">
                                                     <span class="input-group-text">₱</span>
-                                                    <input type="number" class="form-control" name="food_price" 
+                                                    <input type="number" class="form-control" name="image_price" 
                                                            value="<?php echo $img['image_price']?>">
                                                 </div>
                                             </div>
@@ -133,7 +148,7 @@
                                                 <img src="../images/<?php echo $img['image_img']?>" 
                                                      class="img-fluid mb-2" 
                                                      style="max-height: 200px; width: 100%; object-fit: cover;">
-                                                <input type="file" class="form-control" name="food_image">
+                                                <input type="file" class="form-control" name="image_img">
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

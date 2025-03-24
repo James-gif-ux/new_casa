@@ -25,6 +25,8 @@
             //return
             return $query->fetch(PDO::FETCH_ASSOC);
         }
+
+		
         
 	 }
 ?>
