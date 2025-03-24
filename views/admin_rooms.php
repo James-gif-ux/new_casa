@@ -1,41 +1,67 @@
 <?php 
+    // Start output buffering at the very beginning
+    ob_start();
+    
     include 'nav/admin_sidebar.php';
     require_once '../model/server.php';
     require_once '../model/Booking_Model.php';
     
     $model = new Booking_Model();
     $services = new Booking_Model();
-    $connector = new Connector(); // Add database connection
+    $connector = new Connector();
+    $rooms = $model->add_services();
 
     // Handle form submission for adding new room
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $description = $_POST['description'];
-        $name = $_POST['room_name'];
-        $price = $_POST['services_price'];
-        $services_id = $_POST['services_id'];
+        // Check if the required POST variables exist
+        $description = isset($_POST['description']) ? $_POST['description'] : '';
+        $name = isset($_POST['room_name']) ? $_POST['room_name'] : '';
+        $price = isset($_POST['services_price']) ? $_POST['services_price'] : 0;
         
-        // Get current image
-        $sql = "SELECT services_image FROM services_tb WHERE services_id = ?";
-        $stmt = $connector->getConnection()->prepare($sql);
-        $stmt->execute([$services_id]);
-        $current_image = $stmt->fetchColumn();
-        
-        // Handle file upload
-        if (!empty($_FILES['services_image']['name'])) {
-            $image = $_FILES['services_image']['name'];
-            $target = "../images/" . basename($image);
-            // Delete old image if exists
-            if ($current_image && file_exists("../images/" . $current_image)) {
-                unlink("../images/" . $current_image);
+        if (isset($_POST['services_id'])) {
+            // Edit operation
+            $services_id = $_POST['services_id'];
+            
+            // Get current image
+            $sql = "SELECT services_image FROM services_tb WHERE services_id = ?";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$services_id]);
+            $current_image = $stmt->fetchColumn();
+            
+            // Handle file upload
+            if (!empty($_FILES['services_image']['name'])) {
+                $image = $_FILES['services_image']['name'];
+                $target = "../images/" . basename($image);
+                // Delete old image if exists
+                if ($current_image && file_exists("../images/" . $current_image)) {
+                    unlink("../images/" . $current_image);
+                }
+                move_uploaded_file($_FILES['services_image']['tmp_name'], $target);
+            } else {
+                $image = $current_image;
             }
-            move_uploaded_file($_FILES['services_image']['tmp_name'], $target);
-        } else {
-            $image = $current_image;
-        }
 
-        $sql = "UPDATE services_tb SET services_description = ?, services_name = ?, services_price = ?, services_image = ? WHERE services_id = ?";
-        $stmt = $connector->getConnection()->prepare($sql);
-        $stmt->execute([$description, $name, $price, $image, $services_id]);
+            $sql = "UPDATE services_tb SET services_description = ?, services_name = ?, services_price = ?, services_image = ? WHERE services_id = ?";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$description, $name, $price, $image, $services_id]);
+        } else {
+            // Add operation
+            $image = '';
+            if (!empty($_FILES['services_image']['name'])) {
+                $image = $_FILES['services_image']['name'];
+                $target = "../images/" . basename($image);
+                move_uploaded_file($_FILES['services_image']['tmp_name'], $target);
+            }
+
+            // Insert new room
+            $sql = "INSERT INTO services_tb (services_description, services_name, services_price, services_image) VALUES (?, ?, ?, ?)";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$description, $name, $price, $image]);
+            
+            // Use JavaScript redirect instead of header()
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "';</script>";
+            exit();
+        }
     }
 
     // Fetch existing rooms
@@ -51,19 +77,21 @@
 <div class="container" id="carouselMultiItemExample" data-mdb-carousel-init class="carousel slide carousel-dark text-center" data-mdb-ride="carousel">
   <!-- Inner -->
     <div class="page-inner carousel-inner py-4">
+        <form action="../pages/admin_rooms.php?function=add_services&&sub_page=add_services" method="post" enctype="multipart/form-data">
         <div>
-            <input type="text" class="form-control" placeholder="Room Name" aria-label="Room Name">
+            <input type="text" name="room_name" class="form-control" placeholder="Room Name" aria-label="Room Name" required>
         </div>
         <div>
-            <textarea type="text" class="form-control" placeholder="Description" aria-label="Description"></textarea>
+            <textarea name="description" class="form-control" placeholder="Description" aria-label="Description"></textarea>
         </div>
         <div>
-            <input type="number" class="form-control" placeholder="Room Price" aria-label="Room Price">
+            <input type="number" name="services_price" class="form-control" placeholder="Room Price" aria-label="Room Price" required>
         </div>
         <div>
-            <input type="file" class="form-control" placeholder="Room Image" aria-label="Room Image">
+            <input type="file" name="services_image" class="form-control" placeholder="Room Image" aria-label="Room Image">
         </div>
-            <button type="submit" class="btn btn-primary">Add Room</button>
+        <button type="submit" class="btn btn-primary">Add Room</button>
+    </form>
         <div class="page-header">
             <h3 class="fw-bold mb-3">Admin Rooms</h3>
         </div>

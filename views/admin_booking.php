@@ -1,4 +1,17 @@
-<?php include 'nav/admin_sidebar.php'; ?>
+
+<?php
+require  '../model/Booking_Model.php';
+require_once '../model/server.php';
+$connector = new Connector();
+$model = new Booking_Model();
+
+$sql = "SELECT * FROM booking_tb";
+$stmt = $connector->getConnection()->prepare($sql);
+$stmt->execute();
+$bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  include 'nav/admin_sidebar.php';
+?>
      
         <div class="container">
           <div class="mb-3">
@@ -47,81 +60,30 @@
                               </tr>
                           </tfoot>
                           <tbody>
-                            <tr>
-                              <td>Tiger Nixon</td>
-                              <td>System Architect</td>
-                              <td>Edinburgh</td>
-                              <td>2011/04/25</td>
-                              <td>2011/04/25</td>
-                              <td>$320,800</td>
-                              <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#cfb9f6;">Approved</span></td>
+                            <?php foreach ($bookings as $booking) : ?>
+                              <tr>
+                              <td><?php echo $booking['booking_fullname']?></td>
+                              <td><?php echo $booking['booking_email']?></td>
+                              <td><?php echo $booking['booking_number']?></td>
+                              <td><?php echo $booking['booking_check_in']?></td>
+                              <td><?php echo $booking['booking_check_out']?></td>
+                              <td><?php echo $booking['total_amount']?></td>
+                              <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#cfb9f6;"><?php echo $booking['booking_status']?></span></td>
                               <td>
-                                <button type="button" class="btn btn-success btn-sm" title="Approve" >
-                                  <i class="bi bi-check-circle"></i>
-                                </button>
                                 <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
                                   <i class="bi bi-three-dots-vertical p-2"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                  <a href="#" class="dropdown-item" >
+                                  <a href="../pages/approved.php?booking_id=<?php echo $booking['booking_id']?>&action=checked-in" class="dropdown-item" onclick="return confirm('Are you sure you want to checked in this booking?');">
                                     <i class="bi bi-box-arrow-in-left"></i> Check In
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="../pages/approved.php?booking_id=<?php echo $booking['booking_id']?>&action=checked-out" class="dropdown-item" onclick="return confirm('Are you sure you want to checked out this booking?');">
                                     <i class="bi bi-box-arrow-in-right"></i> Check Out
                                   </a>
                                 </div>
                               </td>
                             </tr>
-                            <tr>
-                              <td>Tiger Nixon</td>
-                              <td>System Architect</td>
-                              <td>Edinburgh</td>
-                              <td>2011/04/25</td>
-                              <td>2011/04/25</td>
-                              <td>$320,800</td>
-                              <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#93edf1;">Checked In</span></td>
-                              <td>
-                                <button type="button" class="btn btn-success btn-sm" title="Approve" >
-                                  <i class="bi bi-check-circle"></i>
-                                </button>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
-                                  <i class="bi bi-three-dots-vertical p-2"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                  <a href="#" class="dropdown-item" >
-                                    <i class="bi bi-box-arrow-in-left"></i> Check In
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="bi bi-box-arrow-in-right"></i> Check Out
-                                  </a>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Tiger Nixon</td>
-                              <td>System Architect</td>
-                              <td>Edinburgh</td>
-                              <td>2011/04/25</td>
-                              <td>2011/04/25</td>
-                              <td>$320,800</td>
-                              <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#f5cc8b;" id="modalStatus">Checked Out</span></td>
-                              <td>
-                                <button type="button" class="btn btn-success btn-sm" title="Approve" >
-                                  <i class="bi bi-check-circle"></i>
-                                </button>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
-                                  <i class="bi bi-three-dots-vertical p-2"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                  <a href="#" class="dropdown-item" >
-                                    <i class="bi bi-box-arrow-in-left"></i> Check In
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="bi bi-box-arrow-in-right"></i> Check Out
-                                  </a>
-                                </div>
-                              </td>
-                            </tr>
+                            <?php endforeach; ?>
                         </tbody>
                       </table>
                     </div>

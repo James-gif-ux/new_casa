@@ -97,26 +97,26 @@
               </li>
              
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                  <i class="fas fa-th-list"></i>
-                  <p>Guest</p>
-                  <span class="caret"></span>
+                <a class="collapsed" data-bs-toggle="collapse" href="#sidebarLayouts" aria-expanded="false">
+                    <i class="fas fa-th-list"></i>
+                    <p>Guest</p>
+                    <span class="caret"></span>
                 </a>
                 <div class="collapse" id="sidebarLayouts">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="../pages/admin.php?sub_page=admin_booking">
-                        <span class="sub-item">Approved Bookings</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="../pages/admin.php?sub_page=reservedBooking">
-                        <span class="sub-item">Reserved Bookings</span>
-                      </a>
-                    </li>
-                  </ul>
+                    <ul class="nav nav-collapse">
+                        <li>
+                            <a href="../pages/admin.php?sub_page=admin_booking">
+                                <span class="sub-item">Approved Bookings</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../pages/admin.php?sub_page=reservedBooking">
+                                <span class="sub-item">Reserved Bookings</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-              </li>
+            </li>
               <li class="nav-item">
                 <a href="../pages/admin.php?sub_page=admin_rooms">
                 <i class="fas fa-door-open"></i>
@@ -130,28 +130,19 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#forms">
-                  <i class="fas fa-pen-square"></i>
-                  <p>Process</p>
-                  <span class="caret"></span>
+                <a href="../pages/admin.php?sub_page=admin_inquires">
+                <i class="bi bi-envelope-arrow-up"></i>
+                <span class="sub-item">Inquires</span>
                 </a>
-                <div class="collapse" id="forms">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="#">
-                        <span class="sub-item">Inquires</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <span class="sub-item">Payments</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
               <li class="nav-item">
-                <a href="#">
+                <a href="../pages/admin.php?sub_page=admin_payments">
+                <i class="bi bi-wallet"></i>
+                <span class="sub-item">Payments</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../pages/admin.php?sub_page=admin_reports">
                 <i class="bi bi-calendar3"></i>
                 <span class="sub-item">Reports</span>
                 </a>

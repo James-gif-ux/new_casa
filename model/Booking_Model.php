@@ -32,6 +32,36 @@ class Booking_Model {
 
         return $services;
     }
+    public function basename(string $path, string $suffix = ''): string {
+        // Return empty string if path is empty
+        if (empty($path)) {
+            return '';
+        }
+    
+    // Get the base name from the path
+        $base = basename($path);
+        
+        // If suffix is provided and matches end of base, remove it
+        if ($suffix && str_ends_with($base, $suffix)) {
+            return substr($base, 0, -strlen($suffix));
+        }
+        
+        return $base;
+    }
+    // Fetch all images from the database
+    function add_services(){
+         // Check if required fields are set
+         if (!isset($_POST['services_name']) || empty($_POST['services_name'])) {
+            // Handle the error - maybe return false or throw an exception
+            return false;
+        }
+        $sql = "INSERT INTO services_tb (services_name, services_image, services_description, services_price) VALUES (?,?,?,?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssss", $services_name, $services_image, $services_description, $services_price);
+        $stmt->execute();
+        $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function get_images() {
         $sql = "SELECT * FROM image_tb";
         $result = $this->conn->query($sql);
@@ -44,6 +74,13 @@ class Booking_Model {
         }
 
         return $images;
+    }
+    public function add_images(){
+        $sql = "INSERT INTO image_tb (image_name, image_img, image_description, image_price) VALUES (?,?,?,?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssss", $image_name, $image_img, $image_description, $image_price);
+        $stmt->execute();
+        $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // Check if a service exists by its ID
@@ -113,6 +150,12 @@ class Booking_Model {
         }
 
         return $bookings;
+    }
+
+    public function get_bookings(){
+        $sql = "SELECT * FROM booking_tb";
+        $result = $this->conn->query($sql);
+        $bookings = [];
     }
 
     public function update_room($id, $name, $description, $price, $image) {
