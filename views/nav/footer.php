@@ -16,22 +16,22 @@
                                         <div class="social-icon">
                                             <ul>
                                                 <li>
-                                                    <a href="#">
+                                                    <a href="https://www.facebook.com/">
                                                         <i class="uil uil-facebook-f"></i>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#">
+                                                    <a href="https://www.instagram.com/">
                                                         <i class="uil uil-instagram"></i>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#">
+                                                    <a href="https://github.com/James-gif-ux/new_casa">
                                                         <i class="uil uil-github-alt"></i>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#">
+                                                    <a href="https://www.youtube.com/">
                                                         <i class="uil uil-youtube"></i>
                                                     </a>
                                                 </li>
