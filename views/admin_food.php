@@ -66,23 +66,30 @@
 <div class="container" id="carouselMultiItemExample" data-mdb-carousel-init class="carousel slide carousel-dark text-center" data-mdb-ride="carousel">
   <!-- Inner -->
     <div class="page-inner carousel-inner py-4">
-        <form action="" method="POST" enctype="multipart/form-data">
-            <div>
-                <input type="text" name="image_name" class="form-control" placeholder="Food Name" >
+        <div class="card mb-5" style="max-width: 600px;">
+            <div class="card-header">
+            <h5 class="card-title mb-0">Add New Food</h5>
             </div>
-            <div>
-                <textarea type="text" name="image_description" class="form-control" placeholder="Description" ></textarea>
+            <div class="card-body">
+            <form action="" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+            <input type="text" name="image_name" class="form-control" placeholder="Food Name" required>
             </div>
-            <div>
-                <input type="number" name="image_price" class="form-control" placeholder="Food Price" >
+            <div class="mb-3">
+            <textarea name="image_description" class="form-control" placeholder="Description" rows="3" required></textarea>
             </div>
-            <div>
-                <input type="file" name="image_img" class="form-control" placeholder="Food Image" >
+            <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text">₱</span>
+                <input type="number" name="image_price" class="form-control" placeholder="Food Price" required>
+            </div>
+            </div>
+            <div class="mb-3">
+            <input type="file" name="image_img" class="form-control" placeholder="Food Image" required>
             </div>
             <button type="submit" class="btn btn-primary">Add Food</button>
-        </form>
-        <div class="page-header">
-            <h3 class="fw-bold mb-3">Admin Foods</h3>
+            </form>
+            </div>
         </div>
         <!-- Single item -->
         <div class="carousel-item active">

@@ -1,102 +1,97 @@
 <?php include 'nav/admin_sidebar.php'; ?>
 
 <style>
-.card {
-    border: none;
-    margin-top: 50px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 60px;
+.payment-card {
+    margin: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.payment-table {
+    width: 100%;
+    margin-bottom: 0;
+}
 
-
-.table th {
-    font-weight: 600;
-    text-transform: uppercase;
+.payment-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    padding: 1rem;
     font-size: 0.9rem;
 }
 
-.table td {
-    font-size: 0.95rem;
+.payment-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
 }
 
-.btn {
-    transition: all 0.3s ease;
+.action-btn {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    margin: 0 0.25rem;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-}
-
-.badge {
-    padding: 8px 12px;
-    font-size: 0.85rem;
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
 }
 </style>
 
-<div class="container mt-4">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Payment Records</h4>
-        </div>
+<div class="container py-4">
+    <div class="payment-card">
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="text-center">Payment ID</th>
-                            <th class="text-center">Date</th>
-                            <th class="text-center">Customer</th>
-                            <th class="text-center">Amount</th>
-                            <th class="text-center">Payment Method</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="align-middle">
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-center">$</td>
-                            <td class="text-center"></td>
-                            <td class="text-center">
-                                <span class="badge rounded-pill bg-success">
-                                    Paid
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-info btn-sm rounded-pill shadow-sm mx-1" onclick="viewPayment()">
-                                    <i class="fas fa-eye"></i> View
-                                </button>
-                                <button class="btn btn-primary btn-sm rounded-pill shadow-sm mx-1" onclick="editPayment()">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="align-middle">
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-center">$</td>
-                            <td class="text-center"></td>
-                            <td class="text-center">
-                                <span class="badge rounded-pill bg-secondary">
-                                   Deposit
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-info btn-sm rounded-pill shadow-sm mx-1" onclick="viewPayment()">
-                                    <i class="fas fa-eye"></i> View
-                                </button>
-                                <button class="btn btn-primary btn-sm rounded-pill shadow-sm mx-1" onclick="editPayment()">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="payment-table table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#001</td>
+                        <td>2023-10-20</td>
+                        <td>John Doe</td>
+                        <td>$100</td>
+                        <td>Credit Card</td>
+                        <td>
+                            <span class="status-badge bg-success text-white">Paid</span>
+                        </td>
+                        <td>
+                            <button class="action-btn btn btn-outline-info" onclick="viewPayment()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn btn btn-outline-primary" onclick="editPayment()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#002</td>
+                        <td>2023-10-21</td>
+                        <td>Jane Smith</td>
+                        <td>$150</td>
+                        <td>Bank Transfer</td>
+                        <td>
+                            <span class="status-badge bg-secondary text-white">Deposit</span>
+                        </td>
+                        <td>
+                            <button class="action-btn btn btn-outline-info" onclick="viewPayment()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn btn btn-outline-primary" onclick="editPayment()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

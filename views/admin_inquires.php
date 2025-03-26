@@ -1,85 +1,83 @@
 <?php include 'nav/admin_sidebar.php'; ?>
+
 <style>
-    .container{
-        border: none;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        max-width: 100%;
-        margin: 0 auto;
+    .inquiry-container {
+        width: 95%;
+        margin: 2rem auto;
+        padding-top: 70px;
+    }
+    .inquiry-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .inquiry-header {
+        background: linear-gradient(45deg, #2196F3, #1976D2);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px 8px 0 0;
+    }
+    .table {
+        margin-bottom: 0;
     }
     .table th {
+        background-color: #f8f9fa;
         font-weight: 600;
-        text-transform: uppercase;
         font-size: 0.9rem;
+        text-align: center; /* Center align header text */
     }
-        
     .table td {
-        font-size: 0.95rem;
+        vertical-align: middle;
+        font-size: 0.9rem;
+        text-align: center; /* Center align cell content */
     }
-
-    .btn {
-        transition: all 0.3s ease;
+    .action-btn {
+        padding: 0.35rem 0.6rem; /* Slightly larger padding */
+        margin: 0 0.3rem;
     }
-
-    .btn:hover {
-        transform: translateY(-2px);
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
     }
-
-    .badge {
-        padding: 8px 12px;
-        font-size: 0.85rem;
+    .action-btn i {
+        font-size: 1.1rem; /* Larger icons */
     }
 </style>
-<div class="container mt-6 d-flex justify-content-center">
-    <div class="card shadow-lg border-0 rounded-3" style="width: 90%;">
-        <div class="card-header bg-gradient-primary text-white py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">
-                    <i class="fas fa-headset me-2 fa-bounce"></i>
-                    Customer Support Inquiries
-                </h4>
-                <span class="badge bg-light text-primary">Total: 10</span>
-            </div>
-        </div>
-        <div class="card-body p-4">
+
+<div class="inquiry-container">
+    <div class="inquiry-card">
+        <div class="p-5">
             <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle">
-                    <thead class="bg-light">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <th scope="col" class="text-center">#ID</th>
-                            <th scope="col">Customer Name</th>
-                            <th scope="col">Subject</th>
-                            <th scope="col">Message</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col" class="text-center">Actions</th>
+                            <th>Name</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="text-center">a</td>
+                            <td>James</td>
+                            <td>Support</td>
+                            <td class="text-truncate" style="max-width: 200px;">Message content</td>
+                            <td>2023-10-20</td>
                             <td>
-                                <div class="d-flex align-items-center">
-                                    james
-                                    <span></span>
-                                </div>
-                            </td>
-                            <td>a</td>
-                            <td class="text-truncate" style="max-width: 200px;">a</td>
-                            <td><small class="text-muted">2023-10-20</small></td>
-                            <td>
-                                <span class="badge bg-warning text-dark rounded-pill px-3">
-                                    <i class="fas fa-clock me-1"></i> Pending
+                                <span class="status-badge bg-warning text-dark">
+                                    Pending
                                 </span>
                             </td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-primary" onclick="viewInquiry()" data-bs-toggle="tooltip" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-success" onclick="replyInquiry()" data-bs-toggle="tooltip" title="Reply">
-                                        <i class="fas fa-reply"></i>
-                                    </button>
-                                </div>
+                            <td>
+                                <button class="btn btn-sm btn-danger action-btn" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success action-btn" title="Reply">
+                                    <i class="fas fa-reply"></i>
+                                </button>
                             </td>
                         </tr>
                     </tbody>

@@ -77,25 +77,41 @@
 <div class="container" id="carouselMultiItemExample" data-mdb-carousel-init class="carousel slide carousel-dark text-center" data-mdb-ride="carousel">
   <!-- Inner -->
     <div class="page-inner carousel-inner py-4">
-        <form action="../pages/admin_rooms.php?function=add_services&&sub_page=add_services" method="post" enctype="multipart/form-data">
-        <div>
-            <input type="text" name="room_name" class="form-control" placeholder="Room Name" aria-label="Room Name" required>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card mb-5">
+                <div class="card-header">
+                    <h5 class="mb-0">Add New Room</h5>
+                </div>
+                <div class="card-body">
+                    <form action="../pages/admin_rooms.php?function=add_services&&sub_page=add_services" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <input type="text" name="room_name" class="form-control" placeholder="Room Name" aria-label="Room Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="description" class="form-control" placeholder="Description" aria-label="Description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text">₱</span>
+                                <input type="number" name="services_price" class="form-control" placeholder="Room Price" aria-label="Room Price" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="file" name="services_image" class="form-control" placeholder="Room Image" aria-label="Room Image">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Room</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div>
-            <textarea name="description" class="form-control" placeholder="Description" aria-label="Description"></textarea>
+        <div class="col-md-7">
+            <!-- Existing carousel content will go here -->
         </div>
-        <div>
-            <input type="number" name="services_price" class="form-control" placeholder="Room Price" aria-label="Room Price" required>
-        </div>
-        <div>
-            <input type="file" name="services_image" class="form-control" placeholder="Room Image" aria-label="Room Image">
-        </div>
-        <button type="submit" class="btn btn-primary">Add Room</button>
-    </form>
-        <div class="page-header">
-            <h3 class="fw-bold mb-3">Admin Rooms</h3>
-        </div>
+    </div>
         <!-- Single item -->
+<div class="card py-4">
+    <div class="card-body">
         <div class="carousel-item active">
             <div class="container">
                 <div class="row">
@@ -110,7 +126,6 @@
                                     <h5 class="card-title"><?php echo $srvc['services_name']?></h5>
                                     <p class="card-text"><?php echo $srvc['services_description']?></p>
                                     <p class="card-text">₱<?= number_format($srvc['services_price'], 2) ?></p>
-                                    <!-- Change button to trigger Bootstrap modal -->
                                     <button type="button" 
                                             class="btn btn-primary" 
                                             data-bs-toggle="modal" 
@@ -174,6 +189,8 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
     </div>
     <!-- Inner -->
 </div>
