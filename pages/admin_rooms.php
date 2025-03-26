@@ -44,6 +44,12 @@
 			include '../views/admin_rooms.php';
 		}
         
+        // Add the missing method
+        function add_services(){
+            $rooms = new Booking_Model();
+            $services = $rooms->add_services();
+            return $services;
+        }
 	}
 	//-----------------------//
 	//-- Active Class      --//

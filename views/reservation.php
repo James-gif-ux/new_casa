@@ -111,7 +111,7 @@
                 <div class="reservation-container">
                     <div class="right-section">
                         <h2>Make a Reservation</h2>
-                        <form method="POST" action="home.php?service_id=<?= $service['services_id'] ?>" class="reservation-form">
+                        <form method="POST" action="process.php?reservation_id=<?= $service['services_id'] ?>" class="reservation-form">
                             <div class="form-group">
                                 <label for="name">Full Name:</label>
                                 <input type="text" id="name" name="name" required onblur="checkDuplicate('name', this.value)">

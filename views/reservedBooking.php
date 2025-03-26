@@ -5,7 +5,7 @@ require_once '../model/server.php';
 // At the top of the file, update the reservation fetch
 $model = new Reservation_Model();
 // Fetch reservations with status 'pending' or 'cancelled'
-$reservation = $model->get_reservation_by_status(['cancelled']);
+$reservation = $model->get_reservation_by_status(['pending']);
 
 include 'nav/admin_sidebar.php'; 
 ?>

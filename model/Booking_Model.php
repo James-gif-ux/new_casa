@@ -165,5 +165,76 @@ class Booking_Model {
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([$status, $booking_id]);
     }
+    public function add_room($name, $description, $price, $image) {
+        $sql = "INSERT INTO services_tb (services_description, services_name, services_price, services_image) VALUES (?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$description, $name, $price, $image]);
+    }
+
+    public function edit_rooms($id, $description, $name, $price, $image) {
+        try {
+            $sql = "UPDATE services_tb SET services_description = ?, services_name = ?, services_price = ?, services_image = ? WHERE services_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([$description, $name, $price, $image, $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+    public function process_payment($reservation_id, $reference, $image, $amount, $date, $status) {
+        try {
+            $sql = "INSERT INTO payment_tb (payment_reservation_id, payment_reference, payment_image, 
+                    payment_amount, payment_date, payment_status) 
+                    VALUES (?, ?, ?, ?, ?, ?)";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$reservation_id, $reference, $image, $amount, $date, $status]);
+            
+            if ($stmt->rowCount() > 0) {
+                // Update booking status
+                $update_sql = "UPDATE booking_tb SET booking_status = ? WHERE booking_id = ?";
+                $update_stmt = $this->conn->prepare($update_sql);
+                $update_stmt->execute([$status, $reservation_id]);
+                
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            error_log("Payment Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    public function get_reservations_with_payments() {
+        try {
+            $sql = "SELECT b.*, p.payment_reference, p.payment_amount, p.payment_date, p.payment_status 
+                    FROM booking_tb b 
+                    LEFT JOIN payment_tb p ON b.booking_id = p.payment_reservation_id 
+                    ORDER BY b.booking_id DESC";
+                    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching reservations with payments: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function get_reservation_with_payment($booking_id) {
+        try {
+            $sql = "SELECT b.*, p.payment_reference, p.payment_amount, p.payment_date, p.payment_status 
+                    FROM booking_tb b 
+                    LEFT JOIN payment_tb p ON b.booking_id = p.payment_reservation_id 
+                    WHERE b.booking_id = ?";
+                    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$booking_id]);
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching reservation with payment: " . $e->getMessage());
+            return null;
+        }
+    }
 }
 ?>
