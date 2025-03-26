@@ -1,75 +1,80 @@
 <?php 
-    // Start output buffering at the very beginning
     ob_start();
     
     include 'nav/admin_sidebar.php';
     require_once '../model/server.php';
     require_once '../model/Booking_Model.php';
     
-    $model = new Booking_Model();
-    $services = new Booking_Model();
     $connector = new Connector();
-    $rooms = $model->add_services();
-
+    $model = new Booking_Model();
+    
     // Handle form submission for adding new room
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Check if the required POST variables exist
-        $description = isset($_POST['description']) ? $_POST['description'] : '';
-        $name = isset($_POST['room_name']) ? $_POST['room_name'] : '';
-        $price = isset($_POST['services_price']) ? $_POST['services_price'] : 0;
-        
-        if (isset($_POST['services_id'])) {
-            // Edit operation
-            $services_id = $_POST['services_id'];
+        try {
+            $description = isset($_POST['description']) ? $_POST['description'] : '';
+            $name = isset($_POST['room_name']) ? $_POST['room_name'] : '';
+            $price = isset($_POST['services_price']) ? $_POST['services_price'] : 0;
             
-            // Get current image
-            $sql = "SELECT services_image FROM services_tb WHERE services_id = ?";
-            $stmt = $connector->getConnection()->prepare($sql);
-            $stmt->execute([$services_id]);
-            $current_image = $stmt->fetchColumn();
-            
-            // Handle file upload
-            if (!empty($_FILES['services_image']['name'])) {
-                $image = $_FILES['services_image']['name'];
-                $target = "../images/" . basename($image);
-                // Delete old image if exists
-                if ($current_image && file_exists("../images/" . $current_image)) {
-                    unlink("../images/" . $current_image);
+            if (isset($_POST['services_id'])) {
+                // Edit operation
+                $services_id = $_POST['services_id'];
+                
+                // Handle file upload
+                if (!empty($_FILES['services_image']['name'])) {
+                    $image = $_FILES['services_image']['name'];
+                    $target = "../images/" . basename($image);
+                    move_uploaded_file($_FILES['services_image']['tmp_name'], $target);
+                } else {
+                    $image = ''; // or get current image from database
                 }
-                move_uploaded_file($_FILES['services_image']['tmp_name'], $target);
+
+                // Use model method to edit room
+                $result = $model->edit_rooms($services_id, $description, $name, $price, $image);
+                
+                if($result) {
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit();
+                }
             } else {
-                $image = $current_image;
+                // Add operation
+                $image = '';
+                if (!empty($_FILES['services_image']['name'])) {
+                    $image = time() . '_' . $_FILES['services_image']['name'];
+                    $target = "../images/" . basename($image);
+                    if (move_uploaded_file($_FILES['services_image']['tmp_name'], $target)) {
+                        // File uploaded successfully
+                        $result = $model->add_room($name, $description, $price, $image);
+                        
+                        if($result) {
+                            echo "<script>
+                                alert('Room added successfully!');
+                                window.location.href = 'admin_rooms.php';
+                            </script>";
+                            exit();
+                        }
+                    }
+                } else {
+                    // No image uploaded, still add the room
+                    $result = $model->add_room($name, $description, $price, $image);
+                    
+                    if($result) {
+                        echo "<script>
+                            alert('Room added successfully!');
+                            window.location.href = 'admin_rooms.php';
+                        </script>";
+                        exit();
+                    }
+                }
             }
-
-            $sql = "UPDATE services_tb SET services_description = ?, services_name = ?, services_price = ?, services_image = ? WHERE services_id = ?";
-            $stmt = $connector->getConnection()->prepare($sql);
-            $stmt->execute([$description, $name, $price, $image, $services_id]);
-        } else {
-            // Add operation
-            $image = '';
-            if (!empty($_FILES['services_image']['name'])) {
-                $image = $_FILES['services_image']['name'];
-                $target = "../images/" . basename($image);
-                move_uploaded_file($_FILES['services_image']['tmp_name'], $target);
-            }
-
-            // Insert new room
-            $sql = "INSERT INTO services_tb (services_description, services_name, services_price, services_image) VALUES (?, ?, ?, ?)";
-            $stmt = $connector->getConnection()->prepare($sql);
-            $stmt->execute([$description, $name, $price, $image]);
-            
-            // Use JavaScript redirect instead of header()
-            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "';</script>";
-            exit();
+        } catch(PDOException $e) {
+            echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
         }
     }
 
     // Fetch existing rooms
-    $sql = "SELECT * FROM services_tb";
-    $stmt = $connector->getConnection()->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $services = $services->get_service();
+    $services = $model->get_service();
+    // Remove this line as it's causing the error
+    // $rooms = $model->add_room();
 ?>
 
 <link rel="stylesheet" href="../assets/css/admin_rooms.css">
@@ -77,38 +82,24 @@
 <div class="container" id="carouselMultiItemExample" data-mdb-carousel-init class="carousel slide carousel-dark text-center" data-mdb-ride="carousel">
   <!-- Inner -->
     <div class="page-inner carousel-inner py-4">
-    <div class="row">
-        <div class="col-md-5">
-            <div class="card mb-5">
-                <div class="card-header">
-                    <h5 class="mb-0">Add New Room</h5>
-                </div>
-                <div class="card-body">
-                    <form action="../pages/admin_rooms.php?function=add_services&&sub_page=add_services" method="post" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <input type="text" name="room_name" class="form-control" placeholder="Room Name" aria-label="Room Name" required>
-                        </div>
-                        <div class="mb-3">
-                            <textarea name="description" class="form-control" placeholder="Description" aria-label="Description"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text">₱</span>
-                                <input type="number" name="services_price" class="form-control" placeholder="Room Price" aria-label="Room Price" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <input type="file" name="services_image" class="form-control" placeholder="Room Image" aria-label="Room Image">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Room</button>
-                    </form>
-                </div>
-            </div>
+        <form action="../pages/admin_rooms.php?function=add_services&&sub_page=add_services" method="post" enctype="multipart/form-data">
+        <div>
+            <input type="text" name="room_name" class="form-control" placeholder="Room Name" aria-label="Room Name" required>
         </div>
-        <div class="col-md-7">
-            <!-- Existing carousel content will go here -->
+        <div>
+            <textarea name="description" class="form-control" placeholder="Description" aria-label="Description"></textarea>
         </div>
-    </div>
+        <div>
+            <input type="number" name="services_price" class="form-control" placeholder="Room Price" aria-label="Room Price" required>
+        </div>
+        <div>
+            <input type="file" name="services_image" class="form-control" placeholder="Room Image" aria-label="Room Image">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Room</button>
+    </form>
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">Admin Rooms</h3>
+        </div>
         <!-- Single item -->
 <div class="card py-4">
     <div class="card-body">
