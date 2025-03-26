@@ -1,5 +1,54 @@
 <?php include 'nav/header.php'; ?>
+<?php
+    require_once '../model/server.php';
+    include_once '../model/reservationModel.php';
 
+    $model = new Reservation_Model();
+    $reservationModel = new Reservation_Model();
+    $connector = new Connector(); // Initialize connector before using it
+
+  
+
+    // Get all services
+    $services = $reservationModel->get_booking();
+
+    // Include the Connector class
+    require_once '../model/server.php';
+    $connector = new Connector();
+
+    // Fetch all bookings that are pending approval
+    $sql = "SELECT reservation_id, name, email, phone, checkin, checkout, message FROM reservations WHERE status = 'pending'";
+    $reservations = $connector->executeQuery($sql);
+
+    // Handle form submission
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        try {
+            $connector = new Connector();
+            
+            // Updated SQL to include res_services_id
+            $sql = "INSERT INTO reservations (name, email, phone, checkin, checkout, message, status, res_services_id) 
+                    VALUES (:name, :email, :phone, :checkin, :checkout, :message, 'pending', :service_id)";
+            
+            $stmt = $connector->getConnection()->prepare($sql);
+            $result = $stmt->execute([
+                ':name' => $_POST['name'],
+                ':email' => $_POST['email'],
+                ':phone' => $_POST['phone'],
+                ':checkin' => $_POST['checkin'],
+                ':checkout' => $_POST['checkout'],
+                ':message' => $_POST['message'],
+                ':service_id' => $_POST['service_id'] // This gets the hidden service_id field value
+            ]);
+
+            if ($result) {
+                echo "<script>alert('Reservation submitted successfully!');</script>";
+            }
+            
+        } catch (PDOException $e) {
+            echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+        }
+    }
+    ?>
 <div id="viewport">
         <div id="js-scroll-content">
             <section class="main-banner" id="home">

@@ -1,32 +1,26 @@
 <?php
+require_once '../model/Booking_Model.php';
 require_once '../model/server.php';
 
-if (isset($_GET['booking_id']) && isset($_GET['action'])) {
-    $booking_id = $_GET['booking_id'];
-    $action = $_GET['action'];
-    $connector = new Connector();
-
-    // Initialize $sql
-    $sql = '';
-
-    if ($action === 'checked-in') {
-        $sql = "UPDATE booking_tb SET booking_status = 'checked-in' WHERE booking_id = :booking_id";
-    } elseif ($action === 'checked-out') {
-        $sql = "UPDATE booking_tb SET booking_status = 'checked-out' WHERE booking_id = :booking_id";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $booking_id = $_POST['booking_id'] ?? null;
+    $action = $_POST['action'] ?? null;
+    
+    if (!$booking_id || !$action) {
+        echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
+        exit;
     }
-
-    // Only proceed if $sql is not empty
-    if (!empty($sql)) {
-        $params = [':booking_id' => $booking_id];
-        
-        if ($connector->executeUpdate($sql, $params)) {
-            header("Location: ../pages/admin_booking.php?status=success");
-        } else {
-            header("Location: ../pages/admin_booking.php?status=error");
-        }
-    } else {
-        header("Location: ../pages/admin_booking.php?status=invalid_action");
+    
+    $model = new Booking_Model();
+    $status = $action === 'check_in' ? 'Checked In' : 'Checked Out';
+    
+    try {
+        $result = $model->updateBookingStatus($booking_id, $status);
+        echo json_encode(['success' => true, 'message' => 'Status updated successfully']);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
-    exit();
 }
+
+
 ?>

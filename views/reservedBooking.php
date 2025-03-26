@@ -1,4 +1,14 @@
-<?php include 'nav/admin_sidebar.php'; ?>
+<?php 
+require_once '../model/reservationModel.php';
+require_once '../model/server.php';
+
+// At the top of the file, update the reservation fetch
+$model = new Reservation_Model();
+// Fetch reservations with status 'pending' or 'cancelled'
+$reservation = $model->get_reservation_by_status(['cancelled']);
+
+include 'nav/admin_sidebar.php'; 
+?>
 
 
         <div class="container">
@@ -6,7 +16,7 @@
               <select id="statusFilter" class="select" style="float: right; margin-right: 70px; margin-top: 22px; border:1px solid gray; padding: 9px; border-radius: 5px;" aria-label="Reserved status selection">
                   <option value="">All Status</option>
                   <option value="Pending">Pending</option>
-                  <option value="Cancelled">Cancelled</option>
+                  <option value="cancelled">Cancelled</option>
               </select>
           </div>
           <div class="page-inner">
@@ -30,6 +40,7 @@
                               <th>Check In</th>
                               <th>Check Out</th>
                               <th>Messages</th>
+                              <th>Price</th>
                               <th>Status</th>
                               <th>Action</th>
                             </tr>
@@ -42,65 +53,71 @@
                                 <th>Check In</th>
                                 <th>Check Out</th>
                                 <th>Messages</th>
+                                <th>Price</th>
                                 <th>Status</th>
                                 <th>Action</th>
                               </tr>
                           </tfoot>
                           <tbody>
-                            <tr>
-                              <td>Tiger Nixon</td>
-                              <td>System Architect</td>
-                              <td>Edinburgh</td>
-                              <td>2011/04/25</td>
-                              <td>2011/04/25</td>
-                              <td>hello</td>
-                              <td><span class="badge me-1 px-2" style="color:#171817; font-weight:bold; font-size:15px; background-color:#a9f0a7;">Pending</span></td>
-                              <td>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
-                                  <i class="bi bi-three-dots-vertical p-2"></i>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <a href="#" class="dropdown-item"><i class="bi bi-hourglass-split"></i> Pending</a>
-                                  <a href="#" class="dropdown-item"><i class="bi bi-x-circle"></i> Cancel</a>
-                                </div>
+                            <?php foreach ($reservation as $res):?>
+                              <tr>
+                                <td><?php echo $res['name']?></td>
+                                <td><?php echo $res['email']?></td>  <!-- Removed the "1" -->
+                                <td><?php echo $res['phone']?></td>
+                                <td><?php echo date('M. d, Y', strtotime($res['checkin'])); ?></td>
+                                <td><?php echo date('M. d, Y', strtotime($res['checkout'])); ?></td>
+                                <td><?php echo $res['message']?></td>
+                                <td><?php echo number_format($res['services_price'], 2); ?></td>
+                                <td>
+                                  <?php 
+                                      $status = strtolower($res['status']);
+                                      $bgColor = '';
+                                      
+                                      switch($status) {
+                                        case 'pending':
+                                          $bgColor = '#a9f0a7';
+                                          break;
+                                          case 'approved':
+                                              $bgColor = '#07e0f9';
+                                              break;
+                                          case 'cancelled':
+                                              $bgColor = '#f5c6b9';
+                                              break;
+                                          default:
+                                              $bgColor = '#cfb9f6';
+                                      }
+                                  ?>
+                                  <span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:<?php echo $bgColor; ?>;">
+                                      <?php echo $res['status']?>
+                                  </span>
                               </td>
-                            </tr>
-                            <tr>
-                              <td>Tiger Nixon</td>
-                              <td>System Architect</td>
-                              <td>Edinburgh</td>
-                              <td>2011/04/25</td>
-                              <td>2011/04/25</td>
-                              <td>hello</td>
-                              <td><span class="badge me-1 px-2" style="color:#171817; font-weight:bold; font-size:15px; background-color:#f5c6b9;">Cancelled</span></td>
                               <td>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
-                                  <i class="bi bi-three-dots-vertical p-2"></i>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <a href="#" class="dropdown-item"><i class="bi bi-hourglass-split"></i> Pending</a>
-                                  <a href="#" class="dropdown-item"><i class="bi bi-x-circle"></i></i> Cancel</a>
-                                </div>
+                                  <div class="dropdown">
+                                      <button type="button" class="btn btn-link p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                          <i class="bi bi-three-dots-vertical"></i>
+                                      </button>
+                                      <ul class="dropdown-menu">
+                                          <?php if($res['status'] !== 'approved'): ?>
+                                              <li>
+                                                <a class="dropdown-item text-secondary" href="#"
+                                                  onclick="approveReservation(<?php echo $res['reservation_id']?>)">
+                                                    <i class="bi bi-check-circle me-2"></i>Approve
+                                                </a>
+                                              </li>
+                                          <?php endif; ?>
+                                          <?php if($res['status'] !== 'cancelled'): ?>
+                                            <li>
+                                                <a class="dropdown-item text-danger" href="#"
+                                                  onclick="cancelReservation(<?php echo $res['reservation_id']?>)">
+                                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                                </a>
+                                            </li>
+                                          <?php endif; ?>
+                                      </ul>
+                                  </div>
                               </td>
-                            </tr>
-                            <tr>
-                              <td>Tiger Nixon</td>
-                              <td>System Architect</td>
-                              <td>Edinburgh</td>
-                              <td>2011/04/25</td>
-                              <td>2011/04/25</td>
-                              <td>hello</td>
-                              <td><span class="badge me-1 px-2" style="color:#171817; font-weight:bold; font-size:15px; background-color:#a9f0a7;">Pending</span></td>
-                              <td>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
-                                  <i class="bi bi-three-dots-vertical p-2"></i>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <a href="#" class="dropdown-item"><i class="bi bi-hourglass-split"></i> Pending</a>
-                                  <a href="#" class="dropdown-item"><i class="bi bi-x-circle"></i> Cancel</a>
-                                </div>
-                              </td>
-                            </tr>
+                            </tr> 
+                          <?php endforeach;?>
                         </tbody>
                       </table>
                     </div>
@@ -111,6 +128,7 @@
           </div>
         </div>
 
+  
         <footer class="footer">
           <div class="container-fluid d-flex justify-content-between">
             <nav class="pull-left">
@@ -406,7 +424,7 @@
           $(document).ready(function() {
           // Initialize DataTable
           var reservedTable = $('#exampleTable').DataTable({
-              order: [[6, 'desc']], // Sort by status column by default
+              order: [[6, 'desc']], // Status column index
               language: {
                   search: "Search:"
               }
@@ -415,7 +433,8 @@
           // Status colors for reference
           const STATUS_COLORS = {
               'pending': '#a9f0a7',
-              'cancelled': '#f5c6b9'
+              'cancelled': '#f5c6b9',
+              'approved': '#07e0f9'
           };
 
           // Status filter handler
@@ -436,5 +455,91 @@
           });
       });
       </script>
+       <script>
+          function updateReservationStatus(reservationId, status) {
+              return new Promise((resolve, reject) => {
+                  $.ajax({
+                      url: '../pages/reserve.php',
+                      type: 'POST',
+                      data: {
+                          reservation_id: reservationId,
+                          action: status
+                      },
+                      success: function(response) {
+                          try {
+                              const result = JSON.parse(response);
+                              if(result.success) {
+                                  resolve();
+                              } else {
+                                  reject(result.message || 'Failed to update reservation status');
+                              }
+                          } catch(e) {
+                              reject('Error processing response');
+                          }
+                      },
+                      error: function() {
+                          reject('Error connecting to server');
+                      }
+                  });
+              });
+          }
+      </script>
   </body>
 </html>
+
+<!-- Add this in the head section or before closing body tag -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Add this to your JavaScript section -->
+<script>
+function approveReservation(reservationId) {
+    Swal.fire({
+        title: 'Confirm Approval',
+        text: 'Are you sure you want to approve this reservation?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, approve it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            updateReservationStatus(reservationId, 'approved');
+            Swal.fire({
+                title: 'Approved!',
+                text: 'Check approved booking to see the reserved books',
+                icon: 'success',
+                confirmButtonColor: '#3085d6'
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}
+</script>
+<script>
+function cancelReservation(reservationId) {
+    Swal.fire({
+        title: 'Confirm Cancellation',
+        text: 'Are you sure you want to cancel this reservation?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            updateReservationStatus(reservationId, 'cancelled')
+                .then(() => {
+                    Swal.fire({
+                        title: 'Cancelled!',
+                        text: 'The reservation has been cancelled',
+                        icon: 'success',
+                        confirmButtonColor: '#d33'
+                    }).then(() => {
+                        location.reload();
+                    });
+                });
+        }
+    });
+}
+</script>

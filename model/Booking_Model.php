@@ -1,36 +1,23 @@
 <?php
+require_once 'server.php';
 class Booking_Model {
     private $conn;
 
     public function __construct() {
-        // Database credentials
-        $server = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'resort_db';
-
-        // Create the MySQL connection
-        $this->conn = new mysqli($server, $username, $password, $database);
-
-        // Check for a connection error and handle it
-        if ($this->conn->connect_error) {
-            die("Connection failed: " . $this->conn->connect_error);
+        $connector = new Connector();
+        $this->conn = $connector->getConnection();
+        
+        if (!$this->conn) {
+            throw new Exception("Database connection failed");
         }
     }
 
     // Fetch all available services from the database
     public function get_service() {
         $sql = "SELECT * FROM services_tb";
-        $result = $this->conn->query($sql);
-        $services = [];
-
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $services[] = $row;
-            }
-        }
-
-        return $services;
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function basename(string $path, string $suffix = ''): string {
         // Return empty string if path is empty
@@ -57,18 +44,21 @@ class Booking_Model {
         }
         $sql = "INSERT INTO services_tb (services_name, services_image, services_description, services_price) VALUES (?,?,?,?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssss", $services_name, $services_image, $services_description, $services_price);
+        $stmt->bindParam(1, $_POST['services_name']);
+        $stmt->bindParam(2, $_POST['services_image']);
+        $stmt->bindParam(3, $_POST['services_description']);
+        $stmt->bindParam(4, $_POST['services_price']);
         $stmt->execute();
         $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function get_images() {
         $sql = "SELECT * FROM image_tb";
-        $result = $this->conn->query($sql);
+        $result = $this->conn->prepare($sql);
         $images = [];
-
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
+        
+        if ($result->rowCount() > 0) {
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 $images[] = $row;
             }
         }
@@ -78,7 +68,10 @@ class Booking_Model {
     public function add_images(){
         $sql = "INSERT INTO image_tb (image_name, image_img, image_description, image_price) VALUES (?,?,?,?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssss", $image_name, $image_img, $image_description, $image_price);
+        $stmt->bindParam(1, $image_name);
+        $stmt->bindParam(2, $image_img);
+        $stmt->bindParam(3, $image_description);
+        $stmt->bindParam(4, $image_price);
         $stmt->execute();
         $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -86,47 +79,39 @@ class Booking_Model {
     // Check if a service exists by its ID
     public function get_service_name_by_id($services_id) {
         $stmt = $this->conn->prepare("SELECT COUNT(*) FROM services_tb WHERE services_id = ?");
-        $stmt->bind_param("i", $services_id);  // "i" for integer
+        $stmt->bindparam("i", $services_id);  // "i" for integer
         $stmt->execute();
-        $stmt->bind_result($count);
+        $count = $stmt->execute();
         $stmt->fetch();
-        $stmt->close();
+        $stmt = null; // Release the statement handle
 
         return $count > 0;  // Return true if the service exists, false otherwise
     }
 
     // Insert a new booking into the database
-    public function insert_booking($fullname, $email, $number, $check_in, $check_out, $services_id, $status = 'pending') {
-        // Validate if the service exists
-        if (!$this->get_service_name_by_id($services_id)) {
-            return "";
-        }
-
-        // Use prepared statements to prevent SQL injection
-        $stmt = $this->conn->prepare("INSERT INTO booking_tb (booking_fullname, booking_email, booking_number, booking_check_in, booking_check_out, booking_services_id, booking_status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        
-        // Bind the parameters
-        $stmt->bind_param("sssssss", $fullname, $email, $number, $check_in, $check_out, $services_id, $status);
-        
-        // Execute the query and check if it was successful
-        if ($stmt->execute()) {
-            // If successful, return true
-            $stmt->close();
-            return true;
-        } else {
-            // If there was an error, return an error message
-            $error = $stmt->error;
-            $stmt->close();
-            return "Error: " . $error;
-        }
+    public function insert_booking($data) {
+        $sql = "INSERT INTO booking_tb (booking_fullname, booking_email, booking_number, 
+                booking_check_in, booking_check_out, booking_status, total_amount) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+                
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            $data['booking_fullname'],
+            $data['booking_email'],
+            $data['booking_number'],
+            $data['booking_check_in'],
+            $data['booking_check_out'],
+            $data['booking_status'],
+            $data['total_amount'],
+        ]);
     }
 
     // Fetch booking details by booking ID
     public function get_booking_by_id($booking_id) {
         $stmt = $this->conn->prepare("SELECT * FROM booking_tb WHERE booking_id = ?");
-        $stmt->bind_param("i", $booking_id);
+        $stmt->bindparam("i", $booking_id);
         $stmt->execute();
-        $result = $stmt->get_result();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($result->num_rows > 0) {
             return $result->fetch_assoc();
@@ -140,11 +125,11 @@ class Booking_Model {
     // Get all bookings that are pending approval
     public function get_pending_bookings() {
         $sql = "SELECT booking_id, booking_fullname, booking_email, booking_number, booking_check_in, booking_check_out FROM booking_tb WHERE booking_status = 'pending'";
-        $result = $this->conn->query($sql);
+        $result = $this->conn->prepare($sql);
         $bookings = [];
 
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
+        if ($result->rowCount() > 0) {
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 $bookings[] = $row;
             }
         }
@@ -154,7 +139,7 @@ class Booking_Model {
 
     public function get_bookings(){
         $sql = "SELECT * FROM booking_tb";
-        $result = $this->conn->query($sql);
+        $result = $this->conn->prepare($sql);
         $bookings = [];
     }
 
@@ -174,6 +159,11 @@ class Booking_Model {
         } catch (PDOException $e) {
             return "Database Error: " . $e->getMessage();
         }
+    }
+    public function updateBookingStatus($booking_id, $status) {
+        $sql = "UPDATE booking_tb SET booking_status = ? WHERE booking_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$status, $booking_id]);
     }
 }
 ?>

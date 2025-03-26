@@ -14,9 +14,7 @@
     $connector = new Connector();
 
     // Fetch all bookings that are pending approval
-    $sql = "SELECT booking_id, booking_fullname, booking_email, booking_number, booking_check_in, booking_check_out FROM booking_tb WHERE booking_status = 'pending'";
-    $bookings = $connector->executeQuery($sql);
-
+   
     // Store POST data if available
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['check_in'] = $_POST['checkin_date'];
