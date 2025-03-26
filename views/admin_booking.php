@@ -1,14 +1,11 @@
 
 <?php
-require  '../model/Booking_Model.php';
+require  '../model/reservationModel.php';
 require_once '../model/server.php';
 $connector = new Connector();
-$model = new Booking_Model();
+$model = new Reservation_Model();
+$reservation = $model->get_reservation_by_status(['Approved', 'Check In', 'Check Out']);
 
-$sql = "SELECT * FROM booking_tb";
-$stmt = $connector->getConnection()->prepare($sql);
-$stmt->execute();
-$bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   include 'nav/admin_sidebar.php';
 ?>
@@ -60,25 +57,53 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                               </tr>
                           </tfoot>
                           <tbody>
-                            <?php foreach ($bookings as $booking) : ?>
+                            <?php foreach ($reservation as $res) : ?>
                               <tr>
-                              <td><?php echo $booking['booking_fullname']?></td>
-                              <td><?php echo $booking['booking_email']?></td>
-                              <td><?php echo $booking['booking_number']?></td>
-                              <td><?php echo $booking['booking_check_in']?></td>
-                              <td><?php echo $booking['booking_check_out']?></td>
-                              <td><?php echo $booking['total_amount']?></td>
-                              <td><span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:#cfb9f6;"><?php echo $booking['booking_status']?></span></td>
+                              <td><?php echo $res['name']?></td>
+                              <td><?php echo $res['email']?></td>
+                              <td><?php echo $res['phone']?></td>
+                              <td><?php echo date('M. d, Y', strtotime($res['checkin'])); ?></td>
+                              <td><?php echo date('M. d, Y', strtotime($res['checkout'])); ?></td>
+                              <td><?php echo $res['services_price']?></td>
+                              <td>
+                                  <?php 
+                                      $status = strtolower($res['status']);
+                                      $bgColor = '';
+                                      
+                                      switch($status) {
+                                          case 'approved':
+                                              $bgColor = '#cfb9f6';
+                                              break;
+                                          case 'checked in':
+                                              $bgColor = '#93edf1';
+                                              break;
+                                          case 'checked out':
+                                              $bgColor = '#f5cc8b';
+                                              break;
+                                          default:
+                                              $bgColor = '#cfb9f6';
+                                      }
+                                  ?>
+                                  <span class="badge me-1 px-2" style="color:#16132a; font-weight:bold; font-size:15px; background-color:<?php echo $bgColor; ?>;">
+                                      <?php echo $res['status']?>
+                                  </span>
+                              </td>
                               <td>
                                 <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
                                   <i class="bi bi-three-dots-vertical p-2"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                  <a href="../pages/approved.php?booking_id=<?php echo $booking['booking_id']?>&action=checked-in" class="dropdown-item" onclick="return confirm('Are you sure you want to checked in this booking?');">
-                                    <i class="bi bi-box-arrow-in-left"></i> Check In
+                                  <a href="javascript:void(0)" 
+                                     class="dropdown-item" 
+                                     style="color:rgb(8, 160, 165);"
+                                     onclick="updateReservationStatus(<?php echo $res['reservation_id']?>, 'checkin')">
+                                      <i class="bi bi-box-arrow-in-left"></i> Check In
                                   </a>
-                                  <a href="../pages/approved.php?booking_id=<?php echo $booking['booking_id']?>&action=checked-out" class="dropdown-item" onclick="return confirm('Are you sure you want to checked out this booking?');">
-                                    <i class="bi bi-box-arrow-in-right"></i> Check Out
+                                  <a href="javascript:void(0)" 
+                                     class="dropdown-item"
+                                     style="color:rgb(179, 115, 12);" 
+                                     onclick="updateReservationStatus(<?php echo $res['reservation_id']?>, 'checkout')">
+                                      <i class="bi bi-box-arrow-in-right"></i> Check Out
                                   </a>
                                 </div>
                               </td>
@@ -441,5 +466,36 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
           });
       });
       </script>
-  </body>
+      <script>
+          function updateBookingStatus(bookingId, status) {
+              if(!confirm('Are you sure you want to ' + status.replace('_', ' ') + ' this booking?')) {
+                  return;
+              }
+              
+              $.ajax({
+                  url: '../pages/approved.php',
+                  type: 'POST',
+                  data: {
+                      booking_id: bookingId,
+                      action: status
+                  },
+                  success: function(response) {
+                      try {
+                          const result = JSON.parse(response);
+                          if(result.success) {
+                              location.reload();
+                          } else {
+                              alert(result.message || 'Failed to update booking status');
+                          }
+                      } catch(e) {
+                          alert('Error processing response');
+                      }
+                  },
+                  error: function() {
+                      alert('Error connecting to server');
+                  }
+              });
+          }
+      </script>
+    </body>
 </html>

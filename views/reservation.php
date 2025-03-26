@@ -25,7 +25,7 @@
     }
 
     // Get all services
-    $services = $reservationModel->get_service();
+    $services = $reservationModel->get_booking();
 
     // Include the Connector class
     require_once '../model/server.php';
@@ -63,7 +63,28 @@
             echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
         }
     }
-    ?>
+    ?>   
+    <?php
+    // Fetch all reserved dates
+    $sql = "SELECT checkin, checkout FROM reservations WHERE res_services_id = :service_id AND status != 'cancelled'";
+    $stmt = $connector->getConnection()->prepare($sql);
+    $stmt->execute([':service_id' => $service_id]);
+    $reserved_dates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Create array of reserved dates
+    $disabled_dates = [];
+    foreach ($reserved_dates as $reservation) {
+        $period = new DatePeriod(
+            new DateTime($reservation['checkin']),
+            new DateInterval('P1D'),
+            new DateTime($reservation['checkout'])
+        );
+        foreach ($period as $date) {
+            $disabled_dates[] = $date->format('Y-m-d');
+        }
+    }
+    $disabled_dates_json = json_encode($disabled_dates);
+?>
 
 
     <!DOCTYPE html>
@@ -90,49 +111,33 @@
                 <div class="reservation-container">
                     <div class="right-section">
                         <h2>Make a Reservation</h2>
-                        <form method="POST" action="reservation.php?service_id=<?= $service['services_id'] ?>" class="reservation-form">
+                        <form method="POST" action="home.php?service_id=<?= $service['services_id'] ?>" class="reservation-form">
                             <div class="form-group">
                                 <label for="name">Full Name:</label>
-                                <input type="text" id="name" name="name" required>
+                                <input type="text" id="name" name="name" required onblur="checkDuplicate('name', this.value)">
+                                <span id="name-error" class="error-message"></span>
                             </div>
 
                                 <div class="form-group">
                                     <label for="email">Email:</label>
-                                    <input type="email" id="email" name="email" required>
+                                    <input type="email" id="email" name="email" required onblur="checkDuplicate('email', this.value)">
+                                    <span id="email-error" class="error-message"></span>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="phone">Phone:</label>
                                     <input type="tel" id="phone" name="phone" required>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="checkin">Check in:</label>
-                                    <input type="date" id="checkin" name="checkin" required min="<?= date('Y-m-d') ?>">
+                                    <input type="date" id="checkin" name="checkin" required min="<?= date('Y-m-d') ?>" 
+                                           data-reserved='<?= $disabled_dates_json ?>'>
                                 </div>
                                 <div class="form-group">
                                     <label for="checkout">Check out:</label>
-                                    <input type="date" id="checkout" name="checkout" required>
+                                    <input type="date" id="checkout" name="checkout" required 
+                                           data-reserved='<?= $disabled_dates_json ?>'>
                                 </div>
-                                <script>
-                                    // Set min dates and add validation
-                                    const checkin = document.getElementById('checkin');
-                                    const checkout = document.getElementById('checkout');
-                                    
-                                    checkin.addEventListener('change', function() {
-                                        checkout.min = this.value;
-                                        if(checkout.value && checkout.value < this.value) {
-                                            checkout.value = this.value;
-                                        }
-                                    });
-                                    
-                                    checkout.addEventListener('change', function() {
-                                        if(this.value < checkin.value) {
-                                            alert('Check-out date cannot be before check-in date');
-                                            this.value = checkin.value;
-                                        }
-                                    });
-                                </script>
 
                                 <div class="form-group">
                                     <label for="message">Special Requests:</label>
@@ -158,6 +163,109 @@
                         e.preventDefault();
                         if (confirm('Are you sure you want to make this reservation?')) {
                             this.submit();
+                        }
+                    });
+                </script>
+                
+
+                <script>
+                    let nameExists = false;
+                    let emailExists = false;
+
+                    function checkDuplicate(field, value) {
+                        if (!value.trim()) return;
+                        
+                        fetch(`../pages/check_duplicate.php?field=${field}&value=${encodeURIComponent(value)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const errorElement = document.getElementById(`${field}-error`);
+                                if (data.exists) {
+                                    errorElement.textContent = `This ${field} is already registered`;
+                                    errorElement.style.color = 'red';
+                                    if (field === 'name') nameExists = true;
+                                    if (field === 'email') emailExists = true;
+                                } else {
+                                    errorElement.textContent = '';
+                                    if (field === 'name') nameExists = false;
+                                    if (field === 'email') emailExists = false;
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error checking duplicate:', error);
+                            });
+                    }
+
+                    function validateForm() {
+                        const name = document.getElementById('name').value;
+                        const email = document.getElementById('email').value;
+                        
+                        // Check both fields one last time before submission
+                        return new Promise((resolve) => {
+                            Promise.all([
+                                fetch(`../pages/check_duplicate.php?field=name&value=${encodeURIComponent(name)}`),
+                                fetch(`../pages/check_duplicate.php?field=email&value=${encodeURIComponent(email)}`)
+                            ])
+                            .then(responses => Promise.all(responses.map(res => res.json())))
+                            .then(([nameData, emailData]) => {
+                                if (nameData.exists || emailData.exists) {
+                                    alert('Please fix the duplicate entries before submitting');
+                                    resolve(false);
+                                } else {
+                                    resolve(true);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Validation error:', error);
+                                resolve(false);
+                            });
+                        });
+                    }
+                
+                    // Update form submission handler
+                    document.querySelector('.reservation-form').addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        const isValid = await validateForm();
+                        if (isValid && confirm('Are you sure you want to make this reservation?')) {
+                            this.submit();
+                        }
+                    });
+                </script>
+                <script>
+                    const disabledDates = JSON.parse(document.getElementById('checkin').dataset.reserved);
+                    
+                    function disableDates(element) {
+                        const date = new Date(element.value);
+                        const dateString = date.toISOString().split('T')[0];
+                        if (disabledDates.includes(dateString)) {
+                            alert('This date is already reserved. Please select another date.');
+                            element.value = '';
+                        }
+                    }
+
+                    document.getElementById('checkin').addEventListener('change', function() {
+                        disableDates(this);
+                    });
+
+                    document.getElementById('checkout').addEventListener('change', function() {
+                        disableDates(this);
+                    });
+                </script>
+                <script>
+                    // Set min dates and add validation
+                    const checkin = document.getElementById('checkin');
+                    const checkout = document.getElementById('checkout');
+                    
+                    checkin.addEventListener('change', function() {
+                        checkout.min = this.value;
+                        if(checkout.value && checkout.value < this.value) {
+                            checkout.value = this.value;
+                        }
+                    });
+                    
+                    checkout.addEventListener('change', function() {
+                        if(this.value < checkin.value) {
+                            alert('Check-out date cannot be before check-in date');
+                            this.value = checkin.value;
                         }
                     });
                 </script>
