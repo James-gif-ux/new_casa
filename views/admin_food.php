@@ -1,5 +1,5 @@
 <?php 
-    include 'nav/admin_sidebar.php';
+   
     require_once '../model/server.php';
     require_once '../model/image_model.php';
     
@@ -59,6 +59,7 @@
             exit();
         }
     }
+    include 'nav/admin_sidebar.php';
 ?>
 
 <link rel="stylesheet" href="../assets/css/admin_rooms.css">
@@ -71,23 +72,23 @@
             <h5 class="card-title mb-0">Add New Food</h5>
             </div>
             <div class="card-body">
-            <form action="" method="POST" enctype="multipart/form-data">
-            <div class="mb-3">
-            <input type="text" name="image_name" class="form-control" placeholder="Food Name" required>
-            </div>
-            <div class="mb-3">
-            <textarea name="image_description" class="form-control" placeholder="Description" rows="3" required></textarea>
-            </div>
-            <div class="mb-3">
-            <div class="input-group">
-                <span class="input-group-text">₱</span>
-                <input type="number" name="image_price" class="form-control" placeholder="Food Price" required>
-            </div>
-            </div>
-            <div class="mb-3">
-            <input type="file" name="image_img" class="form-control" placeholder="Food Image" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Food</button>
+            <form action="admin_food.php" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <input type="text" name="image_name" class="form-control" placeholder="Food Name" required>
+                </div>
+                <div class="mb-3">
+                    <textarea name="image_description" class="form-control" placeholder="Description" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">₱</span>
+                    <input type="number" name="image_price" class="form-control" placeholder="Food Price" required>
+                </div>
+                </div>
+                <div class="mb-3">
+                    <input type="file" name="image_img" class="form-control" placeholder="Food Image" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Food</button>
             </form>
             </div>
         </div>
