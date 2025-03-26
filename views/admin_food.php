@@ -79,7 +79,7 @@
             <div>
                 <input type="file" name="image_img" class="form-control" placeholder="Food Image" >
             </div>
-            <button type="submit" class="btn btn-primary">Add Room</button>
+            <button type="submit" class="btn btn-primary">Add Food</button>
         </form>
         <div class="page-header">
             <h3 class="fw-bold mb-3">Admin Foods</h3>
