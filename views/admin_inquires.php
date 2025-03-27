@@ -39,7 +39,7 @@
             border-radius: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             display: flex;
-            height: calc(100vh - 30px);
+            height: calc(100vh - 150px); /* Adjusted height */
             overflow: hidden;
         }
 
@@ -50,6 +50,8 @@
             background: #f8f9fa;
             border-top-left-radius: 25px;
             border-bottom-left-radius: 25px;
+            height: 100%; /* Added fixed height */
+            max-height: calc(100vh - 150px); /* Added max-height */
         }
 
         .message-preview {
@@ -93,6 +95,8 @@
             background: #fff;
             border-top-right-radius: 25px;
             border-bottom-right-radius: 25px;
+            height: 100%; /* Added fixed height */
+            max-height: calc(100vh - 150px); /* Added max-height */
         }
 
         .sender-info {
