@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once '../model/server.php';
     include_once '../model/reservationModel.php';
 
@@ -15,12 +16,12 @@
         $service = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$service) {
-            header("Location: process.php");
+            header("Location: number.php");
             exit();
         }
     } else {
         // Redirect back to books.php if no service_id is provided
-        header("Location: roombooking.php");
+        header("Location: number.php");
         exit();
     }
 
@@ -57,6 +58,10 @@
 
             if ($result) {
                 echo "<script>alert('Reservation submitted successfully!');</script>";
+                header('location:number.php');
+                exit();
+            } else {
+                echo "<script>alert('Error submitting reservation.');</script>";
             }
             
         } catch (PDOException $e) {
@@ -64,29 +69,7 @@
         }
     }
     ?>   
-    <?php
-    // Fetch all reserved dates
-    $sql = "SELECT checkin, checkout FROM reservations WHERE res_services_id = :service_id AND status != 'cancelled'";
-    $stmt = $connector->getConnection()->prepare($sql);
-    $stmt->execute([':service_id' => $service_id]);
-    $reserved_dates = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Create array of reserved dates
-    $disabled_dates = [];
-    foreach ($reserved_dates as $reservation) {
-        $period = new DatePeriod(
-            new DateTime($reservation['checkin']),
-            new DateInterval('P1D'),
-            new DateTime($reservation['checkout'])
-        );
-        foreach ($period as $date) {
-            $disabled_dates[] = $date->format('Y-m-d');
-        }
-    }
-    $disabled_dates_json = json_encode($disabled_dates);
-?>
-
-
+   
     <!DOCTYPE html>
         <html lang="en">
             <head>
@@ -111,7 +94,7 @@
                 <div class="reservation-container">
                     <div class="right-section">
                         <h2>Make a Reservation</h2>
-                        <form method="POST" action="process.php?reservation_id=<?= $service['services_id'] ?>" class="reservation-form">
+                        <form method="POST" action="" class="reservation-form">
                             <div class="form-group">
                                 <label for="name">Full Name:</label>
                                 <input type="text" id="name" name="name" required onblur="checkDuplicate('name', this.value)">
@@ -144,7 +127,7 @@
                                     <textarea id="message" name="message" rows="4"></textarea>
                                 </div>
 
-                                <input type="hidden" name="service_id" value="<?= $service['services_id'] ?>">
+                                <input type="hidden" name="service_id" value="<?= htmlspecialchars($service_id) ?>">
 
                                 <div style="display: flex; gap: 10px; justify-content: space-between;">
                                     <button type="submit" class="submit-btn" style="width: 48%;">Make Reservation</button>

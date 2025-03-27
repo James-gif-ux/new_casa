@@ -40,6 +40,9 @@
 		function reservation(){
 			include '../views/reservation.php';
 		}
+		function number(){
+			include '../views/number.php';
+		}
         
 	}
 ?>

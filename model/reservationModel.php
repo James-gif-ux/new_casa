@@ -172,5 +172,22 @@ class Reservation_Model {
             return [];
         }
     }
+
+    public function get_services(){
+        $sql = "SELECT * FROM services_tb";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get_service_by_id($services_id) {
+        $sql = "SELECT services_id, services_name, services_description, services_image, services_price 
+                FROM services_tb 
+                WHERE services_id = :services_id";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':services_id' => $services_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
 ?>

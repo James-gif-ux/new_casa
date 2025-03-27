@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +16,7 @@
         }
 
         .container {
-            background-color:rgb(240, 216, 216);
+            background-color: rgb(240, 216, 216);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -28,7 +30,7 @@
         }
 
         pre {
-            font-family: 'Times New Roman', Times, serif, sans-serif;
+            font-family: 'Times New Roman', Times, serif;
             white-space: pre-wrap;
             line-height: 1.6;
             color: #34495e;
@@ -38,11 +40,16 @@
         a {
             display: inline-block;
             color: blue;
+            text-decoration: none;
             padding: 12px 24px;
             border-radius: 5px;
             transition: background-color 0.3s ease;
+            margin: 10px 0;
         }
 
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
