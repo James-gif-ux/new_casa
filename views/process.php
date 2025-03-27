@@ -1,222 +1,179 @@
-<?php 
-    session_start();
-    require_once '../model/server.php';
-    require_once '../model/Booking_Model.php';
-    
-    $connector = new Connector();
-    $model = new Booking_Model();
-
-    // Get reservation ID from URL
-    $reservation_id = isset($_GET['reservation_id']) ? $_GET['reservation_id'] : '';
-    
-    // Fetch specific reservation details if ID exists
-    $reservation = null;
-    if (!empty($reservation_id)) {
-        $reservation = $model->get_reservation_with_payment($reservation_id);
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        try {
-            // Debug information
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-            
-            // Get and validate reservation_id from POST or GET
-            $reservation_id = isset($_POST['reservation_id']) ? $_POST['reservation_id'] : 
-                            (isset($_GET['reservation_id']) ? $_GET['reservation_id'] : '');
-                            
-            if (empty($reservation_id)) {
-                throw new Exception("Invalid reservation ID. Please try again.");
-            }
-
-            // Sanitize the reservation ID
-            $reservation_id = filter_var($reservation_id, FILTER_SANITIZE_NUMBER_INT);
-            
-            // Validate reservation exists
-            $check_reservation = $model->get_reservation_with_payment($reservation_id);
-            if (!$check_reservation) {
-                throw new Exception("Reservation not found.");
-            }
-
-            // Get and validate other inputs
-            $reference = $_POST['payment_reference'] ?? '';
-            $amount = $_POST['payment_amount'] ?? 0;
-            $date = $_POST['payment_date'] ?? '';
-            $status = 'pending';
-
-            // Validate file upload
-            if (empty($_FILES['payment_image']['name'])) {
-                throw new Exception("Payment proof is required");
-            }
-
-            // Process image upload
-            $image = time() . '_' . $_FILES['payment_image']['name'];
-            $target = "../images/" . $image;
-            
-            if (!move_uploaded_file($_FILES['payment_image']['tmp_name'], $target)) {
-                throw new Exception("Failed to upload image");
-            }
-
-            // Process the payment
-            $result = $model->process_payment($reservation_id, $reference, $image, $amount, $date, $status);
-
-            if ($result) {
-                $_SESSION['success'] = "Payment processed successfully!";
-                header("Location: ../pages/roomBooking.php");
-                exit();
-            } else {
-                throw new Exception("Payment processing failed");
-            }
-        } catch (Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
-            error_log("Payment Error: " . $e->getMessage());
-        }
-    }
-
-    // Display any error messages at the top of the form
-    if (isset($_SESSION['error'])) {
-        echo "<div class='alert alert-danger'>{$_SESSION['error']}</div>";
-        unset($_SESSION['error']);
-    }
-?>
 <?php
     require_once '../model/server.php';
-    include_once '../model/reservationModel.php';
-
-    $model = new Reservation_Model();
-    $reservationModel = new Reservation_Model();
-    $connector = new Connector(); // Initialize connector before using it
-
-    // Get specific service based on URL parameter
-    if (isset($_GET['service_id'])) {
-        $service_id = $_GET['service_id'];
-        $sql = "SELECT * FROM services_tb WHERE services_id = :service_id";
-        $stmt = $connector->getConnection()->prepare($sql);
-        $stmt->execute([':service_id' => $service_id]);
-        $service = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if (!$service) {
-            header("Location: roombooking.php");
-            exit();
-        }
-    } else {
-        // Redirect back to books.php if no service_id is provided
-        header("Location: roombooking.php");
-        exit();
-    }
-
-    // Get all services
-    $services = $reservationModel->get_booking();
-
-    // Include the Connector class
-    require_once '../model/server.php';
     $connector = new Connector();
 
-    // Fetch all bookings that are pending approval
-    $sql = "SELECT reservation_id, name, email, phone, checkin, checkout, message FROM reservations WHERE status = 'pending'";
-    $reservations = $connector->executeQuery($sql);
 
-    // Handle form submission
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        try {
-            $connector = new Connector();
-            
-            // Updated SQL to include res_services_id
-            $sql = "INSERT INTO reservations (name, email, phone, checkin, checkout, message, status, res_services_id) 
-                    VALUES (:name, :email, :phone, :checkin, :checkout, :message, 'pending', :service_id)";
-            
-            $stmt = $connector->getConnection()->prepare($sql);
-            $result = $stmt->execute([
-                ':name' => $_POST['name'],
-                ':email' => $_POST['email'],
-                ':phone' => $_POST['phone'],
-                ':checkin' => $_POST['checkin'],
-                ':checkout' => $_POST['checkout'],
-                ':message' => $_POST['message'],
-                ':service_id' => $_POST['service_id'] // This gets the hidden service_id field value
-            ]);
-
-            if ($result) {
-                echo "<script>alert('Reservation submitted successfully!');</script>";
-            }
-            
-        } catch (PDOException $e) {
-            echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
-        }
-    }
-    ?>   
-    <?php
-    // Fetch all reserved dates
-    $sql = "SELECT checkin, checkout FROM reservations WHERE res_services_id = :service_id AND status != 'cancelled'";
-    $stmt = $connector->getConnection()->prepare($sql);
-    $stmt->execute([':service_id' => $service_id]);
-    $reserved_dates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        $sql = "INSERT INTO payments (name, amount, payment_method, reference_number, date_of_payment, proof_of_payment, status) VALUES (?,?,?,?,?,?,?)";
+        $stmt = $connector->getConnection()->prepare($sql);
     
-    // Create array of reserved dates
-    $disabled_dates = [];
-    foreach ($reserved_dates as $reservation) {
-        $period = new DatePeriod(
-            new DateTime($reservation['checkin']),
-            new DateInterval('P1D'),
-            new DateTime($reservation['checkout'])
-        );
-        foreach ($period as $date) {
-            $disabled_dates[] = $date->format('Y-m-d');
+        // Validate and sanitize inputs
+        $name = $_POST['name'] ?? '';
+        $amount = floatval($_POST['amount'] ?? 0);
+        $paymentMethod = $_POST['payment_method'] ?? 'default_payment_method';
+        $referenceNumber = $_POST['reference_number'] ?? '';
+        $dateOfPayment = $_POST['date_of_payment'] ?? '';
+        $proofOfPayment = $_POST['proof_of_payment'] ?? '';
+        $status = $_POST['status'] ?? 'paid'; // Default to 'pending' if not provided
+    
+        // Explicitly set parameter types
+        $stmt->bindParam(1, $name, PDO::PARAM_STR);
+        $stmt->bindParam(2, $amount, PDO::PARAM_STR); // Or PDO::PARAM_FLOAT depending on your PDO setup
+        $stmt->bindParam(3, $paymentMethod, PDO::PARAM_STR);
+        $stmt->bindParam(4, $referenceNumber, PDO::PARAM_STR);
+        $stmt->bindParam(5, $dateOfPayment, PDO::PARAM_STR);
+        $stmt->bindParam(6, $proofOfPayment, PDO::PARAM_STR);
+        $stmt->bindParam(7, $status, PDO::PARAM_STR);
+    
+        // Execute and check for success
+        if (!$stmt->execute()) {
+            // Log or handle the error
+            $errorInfo = $stmt->errorInfo();
+            throw new Exception("Database insertion failed: " . $errorInfo[2]);
         }
+    } catch (Exception $e) {
+        // Proper error handling
+        error_log($e->getMessage());
+        // Optionally, display a user-friendly error message
     }
-    $disabled_dates_json = json_encode($disabled_dates);
+    
 ?>
-<title>Payment Process  </title>
 
-<div class="container mt-4">
-    <link rel="stylesheet" href="../assets/css/process.css">
-
-    <div class="payment-container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="payment-card">
-                    <div class="card-header">
-                        <h4>Process Payment</h4>
-                    </div>
-                    <div class="card-body">
-                        <form action="" method="POST" enctype="multipart/form-data">
-                            <input type="hidden" name="reservation_id" value="<?php echo isset($_GET['reservation_id']) ? $_GET['reservation_id'] : ''; ?>">
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Reference Number</label>
-                                <input type="text" class="form-control" name="payment_reference" required 
-                                       placeholder="Enter reference number">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Amount</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₱</span>
-                                    <input type="number" class="form-control" name="payment_amount" 
-                                           step="0.01" required placeholder="Enter amount">
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Date of Payment</label>
-                                <input type="date" class="form-control" name="payment_date" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Proof of Payment</label>
-                                <input type="file" class="form-control" name="payment_image" 
-                                       accept="image/*" required>
-                                <small class="text-muted">Upload screenshot or photo of payment receipt</small>
-                            </div>
-
-                            <div class="d-grid gap-3">
-                                <button type="submit" class="btn btn-primary">Submit Payment</button>
-                                <a href="../pages/roomBooking.php" class="btn btn-primary">Back to Bookings</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Method</title>
+    <!-- Include SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        form {
+            background-color: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        form:hover {
+            transform: translateY(-5px);
+        }
+        div {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        select, input[type="number"], input[type="text"], input[type="date"], input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+        select:focus, input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 8px rgba(52,152,219,0.3);
+        }
+        input[type="submit"] {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        input[type="submit"]:hover {
+            background: linear-gradient(to right, #27ae60, #219a52);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46,204,113,0.3);
+        }
+        .payment-icon {
+            width: 30px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>💳 Payment Method</h2>
+    <form method="post" action="" id="paymentForm"  onsubmit="return confirmPayment(event)">
+        <div>
+            <label for="payment_method">Select Payment Method:</label>
+            <input type="text" name="payment_method" placeholder="Gcash">
         </div>
-    </div>
-</div>
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" name="name" placeholder="Your name">
+        </div>
+        <div>
+            <label for="amount">Amount:</label>
+            <input type="number" name="amount" placeholder="Enter amount" required>
+        </div>
+        <div>
+            <label for="reference_number">Reference Number:</label>
+            <input type="text" name="reference_number" placeholder="Enter reference number" required>
+        </div>
+        <div>
+            <label for="date_of_payment">Date:</label>
+            <input type="date" name="date_of_payment" required>
+        </div>
+        <div>
+            <label for="proof_of_payments">Upload Receipt:</label>
+            <input type="file" name="proof_of_payment" accept="image/*">
+        </div>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+   
+    <script>
+        function confirmPayment(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Confirm Payment',
+                text: 'Are you sure you want to submit this payment?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, submit!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('paymentForm').submit();
+                }
+            });
+            return false;
+        }
+    </script>
+</body>
+</html>

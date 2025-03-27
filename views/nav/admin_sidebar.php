@@ -145,22 +145,22 @@
           <div class="main-header-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
-              <a href="index.html" class="logo">
+              <a href="../pages/admin.php?sub_page=admin" class="logo">
                 <img
-                  src="assets/img/kaiadmin/logo_light.svg"
+                  src="../images/casa.png"
                   alt="navbar brand"
                   class="navbar-brand"
-                  height="20"
+                  style="width: 100%; top: 0px; left: 0px; height: auto; position: relative;"
                 />
               </a>
               <div class="nav-toggle">
-                <button class="btn btn-toggle toggle-sidebar">
-                  <i class="gg-menu-right"></i>
-                </button>
-                <button class="btn btn-toggle sidenav-toggler">
-                  <i class="gg-menu-left"></i>
-                </button>
-              </div>
+                    <button class="btn btn-toggle toggle-sidebar">
+                        <i class="gg-menu-right"></i>
+                    </button>
+                    <button class="btn btn-toggle sidenav-toggler">
+                        <i class="gg-menu-left"></i>
+                    </button>
+                </div>
               <button class="topbar-toggler more">
                 <i class="gg-more-vertical-alt"></i>
               </button>

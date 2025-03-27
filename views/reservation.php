@@ -15,7 +15,7 @@
         $service = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$service) {
-            header("Location: roombooking.php");
+            header("Location: process.php");
             exit();
         }
     } else {
@@ -221,14 +221,7 @@
                         });
                     }
                 
-                    // Update form submission handler
-                    document.querySelector('.reservation-form').addEventListener('submit', async function(e) {
-                        e.preventDefault();
-                        const isValid = await validateForm();
-                        if (isValid && confirm('Are you sure you want to make this reservation?')) {
-                            this.submit();
-                        }
-                    });
+                  
                 </script>
                 <script>
                     const disabledDates = JSON.parse(document.getElementById('checkin').dataset.reserved);
