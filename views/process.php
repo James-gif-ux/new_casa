@@ -1,42 +1,59 @@
 <?php
-    require_once '../model/server.php';
-    $connector = new Connector();
+require_once '../model/server.php';
+$connector = new Connector();
 
-
-    try {
-        $sql = "INSERT INTO payments (name, amount, payment_method, reference_number, date_of_payment, proof_of_payment, status) VALUES (?,?,?,?,?,?,?)";
-        $stmt = $connector->getConnection()->prepare($sql);
-    
-        // Validate and sanitize inputs
-        $name = $_POST['name'] ?? '';
-        $amount = floatval($_POST['amount'] ?? 0);
-        $paymentMethod = $_POST['payment_method'] ?? 'default_payment_method';
-        $referenceNumber = $_POST['reference_number'] ?? '';
-        $dateOfPayment = $_POST['date_of_payment'] ?? '';
-        $proofOfPayment = $_POST['proof_of_payment'] ?? '';
-        $status = $_POST['status'] ?? 'paid'; // Default to 'pending' if not provided
-    
-        // Explicitly set parameter types
-        $stmt->bindParam(1, $name, PDO::PARAM_STR);
-        $stmt->bindParam(2, $amount, PDO::PARAM_STR); // Or PDO::PARAM_FLOAT depending on your PDO setup
-        $stmt->bindParam(3, $paymentMethod, PDO::PARAM_STR);
-        $stmt->bindParam(4, $referenceNumber, PDO::PARAM_STR);
-        $stmt->bindParam(5, $dateOfPayment, PDO::PARAM_STR);
-        $stmt->bindParam(6, $proofOfPayment, PDO::PARAM_STR);
-        $stmt->bindParam(7, $status, PDO::PARAM_STR);
-    
-        // Execute and check for success
-        if (!$stmt->execute()) {
-            // Log or handle the error
-            $errorInfo = $stmt->errorInfo();
-            throw new Exception("Database insertion failed: " . $errorInfo[2]);
+try {
+    // Handle file upload first
+    $proofOfPayment = '';
+    if (isset($_FILES['proof_of_payment']) && $_FILES['proof_of_payment']['error'] === UPLOAD_ERR_OK) {
+        $proof = $_FILES['proof_of_payment']['name'];
+        $target = "../images/" . basename($proof);
+        
+        // Create directory if it doesn't exist
+        if (!file_exists("../images/")) {
+            mkdir("../images/", 0777, true);
         }
-    } catch (Exception $e) {
-        // Proper error handling
-        error_log($e->getMessage());
-        // Optionally, display a user-friendly error message
+        
+        // Move uploaded file
+        if (move_uploaded_file($_FILES['proof_of_payment']['tmp_name'], $target)) {
+            $proofOfPayment = $proof;
+        } else {
+            throw new Exception("Failed to upload file");
+        }
     }
-    
+
+    // Database insertion
+    $sql = "INSERT INTO payments (name, amount, payment_method, reference_number, date_of_payment, proof_of_payment, status) VALUES (?,?,?,?,?,?,?)";
+    $stmt = $connector->getConnection()->prepare($sql);
+
+    // Validate and sanitize inputs
+    $name = $_POST['name'] ?? '';
+    $amount = floatval($_POST['amount'] ?? 0);
+    $paymentMethod = $_POST['payment_method'] ?? 'default_payment_method';
+    $referenceNumber = $_POST['reference_number'] ?? '';
+    $dateOfPayment = $_POST['date_of_payment'] ?? '';
+    $status = $_POST['status'] ?? 'paid';
+
+    // Bind parameters
+    $stmt->bindParam(1, $name, PDO::PARAM_STR);
+    $stmt->bindParam(2, $amount, PDO::PARAM_STR);
+    $stmt->bindParam(3, $paymentMethod, PDO::PARAM_STR);
+    $stmt->bindParam(4, $referenceNumber, PDO::PARAM_STR);
+    $stmt->bindParam(5, $dateOfPayment, PDO::PARAM_STR);
+    $stmt->bindParam(6, $proofOfPayment, PDO::PARAM_STR);
+    $stmt->bindParam(7, $status, PDO::PARAM_STR);
+
+    // Execute and check for success
+    if (!$stmt->execute()) {
+        $errorInfo = $stmt->errorInfo();
+        throw new Exception("Database insertion failed: " . $errorInfo[2]);
+    }
+    // Redirect or show success message
+    header("Location: home.php");
+} catch (Exception $e) {
+    error_log($e->getMessage());
+    echo "An error occurred. Please try again.";
+}
 ?>
 
 <!DOCTYPE html>
@@ -125,7 +142,7 @@
 </head>
 <body>
     <h2>💳 Payment Method</h2>
-    <form method="post" action="" id="paymentForm"  onsubmit="return confirmPayment(event)">
+    <form method="post" action="" id="paymentForm" enctype="multipart/form-data" onsubmit="return confirmPayment(event)">
         <div>
             <label for="payment_method">Select Payment Method:</label>
             <input type="text" name="payment_method" placeholder="Gcash">
