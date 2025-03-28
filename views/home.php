@@ -36,13 +36,13 @@
             
             $stmt = $connector->getConnection()->prepare($sql);
             $result = $stmt->execute([
-                ':name' => $_POST['name'],
-                ':email' => $_POST['email'],
-                ':phone' => $_POST['phone'],
-                ':checkin' => $_POST['checkin'],
-                ':checkout' => $_POST['checkout'],
-                ':message' => $_POST['message'],
-                ':service_id' => $_POST['service_id'] // This gets the hidden service_id field value
+                ':name' => $_POST['name'] ?? '',
+                ':email' => $_POST['email'] ?? '',
+                ':phone' => $_POST['phone'] ?? '',
+                ':checkin' => $_POST['checkin'] ?? '',
+                ':checkout' => $_POST['checkout'] ?? '',
+                ':message' => $_POST['message'] ?? '',
+                ':service_id' => $_POST['service_id'] ?? null
             ]);
 
             if ($result) {
@@ -53,6 +53,8 @@
             echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
         }
     }
+
+
     ?>
 <div id="viewport">
         <div id="js-scroll-content">
@@ -331,7 +333,6 @@
                                     <div class="sec-title-shape mb-4">
                                         <img src="../assets/images/title-shape.svg" alt="">
                                     </div>
-                                </div>
                             </div>
                         </div>
 
@@ -589,4 +590,4 @@
             </section>
 
 
-       <?php include 'nav/footer.php'; ?>    
+       <?php include 'nav/footer.php'; ?>

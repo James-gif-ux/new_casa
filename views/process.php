@@ -2,57 +2,70 @@
 require_once '../model/server.php';
 $connector = new Connector();
 
-try {
-    // Handle file upload first
-    $proofOfPayment = '';
-    if (isset($_FILES['proof_of_payment']) && $_FILES['proof_of_payment']['error'] === UPLOAD_ERR_OK) {
-        $proof = $_FILES['proof_of_payment']['name'];
-        $target = "../images/" . basename($proof);
-        
-        // Create directory if it doesn't exist
-        if (!file_exists("../images/")) {
-            mkdir("../images/", 0777, true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        // Handle file upload first
+        $proofOfPayment = '';
+        if (isset($_FILES['proof_of_payment']) && $_FILES['proof_of_payment']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '../uploads/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $fileName = uniqid() . '_' . basename($_FILES['proof_of_payment']['name']);
+            $targetPath = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['proof_of_payment']['tmp_name'], $targetPath)) {
+                $proofOfPayment = $fileName;
+            } else {
+                throw new Exception("Failed to upload file.");
+            }
         }
-        
-        // Move uploaded file
-        if (move_uploaded_file($_FILES['proof_of_payment']['tmp_name'], $target)) {
-            $proofOfPayment = $proof;
+
+        // Database insertion
+        $sql = "INSERT INTO payments (name, amount, payment_method, reference_number, date_of_payment, proof_of_payment, status) VALUES (?,?,?,?,?,?,?)";
+        $stmt = $connector->getConnection()->prepare($sql);
+
+        // Validate and sanitize inputs
+        $name = filter_var($_POST['name'] ?? '', FILTER_SANITIZE_STRING);
+        $amount = filter_var($_POST['amount'] ?? 0, FILTER_VALIDATE_FLOAT);
+        $paymentMethod = filter_var($_POST['payment_method'] ?? 'default_payment_method', FILTER_SANITIZE_STRING);
+        $referenceNumber = filter_var($_POST['reference_number'] ?? '', FILTER_SANITIZE_STRING);
+        $dateOfPayment = filter_var($_POST['date_of_payment'] ?? '', FILTER_SANITIZE_STRING);
+        $status = 'paid';
+
+        // Bind parameters
+        $stmt->bindParam(1, $name, PDO::PARAM_STR);
+        $stmt->bindParam(2, $amount, PDO::PARAM_STR);
+        $stmt->bindParam(3, $paymentMethod, PDO::PARAM_STR);
+        $stmt->bindParam(4, $referenceNumber, PDO::PARAM_STR);
+        $stmt->bindParam(5, $dateOfPayment, PDO::PARAM_STR);
+        $stmt->bindParam(6, $proofOfPayment, PDO::PARAM_STR);
+        $stmt->bindParam(7, $status, PDO::PARAM_STR);
+
+        // Execute the statement
+        if ($stmt->execute()) {
+            echo "<script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Payment recorded successfully',
+                    icon: 'success'
+                });
+            </script>";
+            header('Location: home.php');
         } else {
-            throw new Exception("Failed to upload file");
+            throw new Exception("Failed to insert payment record.");
         }
+
+    } catch (Exception $e) {
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to process payment: " . addslashes($e->getMessage()) . "',
+                icon: 'error'
+            });
+        </script>";
     }
-
-    // Database insertion
-    $sql = "INSERT INTO payments (name, amount, payment_method, reference_number, date_of_payment, proof_of_payment, status) VALUES (?,?,?,?,?,?,?)";
-    $stmt = $connector->getConnection()->prepare($sql);
-
-    // Validate and sanitize inputs
-    $name = $_POST['name'] ?? '';
-    $amount = floatval($_POST['amount'] ?? 0);
-    $paymentMethod = $_POST['payment_method'] ?? 'default_payment_method';
-    $referenceNumber = $_POST['reference_number'] ?? '';
-    $dateOfPayment = $_POST['date_of_payment'] ?? '';
-    $status = $_POST['status'] ?? 'paid';
-
-    // Bind parameters
-    $stmt->bindParam(1, $name, PDO::PARAM_STR);
-    $stmt->bindParam(2, $amount, PDO::PARAM_STR);
-    $stmt->bindParam(3, $paymentMethod, PDO::PARAM_STR);
-    $stmt->bindParam(4, $referenceNumber, PDO::PARAM_STR);
-    $stmt->bindParam(5, $dateOfPayment, PDO::PARAM_STR);
-    $stmt->bindParam(6, $proofOfPayment, PDO::PARAM_STR);
-    $stmt->bindParam(7, $status, PDO::PARAM_STR);
-
-    // Execute and check for success
-    if (!$stmt->execute()) {
-        $errorInfo = $stmt->errorInfo();
-        throw new Exception("Database insertion failed: " . $errorInfo[2]);
-    }
-    // Redirect or show success message
-    header("Location: home.php");
-} catch (Exception $e) {
-    error_log($e->getMessage());
-    echo "An error occurred. Please try again.";
 }
 ?>
 
