@@ -183,7 +183,7 @@ include 'nav/admin_sidebar.php';
                                 <?php foreach ($payments as $payment):?>
                                     <tr class="table-row-hover">
                                         <td width="5%"><?php echo $payment['payment_id']; ?></td>
-                                        <td width="15%"><?php echo $payment['date_of_payment']; ?></td>
+                                        <td width="15%"><?php echo date('M. d, Y', strtotime($payment['date_of_payment'])); ?></td>
                                         <td width="20%"><?php echo $payment['name']; ?></td>
                                         <td width="15%"><?php echo $payment['amount']; ?></td>
                                         <td width="15%"><?php echo $payment['payment_method']; ?></td>
