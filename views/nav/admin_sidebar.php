@@ -66,7 +66,7 @@
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
             <div class="sidebar-content">
                 <ul class="nav nav-secondary">
-                    <li class="nav-item <?php echo ($_GET['sub_page'] == 'admin') ? 'active' : ''; ?>">
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin' ? 'active' : ''; ?>">
                         <a href="../pages/admin.php?sub_page=admin">
                             <i class="fas fa-home"></i>
                             <p>Dashboard</p>
@@ -78,7 +78,7 @@
                         </span>
                         <h4 class="text-section">Components</h4>
                     </li>
-                    <li class="nav-item <?php echo (in_array($_GET['sub_page'], ['admin_booking', 'reservedBooking'])) ? 'active' : ''; ?>">
+                    <li class="nav-item <?php echo (isset($_GET['sub_page']) && ($_GET['sub_page'] == 'admin_booking' || $_GET['sub_page'] == 'reservedBooking')) ? 'active' : ''; ?>">
                         <a class="collapsed" 
                            data-bs-toggle="collapse" 
                            href="#sidebarLayouts" 
@@ -89,12 +89,12 @@
                         </a>
                         <div class="collapse" id="sidebarLayouts">
                             <ul class="nav nav-collapse">
-                                <li class="<?php echo ($_GET['sub_page'] == 'admin_booking') ? 'active' : ''; ?>">
+                                <li class="<?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_booking' ? 'active' : ''; ?>">
                                     <a href="../pages/admin.php?sub_page=admin_booking">
                                         <span class="sub-item">Approved Bookings</span>
                                     </a>
                                 </li>
-                                <li class="<?php echo ($_GET['sub_page'] == 'reservedBooking') ? 'active' : ''; ?>">
+                                <li class="<?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'reservedBooking' ? 'active' : ''; ?>">
                                     <a href="../pages/admin.php?sub_page=reservedBooking">
                                         <span class="sub-item">Reserved Bookings</span>
                                     </a>
@@ -102,31 +102,31 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="nav-item <?php echo ($_GET['sub_page'] == 'admin_rooms') ? 'active' : ''; ?>">
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_rooms' ? 'active' : ''; ?>">
                         <a href="../pages/admin.php?sub_page=admin_rooms">
                             <i class="fas fa-door-open"></i>
                             <p>Rooms</p>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo ($_GET['sub_page'] == 'admin_food') ? 'active' : ''; ?>">
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_food' ? 'active' : ''; ?>">
                         <a href="../pages/admin.php?sub_page=admin_food">
                             <i class="bi bi-card-checklist"></i>
                             <p>Food Menu</p>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo ($_GET['sub_page'] == 'admin_inquires') ? 'active' : ''; ?>">
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_inquires' ? 'active' : ''; ?>">
                         <a href="../pages/admin.php?sub_page=admin_inquires">
                             <i class="bi bi-envelope-arrow-up"></i>
                             <p>Inquires</p>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo ($_GET['sub_page'] == 'admin_payments') ? 'active' : ''; ?>">
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_payments' ? 'active' : ''; ?>">
                         <a href="../pages/admin.php?sub_page=admin_payments">
                             <i class="bi bi-wallet"></i>
                             <p>Payments</p>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo ($_GET['sub_page'] == 'admin_reports') ? 'active' : ''; ?>">
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_reports' ? 'active' : ''; ?>">
                         <a href="../pages/admin.php?sub_page=admin_reports">
                             <i class="bi bi-calendar3"></i>
                             <p>Reports</p>

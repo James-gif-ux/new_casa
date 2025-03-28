@@ -132,14 +132,20 @@ class Reservation_Model {
     }
 
     public function updateReservationStatus($reservation_id, $status) {
-        $sql = "UPDATE reservations SET status = ? WHERE reservation_id = ?";
+        $sql = "UPDATE reservations SET status = :status WHERE reservation_id = :reservation_id";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([$status, $reservation_id]);
+        $stmt->bindParam(':reservation_id', $reservation_id, PDO::PARAM_INT);
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function get_reservation_by_status($status) {
         try {
-            $validStatuses = ['pending', 'approved', 'cancelled', 'checkedin', 'checkedout'];
+            $validStatuses = ['pending', 'approved', 'cancelled', 'checked-in', 'checked-out'];
             $status = is_array($status) ? $status[0] : $status; // Handle if status is an array
             
             if (!in_array(strtolower($status), $validStatuses)) {

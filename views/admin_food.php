@@ -1,5 +1,5 @@
 <?php 
-   
+    include 'nav/admin_sidebar.php';
     require_once '../model/server.php';
     require_once '../model/image_model.php';
     
@@ -49,22 +49,39 @@
                 move_uploaded_file($_FILES['image_img']['tmp_name'], $target);
             }
 
-            // Insert new room
-            $sql = "INSERT INTO image_tb (image_description, image_name, image_price, image_img) VALUES (?, ?, ?, ?)";
-            $stmt = $connector->getConnection()->prepare($sql);
-            $stmt->execute([$description, $name, $price, $image]);
-            
-            // Use JavaScript redirect instead of header()
-            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "';</script>";
-            exit();
+            try {
+                // Insert new food item
+                $sql = "INSERT INTO image_tb (image_description, image_name, image_price, image_img) VALUES (?, ?, ?, ?)";
+                $stmt = $connector->getConnection()->prepare($sql);
+                $result = $stmt->execute([$description, $name, $price, $image]);
+
+                if ($result) {
+                    // Check if image was uploaded successfully
+                    if (!empty($_FILES['image_img']['name']) && !file_exists($target)) {
+                        throw new Exception("Failed to upload image file.");
+                    }
+                    
+                    // Redirect on success
+                    echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "';</script>";
+                    exit();
+                } else {
+                    throw new Exception("Failed to insert record into database.");
+                }
+            } catch (Exception $e) {
+                // If there was an error, remove uploaded file if it exists
+                if (!empty($image) && file_exists($target)) {
+                    unlink($target);
+                }
+                echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+            }
         }
     }
-    include 'nav/admin_sidebar.php';
+   
 ?>
 
 <link rel="stylesheet" href="../assets/css/admin_rooms.css">
 <!-- Carousel wrapper -->
-<div class="container" id="carouselMultiItemExample" data-mdb-carousel-init class="carousel slide carousel-dark text-center" data-mdb-ride="carousel">
+<div class="container" id="carouselMultiItemExample">
   <!-- Inner -->
     <div class="page-inner carousel-inner py-4">
         <div class="card mb-5" style="max-width: 600px;">
@@ -72,7 +89,7 @@
             <h5 class="card-title mb-0">Add New Food</h5>
             </div>
             <div class="card-body">
-            <form action="admin_food.php" method="POST" enctype="multipart/form-data">
+            <form action="../pages/admin_food.php" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                     <input type="text" name="image_name" class="form-control" placeholder="Food Name" required>
                 </div>

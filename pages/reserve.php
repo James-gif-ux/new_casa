@@ -12,7 +12,13 @@
         }
         
         $model = new Reservation_Model();
-        $status = $action === 'approved' ? 'Approved' : 'Cancelled';
+        
+        // Prioritize pending status by handling it first
+        if ($action === 'pending') {
+            $status = 'Pending';
+        } else {
+            $status = $action === 'approved' ? 'Approved' : 'Cancelled';
+        }
         
         try {
             $result = $model->updateReservationStatus($reservation_id, $status);

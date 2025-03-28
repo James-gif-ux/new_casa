@@ -1,11 +1,16 @@
 <?php 
-require_once '../model/reservationModel.php';
 require_once '../model/server.php';
-
+$connector = new Connector();
 // At the top of the file, update the reservation fetch
-$model = new Reservation_Model();
-// Fetch reservations with status 'pending' or 'cancelled'
-$reservation = $model->get_reservation_by_status(['pending']);
+
+$sql = "SELECT r.reservation_id, r.name, r.email, r.phone, r.checkin, r.checkout, 
+               r.status, r.res_services_id, r.message, s.services_price, s.services_name 
+        FROM reservations r
+        LEFT JOIN services_tb s ON r.res_services_id = s.services_id 
+        WHERE r.status IN ('pending', 'cancelled')";
+$stmt = $connector->getConnection()->prepare($sql);  
+$stmt->execute();
+$reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 include 'nav/admin_sidebar.php'; 
 ?>
@@ -59,14 +64,14 @@ include 'nav/admin_sidebar.php';
                               </tr>
                           </tfoot>
                           <tbody>
-                            <?php foreach ($reservation as $res):?>
+                            <?php foreach ($reservations as $res):?>
                               <tr>
                                 <td><?php echo $res['name']?></td>
                                 <td><?php echo $res['email']?></td>  <!-- Removed the "1" -->
                                 <td><?php echo $res['phone']?></td>
                                 <td><?php echo date('M. d, Y', strtotime($res['checkin'])); ?></td>
                                 <td><?php echo date('M. d, Y', strtotime($res['checkout'])); ?></td>
-                                <td><?php echo $res['message']?></td>
+                                <td><?php echo $res['message'] ?? 'No message'; ?></td>
                                 <td><?php echo number_format($res['services_price'], 2); ?></td>
                                 <td>
                                   <?php 

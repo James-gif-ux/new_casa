@@ -1,10 +1,19 @@
 
 <?php
-require  '../model/reservationModel.php';
 require_once '../model/server.php';
 $connector = new Connector();
-$model = new Reservation_Model();
-$reservation = $model->get_reservation_by_status(['Approved', 'Check In', 'Check Out']);
+
+// Remove the duplicate SQL query and update the JOIN query
+$sql = "SELECT r.reservation_id, r.name, r.email, r.phone, r.checkin, r.checkout, 
+               r.status, r.res_services_id, s.services_price, s.services_name 
+        FROM reservations r
+        LEFT JOIN services_tb s ON r.res_services_id = s.services_id 
+        WHERE r.status IN ('approved', 'checked in', 'checked out')";
+$stmt = $connector->getConnection()->prepare($sql);  
+$stmt->execute();
+$reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 
 
   include 'nav/admin_sidebar.php';
@@ -57,7 +66,7 @@ $reservation = $model->get_reservation_by_status(['Approved', 'Check In', 'Check
                               </tr>
                           </tfoot>
                           <tbody>
-                            <?php foreach ($reservation as $res) : ?>
+                            <?php foreach ($reservations as $res) : ?>
                               <tr>
                               <td><?php echo $res['name']?></td>
                               <td><?php echo $res['email']?></td>
@@ -427,7 +436,7 @@ $reservation = $model->get_reservation_by_status(['Approved', 'Check In', 'Check
               e.preventDefault();
               
               let newStatus;
-              let bookingId = $(this).closest('tr').data('booking-id');
+              let reservationId = $(this).closest('tr').data('reservation-id');
               
               if ($(this).hasClass('btn-success')) {
                   newStatus = 'approved';
@@ -439,14 +448,14 @@ $reservation = $model->get_reservation_by_status(['Approved', 'Check In', 'Check
                   url: '../ajax/update_booking_status.php',
                   method: 'POST',
                   data: {
-                      booking_id: bookingId,
+                      reservation_id: reservationId,
                       status: newStatus
                   },
                   success: function(response) {
                       response = JSON.parse(response);
                       if (response.success) {
                           // Update status badge
-                          const statusBadge = $(`tr[data-booking-id="${bookingId}"] .badge`);
+                          const statusBadge = $(`tr[data-booking-id="${reservationId}"] .badge`);
                           statusBadge.css('background-color', STATUS_COLORS[newStatus]);
                           statusBadge.text(newStatus.replace('_', ' ').toUpperCase());
                           
@@ -467,7 +476,7 @@ $reservation = $model->get_reservation_by_status(['Approved', 'Check In', 'Check
       });
       </script>
       <script>
-          function updateBookingStatus(bookingId, status) {
+          function updateReservationStatus(reservationId, status) {
               if(!confirm('Are you sure you want to ' + status.replace('_', ' ') + ' this booking?')) {
                   return;
               }
@@ -476,7 +485,7 @@ $reservation = $model->get_reservation_by_status(['Approved', 'Check In', 'Check
                   url: '../pages/approved.php',
                   type: 'POST',
                   data: {
-                      booking_id: bookingId,
+                    reservation_id: reservationId,
                       action: status
                   },
                   success: function(response) {

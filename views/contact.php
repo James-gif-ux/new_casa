@@ -1,4 +1,25 @@
-<?php include 'nav/header.php'; ?>              
+<?php 
+    include 'nav/header.php'; 
+    require_once '../model/server.php';
+    $connector = new Connector();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $sql = "INSERT INTO messages (message_contact_id, recipient_email, subject, message_content, date_sent, status) 
+                VALUES (?, ?, ?, ?, NOW(), 'unread')";
+        $stmt = $connector->getConnection()->prepare($sql);
+        try {
+            $stmt->execute([
+                1, // message_contact_id
+                $_POST['email'], // recipient_email
+                $_POST['subject'], // subject
+                $_POST['message'] // message_content
+            ]);
+            echo "<script>alert('Please check your email for an update');</script>";
+        } catch (Exception $e) {
+            echo "<script>alert('Failed to send message. Please try again later.');</script>";
+        }
+    }
+?>
 
     <section style="padding: clamp(4rem, 8vw, 10rem) 1rem;">
         <div class="row">
@@ -84,4 +105,4 @@
         </div>
     </section>
 
-<?php include 'nav/footer.php'; ?>                   
+<?php include 'nav/footer.php'; ?>
