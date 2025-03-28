@@ -1,4 +1,49 @@
-<?php  include 'nav/admin_sidebar.php';?>
+<?php  
+include 'nav/admin_sidebar.php';
+require_once '../model/server.php';
+$connector = new Connector();
+
+// Process form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $selected_month = $_POST['month_pick'];
+    $start_date = date('Y-m-01', strtotime($selected_month));
+    $end_date = date('Y-m-t', strtotime($selected_month));
+
+    // Get total bookings
+    $sql = "SELECT COUNT(*) as total FROM reservations 
+            WHERE DATE(checkin) BETWEEN ? AND ?";
+    $result = $connector->executeQuery($sql, [$start_date, $end_date]);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $totalBookings = $row['total'];
+
+    // Get completed bookings
+    $sql = "SELECT COUNT(*) as completed FROM reservations 
+            WHERE status = 'approved' AND DATE(checkin) BETWEEN ? AND ?";
+    $result = $connector->executeQuery($sql, [$start_date, $end_date]);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $completedBookings = $row['completed'];
+
+    // Get total payments
+    $sql = "SELECT SUM(amount) as total_payments FROM payments 
+            WHERE DATE(date_of_payment) BETWEEN ? AND ?";
+    $result = $connector->executeQuery($sql, [$start_date, $end_date]);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $totalPayments = $row['total_payments'] ?: 0;
+
+    // Get daily statistics
+    $sql = "SELECT 
+                DATE(r.checkin) as date,
+                COUNT(r.reservation_id) as bookings,
+                SUM(CASE WHEN r.status = 'approved' THEN 1 ELSE 0 END) as completed,
+                COALESCE(SUM(p.amount), 0) as daily_payments
+            FROM reservations r
+            LEFT JOIN payments p ON DATE(r.checkin) = DATE(p.date_of_payment)
+            WHERE DATE(r.checkin) BETWEEN ? AND ?
+            GROUP BY DATE(r.checkin)
+            ORDER BY date DESC";
+    $results = $connector->executeQuery($sql, [$start_date, $end_date])->fetchAll(PDO::FETCH_ASSOC);
+}
+?>
 
 <style>
     .dashboard-container {
@@ -98,8 +143,8 @@
                 <h2><?php echo isset($completedBookings) ? $completedBookings : 0; ?></h2>
             </div>
             <div class="report-card">
-                <h4>Total Revenue</h4>
-                <h2>₱<?php echo isset($totalRevenue) ? number_format($totalRevenue, 2) : '0.00'; ?></h2>
+                <h4>Total Payments</h4>
+                <h2>₱<?php echo number_format(isset($totalPayments) ? $totalPayments : 0, 2); ?></h2>
             </div>
         </div>
 
@@ -109,7 +154,7 @@
                     <th>Date</th>
                     <th>Bookings</th>
                     <th>Completed</th>
-                    <th>Revenue</th>
+                    <th>Payments</th>
                 </tr>
             </thead>
             <tbody>
@@ -119,7 +164,7 @@
                             <td><?php echo $row['date']; ?></td>
                             <td><?php echo $row['bookings']; ?></td>
                             <td><?php echo $row['completed']; ?></td>
-                            <td>₱<?php echo number_format($row['revenue'], 2); ?></td>
+                            <td>₱<?php echo number_format($row['daily_payments'], 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -135,3 +180,23 @@
         </button>
     </div>
 </div>
+
+<script>
+document.getElementById('reportForm').addEventListener('submit', function(e) {
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
+    loadingOverlay.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
+    document.body.appendChild(loadingOverlay);
+});
+</script>

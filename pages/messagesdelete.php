@@ -15,9 +15,9 @@ if (isset($_GET['message_id']) && isset($_GET['action'])) {
     $params = [':message_id' => $message_id];
 
     if ($connector->executeUpdate($sql, $params)) {
-        header("Location: ../views/messages.php?approved=true");
+        header("Location: ../views/admin_inquires.php?approved=true");
     } else {
-        header("Location: ../views/messages.php?approved=false");
+        header("Location: ../views/admin_inquires.php?approved=false");
     }
     exit();
 }

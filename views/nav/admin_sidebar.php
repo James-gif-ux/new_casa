@@ -72,16 +72,10 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="nav-section">
-                        <span class="sidebar-mini-icon">
-                            <i class="fa fa-ellipsis-h"></i>
-                        </span>
-                        <h4 class="text-section">Components</h4>
-                    </li>
                     <li class="nav-item <?php echo (isset($_GET['sub_page']) && ($_GET['sub_page'] == 'admin_booking' || $_GET['sub_page'] == 'reservedBooking')) ? 'active' : ''; ?>">
                         <a class="collapsed" 
                            data-bs-toggle="collapse" 
-                           href="#sidebarLayouts" 
+                           data-bs-target="#sidebarLayouts" 
                            aria-expanded="false">
                             <i class="fas fa-th-list"></i>
                             <p>Guest</p>

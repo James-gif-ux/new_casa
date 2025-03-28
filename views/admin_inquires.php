@@ -21,10 +21,18 @@
   if ($unread_count < 0) {
       $unread_count = 0;
   }
-  $sql = "SELECT * FROM messages 
-      WHERE status IN ('unread', 'read') 
-      ORDER BY date_sent DESC";
-  $messages = $connector->executeQuery($sql);
+  // Update the SQL query to include date comparison
+  $sql = "SELECT m.*, r.reply_content, r.date_sent as reply_date,
+  CASE 
+      WHEN m.date_sent >= NOW() - INTERVAL 1 DAY 
+      AND m.viewed_status = 0 THEN 1 
+      ELSE 0 
+  END as is_new 
+  FROM messages m 
+  LEFT JOIN replies r ON m.message_id = r.message_id
+  WHERE m.status IN ('unread', 'read') 
+  ORDER BY m.date_sent DESC";
+$messages = $connector->executeQuery($sql);
 ?>
 <!DOCTYPE html>
 <html>
@@ -194,11 +202,37 @@
     <div class="chat-container">
         <div class="message-list">
             <?php foreach ($messages as $message): ?>
-            <div class="message-preview <?php echo ($message['status'] === '0' || $message['status'] === 0) ? 'unread' : ''; ?>"
-                 onclick="showMessage('<?php echo htmlspecialchars($message['message_id']); ?>', 
-                                    '<?php echo htmlspecialchars($message['recipient_email']); ?>', 
-                                    '<?php echo htmlspecialchars($message['subject']); ?>', 
-                                    '<?php echo htmlspecialchars($message['message_content']); ?>')">
+            <style>
+                .message-preview.new-message {
+                    position: relative;
+                }
+
+                .message-preview.new-message:after {
+                    content: 'NEW';
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background: #4caf50;
+                    color: white;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    font-weight: bold;
+                }
+            </style>
+            <div class="message-preview <?php 
+                echo ($message['is_new'] === '0' || $message['status'] === 0) ? 'unread ' : '';
+                echo ($message['is_new'] == 1) ? 'new-message' : 'read';
+            ?>" 
+                data-message-id="<?php echo htmlspecialchars($message['message_id']); ?>"
+                onclick="showMessage(
+                    '<?php echo htmlspecialchars($message['message_id']); ?>', 
+                    '<?php echo htmlspecialchars($message['recipient_email']); ?>', 
+                    '<?php echo htmlspecialchars($message['subject']); ?>', 
+                    '<?php echo htmlspecialchars($message['message_content']); ?>', 
+                    '<?php echo isset($message['reply_content']) ? htmlspecialchars($message['reply_content']) : ''; ?>'
+                )">
+
                 <div class="sender-info"><?php echo htmlspecialchars($message['recipient_email']); ?></div>
                 <div class="message-subject"><?php echo htmlspecialchars($message['subject']); ?></div>
                 <div class="message-text"><?php echo substr(htmlspecialchars($message['message_content']), 0, 50) . '...'; ?></div>
@@ -213,12 +247,27 @@
     </div>
 
     <script>
-    function showMessage(messageId, email, subject, content) {
+    // Update the showMessage function
+        function showMessage(messageId, email, subject, content, replyContent) {
         const messageContent = document.getElementById('messageContent');
+        
+        let replySection = '';
+        if (replyContent && replyContent !== 'null') {
+            replySection = `
+                <div class="message-text reply-message" style="margin: 20px 0; padding: 16px; background: #e3f2fd; border-radius: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">Admin Reply:</div>
+                    ${replyContent}
+                </div>
+            `;
+        }
+        
         messageContent.innerHTML = `
             <h3 style="color: #263238; margin-bottom: 16px; border-radius: 10px;">${subject}</h3>
             <div class="sender-info">From: ${email}</div>
-            <div class="message-text" style="margin: 20px 0; padding: 16px; background: #f8f9fa; border-radius: 15px;">${content}</div>
+            <div class="message-text" style="margin: 20px 0; padding: 16px; background: #f8f9fa; border-radius: 15px;">
+                ${content}
+            </div>
+            ${replySection}
             <div class="reply-form">
                 <form onsubmit="return sendReply('${messageId}', '${email}')">
                     <textarea placeholder="Write a reply..." required rows="4"></textarea>
@@ -227,13 +276,30 @@
                 </form>
             </div>
         `;
+
+        const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (messageElement) {
+            messageElement.classList.remove('new-message');
+        }
+
         markAsRead(messageId);
     }
 
     function markAsRead(messageId) {
+        // Create FormData object
+        const formData = new FormData();
+        formData.append('message_id', messageId);
+
+        // Update read status
         fetch('../model/update_message_status.php', {
             method: 'POST',
-            body: new FormData().append('message_id', messageId)
+            body: formData
+        });
+
+        // Update viewed status
+        fetch('../model/update_message_new_status.php', {
+            method: 'POST',
+            body: formData
         });
     }
 
@@ -243,10 +309,58 @@
         }
     }
 
+    // Add this in the <head> section
+    
+    
+    // Update the sendReply function
     function sendReply(messageId, email) {
-        // Implement your reply logic here
+        const textarea = document.querySelector('.reply-form textarea');
+        const replyContent = textarea.value;
+    
+        if (!replyContent.trim()) {
+            return false;
+        }
+    
+        const formData = new FormData();
+        formData.append('message_id', messageId);
+        formData.append('reply_content', replyContent);
+        formData.append('recipient_email', email);
+    
+        fetch('../model/send_reply.php', {  // Updated path to match your existing endpoint
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            textarea.value = '';
+            Swal.fire({
+                icon: 'success',
+                title: 'Reply Sent!',
+                text: 'Your message has been sent to ' + email,
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                position: 'top-end',
+                toast: true,
+                background: '#4caf50',
+                color: '#ffffff',
+                iconColor: '#ffffff'
+            }).then(() => {
+                location.reload();
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to send reply. Please try again.',
+                confirmButtonColor: '#ef5350'
+            });
+        });
+    
         return false;
     }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
