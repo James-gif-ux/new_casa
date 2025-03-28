@@ -8,6 +8,10 @@
     $model = new Reservation_Model();
     $reservationModel = new Reservation_Model();
     $connector = new Connector(); // Initialize connector before using it
+    $sql = "SELECT * FROM image_tb";
+    $stmt = $connector->getConnection()->prepare($sql);
+    $stmt->execute();
+    $breakfast = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   
 
@@ -157,121 +161,157 @@
                         </div>
                         <div class="menu-list-row">
                             <div class="row g-xxl-5 bydefault_show" id="menu-dish">
+                                <!-- 0 -->
                                 <div class="col-lg-4 col-sm-6 dish-box-wp breakfast" data-cat="breakfast">
                                     <div class="dish-box text-center">
-                                        <div class="dist-img">
-                                            <img src="../assets/images/dish/1.png" alt="">
-                                        </div>
-                                        <div class="dish-title">
-                                            <h3 class="h3-title">Fresh Chicken Veggies</h3>
-                                        </div> 
-                                        <hr>
-                                        <div class="dist-bottom-row">
-                                            <ul>
-                                                <li>
-                                                    <b> ₱499.00</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <?php 
+                                            // Only show the first menu item
+                                            if($breakfast && count($breakfast) > 0):
+                                                $menu = $breakfast[0]; // Get first item
+                                        ?>
+                                            <div class="dist-img">
+                                                <img src="../images/<?php echo $menu['image_img']?>" alt="">
+                                            </div>
+                                            <div class="dish-title">
+                                                <h3 class="h3-title"><?php echo $menu['image_name']?></h3>
+                                            </div> 
+                                            <hr>
+                                            <div class="dist-bottom-row">
+                                                <ul>
+                                                    <li>
+                                                        <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
 
-                                <!-- 2 -->
+                                <!-- 1 -->
                                 <div class="col-lg-4 col-sm-6 dish-box-wp breakfast" data-cat="breakfast">
                                     <div class="dish-box text-center">
-                                        <div class="dist-img">
-                                            <img src="../assets/images/dish/2.png" alt="">
-                                        </div>
-                                        <div class="dish-title">
-                                            <h3 class="h3-title">Grilled Chicken</h3>
-                                        </div>
-                                        <hr>
-                                        <div class="dist-bottom-row">
-                                            <ul>
-                                                <li>
-                                                    <b> ₱359.00</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <?php 
+                                            // Only show the first menu item
+                                            if($breakfast && count($breakfast) > 1):
+                                                $menu = $breakfast[1]; // Get first item
+                                        ?>
+                                            <div class="dist-img">
+                                                <img src="../images/<?php echo $menu['image_img']?>" alt="">
+                                            </div>
+                                            <div class="dish-title">
+                                                <h3 class="h3-title"><?php echo $menu['image_name']?></h3>
+                                            </div> 
+                                            <hr>
+                                            <div class="dist-bottom-row">
+                                                <ul>
+                                                    <li>
+                                                      <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
+                                <!-- 2 -->
+                                <div class="col-lg-4 col-sm-6 dish-box-wp lunch" data-cat="lunch">
+                                    <div class="dish-box text-center">
+                                        <?php 
+                                            // Only show the first menu item
+                                            if($breakfast && count($breakfast) > 2):
+                                                $menu = $breakfast[2]; // Get first item
+                                        ?>
+                                            <div class="dist-img">
+                                                <img src="../images/<?php echo $menu['image_img']?>" alt="">
+                                            </div>
+                                            <div class="dish-title">
+                                                <h3 class="h3-title"><?php echo $menu['image_name']?></h3>
+                                            </div> 
+                                            <hr>
+                                            <div class="dist-bottom-row">
+                                                <ul>
+                                                    <li>
+                                                      <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
                                 <!-- 3 -->
                                 <div class="col-lg-4 col-sm-6 dish-box-wp lunch" data-cat="lunch">
                                     <div class="dish-box text-center">
-                                        <div class="dist-img">
-                                            <img src="../assets/images/dish/3.png" alt="">
-                                        </div>
-                                        
-                                        <div class="dish-title">
-                                            <h3 class="h3-title">Panner Noodles</h3>
-                                        </div>
-                                        <hr>
-                                        <div class="dist-bottom-row">
-                                            <ul>
-                                                <li>
-                                                    <b> ₱149.00</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <?php 
+                                            // Only show the first menu item
+                                            if($breakfast && count($breakfast) > 3):
+                                                $menu = $breakfast[3]; // Get first item
+                                        ?>
+                                            <div class="dist-img">
+                                                <img src="../images/<?php echo $menu['image_img']?>" alt="">
+                                            </div>
+                                            <div class="dish-title">
+                                                <h3 class="h3-title"><?php echo $menu['image_name']?></h3>
+                                            </div> 
+                                            <hr>
+                                            <div class="dist-bottom-row">
+                                                <ul>
+                                                    <li>
+                                                       <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
 
                                 <!-- 4 -->
-                                <div class="col-lg-4 col-sm-6 dish-box-wp lunch" data-cat="lunch">
+                                <div class="col-lg-4 col-sm-6 dish-box-wp dinner" data-cat="dinner">
                                     <div class="dish-box text-center">
-                                        <div class="dist-img">
-                                            <img src="../assets/images/dish/4.png" alt="">
-                                        </div>
-                                        <div class="dish-title">
-                                            <h3 class="h3-title">Chicken Noodles</h3>
-                                        </div>
-                                        <hr>
-                                        <div class="dist-bottom-row">
-                                            <ul>
-                                                <li>
-                                                    <b> ₱379.00</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <?php 
+                                            // Only show the first menu item
+                                            if($breakfast && count($breakfast) > 4):
+                                                $menu = $breakfast[4]; // Get first item
+                                        ?>
+                                            <div class="dist-img">
+                                                <img src="../images/<?php echo $menu['image_img']?>" alt="">
+                                            </div>
+                                            <div class="dish-title">
+                                                <h3 class="h3-title"><?php echo $menu['image_name']?></h3>
+                                            </div> 
+                                            <hr>
+                                            <div class="dist-bottom-row">
+                                                <ul>
+                                                    <li>
+                                                       <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
-
                                 <!-- 5 -->
                                 <div class="col-lg-4 col-sm-6 dish-box-wp dinner" data-cat="dinner">
                                     <div class="dish-box text-center">
-                                        <div class="dist-img">
-                                            <img src="../assets/images/dish/5.png" alt="">
-                                        </div>
-                                        <div class="dish-title">
-                                            <h3 class="h3-title">Bread Boiled Egg</h3>
-                                        </div>
-                                        <hr>
-                                        <div class="dist-bottom-row">
-                                            <ul>
-                                                <li>
-                                                    <b> ₱99.00</b>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- 6 -->
-                                <div class="col-lg-4 col-sm-6 dish-box-wp dinner" data-cat="dinner">
-                                    <div class="dish-box text-center">
-                                        <div class="dist-img">
-                                            <img src="../assets/images/dish/6.png" alt="">
-                                        </div>
-                                        <div class="dish-title">
-                                            <h3 class="h3-title">Immunity Dish</h3>
-                                        </div>
-                                        <hr>
-                                        <div class="dist-bottom-row">
-                                            <ul>
-                                                <li>
-                                                    <b> ₱159.00</b>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <?php 
+                                            // Only show the first menu item
+                                            if($breakfast && count($breakfast) > 5):
+                                                $menu = $breakfast[5]; // Get first item
+                                        ?>
+                                            <div class="dist-img">
+                                                <img src="../images/<?php echo $menu['image_img']?>" alt="">
+                                            </div>
+                                            <div class="dish-title">
+                                                <h3 class="h3-title"><?php echo $menu['image_name']?></h3>
+                                            </div> 
+                                            <hr>
+                                            <div class="dist-bottom-row">
+                                                <ul>
+                                                    <li>
+                                                       <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>

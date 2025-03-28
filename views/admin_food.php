@@ -10,7 +10,6 @@
      // Handle form submission for adding new room
      if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the required POST variables exist
-        $description = isset($_POST['image_description']) ? $_POST['image_description'] : '';
         $name = isset($_POST['image_name']) ? $_POST['image_name'] : '';
         $price = isset($_POST['image_price']) ? $_POST['image_price'] : 0;
         
@@ -37,9 +36,9 @@
                 $image = $current_image;
             }
 
-            $sql = "UPDATE image_tb SET image_description = ?, image_name = ?, image_price = ?, image_img = ? WHERE image_id = ?";
+            $sql = "UPDATE image_tb SET  image_name = ?, image_price = ?, image_img = ? WHERE image_id = ?";
             $stmt = $connector->getConnection()->prepare($sql);
-            $stmt->execute([$description, $name, $price, $image, $image_id]);
+            $stmt->execute([$name, $price, $image, $image_id]);
         } else {
             // Add operation
             $image = '';
@@ -51,9 +50,9 @@
 
             try {
                 // Insert new food item
-                $sql = "INSERT INTO image_tb (image_description, image_name, image_price, image_img) VALUES (?, ?, ?, ?)";
+                $sql = "INSERT INTO image_tb (image_name, image_price, image_img) VALUES (?, ?, ?, ?)";
                 $stmt = $connector->getConnection()->prepare($sql);
-                $result = $stmt->execute([$description, $name, $price, $image]);
+                $result = $stmt->execute([$name, $price, $image]);
 
                 if ($result) {
                     // Check if image was uploaded successfully
@@ -94,9 +93,6 @@
                     <input type="text" name="image_name" class="form-control" placeholder="Food Name" required>
                 </div>
                 <div class="mb-3">
-                    <textarea name="image_description" class="form-control" placeholder="Description" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
                 <div class="input-group">
                     <span class="input-group-text">₱</span>
                     <input type="number" name="image_price" class="form-control" placeholder="Food Price" required>
@@ -124,7 +120,6 @@
                              alt="Food Image"/>
                         <div class="card-body">
                             <h5 class="card-title"><?php echo $img['image_name']?></h5>
-                            <p class="card-text"><?php echo $img['image_description']?></p>
                             <p class="card-text">₱<?= number_format($img['image_price'], 2) ?></p>
                             <button type="button" 
                                 class="btn btn-primary" 
@@ -155,11 +150,6 @@
                                 <label class="form-label">Food Name</label>
                                 <input type="text" class="form-control" name="image_name" 
                                        value="<?php echo $img['image_name']?>">
-                                </div>
-                                <div class="mb-3">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" name="image_description" 
-                                      rows="3"><?php echo $img['image_description']?></textarea>
                                 </div>
                                 <div class="mb-3">
                                 <label class="form-label">Price</label>

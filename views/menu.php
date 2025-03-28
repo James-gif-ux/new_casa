@@ -74,7 +74,7 @@ include 'nav/header.php';
                                             <div class="dist-bottom-row">
                                                 <ul>
                                                     <li>
-                                                        <b> <?php echo $menu['image_price']?></b>
+                                                        <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -100,7 +100,7 @@ include 'nav/header.php';
                                             <div class="dist-bottom-row">
                                                 <ul>
                                                     <li>
-                                                        <b> <?php echo $menu['image_price']?></b>
+                                                      <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -125,7 +125,7 @@ include 'nav/header.php';
                                             <div class="dist-bottom-row">
                                                 <ul>
                                                     <li>
-                                                        <b> <?php echo $menu['image_price']?></b>
+                                                      <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -151,7 +151,7 @@ include 'nav/header.php';
                                             <div class="dist-bottom-row">
                                                 <ul>
                                                     <li>
-                                                        <b> <?php echo $menu['image_price']?></b>
+                                                       <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -177,7 +177,7 @@ include 'nav/header.php';
                                             <div class="dist-bottom-row">
                                                 <ul>
                                                     <li>
-                                                        <b> <?php echo $menu['image_price']?></b>
+                                                       <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -202,7 +202,7 @@ include 'nav/header.php';
                                             <div class="dist-bottom-row">
                                                 <ul>
                                                     <li>
-                                                        <b> <?php echo $menu['image_price']?></b>
+                                                       <b>₱<?php echo number_format($menu['image_price'] , 2)?></b>
                                                     </li>
                                                 </ul>
                                             </div>
