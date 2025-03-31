@@ -38,163 +38,247 @@ $messages = $connector->executeQuery($sql);
 <html>
 <head>
     <title>Messages</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .chat-container {
+            margin: 20px;
             margin-top: 100px;
             max-width: 1585px;
-            margin-left: 30px;
             background: white;
             border-radius: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             display: flex;
-            height: calc(100vh - 150px); /* Adjusted height */
+            height: calc(100vh - 150px);
             overflow: hidden;
         }
 
         .message-list {
-            width: 360px;
-            border-right: 1px solid #e4e6eb;
+            width: 350px;
+            border-right: 1px solid #e0e0e0;
             overflow-y: auto;
-            background: #f8f9fa;
-            border-top-left-radius: 25px;
-            border-bottom-left-radius: 25px;
-            height: 100%; /* Added fixed height */
-            max-height: calc(100vh - 150px); /* Added max-height */
+            background: #ffffff;
+            height: 100%;
+            padding-top: 20px;
         }
 
         .message-preview {
-            padding: 16px;
-            border-bottom: 1px solid #e4e6eb;
+            padding: 15px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 15px;
-            margin: 5px;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .message-preview:hover {
-            background: #fff;
-            transform: translateX(4px);
-            border-radius: 15px;
+            background: #f8f9fa;
         }
 
         .message-preview.unread {
+            background: #f0f7ff;
+        }
+
+        .message-preview.active {
             background: #e3f2fd;
-            font-weight: 600;
-            position: relative;
-            border-radius: 15px;
         }
 
-        .message-preview.unread:before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background: #1976d2;
-            border-top-left-radius: 15px;
-            border-bottom-left-radius: 15px;
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #e1e1e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            flex-shrink: 0;
         }
 
-        .message-content {
-            flex: 1;
-            padding: 28px;
-            overflow-y: auto;
-            background: #fff;
-            border-top-right-radius: 25px;
-            border-bottom-right-radius: 25px;
-            height: 100%; /* Added fixed height */
-            max-height: calc(100vh - 150px); /* Added max-height */
+        .message-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
         }
 
         .sender-info {
-            font-size: 14px;
-            color: #546e7a;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            border-radius: 10px;
-            padding: 5px;
-        }
-
-        .message-subject {
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #263238;
             font-size: 15px;
-            border-radius: 10px;
-            padding: 5px;
-        }
-
-        .message-text {
-            color: #546e7a;
-            font-size: 14px;
-            line-height: 1.5;
-            border-radius: 10px;
-            padding: 5px;
+            color: #2c3e50;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .message-time {
             font-size: 12px;
-            color: #78909c;
-            margin-top: 4px;
-            border-radius: 10px;
-            padding: 5px;
+            color: #95a5a6;
+            flex-shrink: 0;
+        }
+
+        .message-preview-content {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .message-subject {
+            font-weight: 500;
+            color: #34495e;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-text {
+            color: #7f8c8d;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .status-new { background: #2ecc71; }
+        .status-unread { background: #3498db; }
+        .status-read { background: #bdc3c7; }
+
+        .message-content {
+            flex: 1;
+            padding: 30px;
+            padding-top: 40px;
+            overflow-y: auto;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
         }
 
         .reply-form {
+            margin-top: auto;
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            margin-top: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-top: 1px solid #f0f0f0;
+            background: #ffffff;
         }
 
         .reply-form textarea {
             width: 100%;
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             resize: none;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             font-size: 14px;
-            transition: border-color 0.3s ease;
         }
 
-        .reply-form textarea:focus {
-            outline: none;
-            border-color: #1976d2;
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .reply-btn, .delete-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
         }
 
         .reply-btn {
-            background: #1976d2;
+            background: #3498db;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.3s ease;
-        }
-
-        .reply-btn:hover {
-            background: #1565c0;
         }
 
         .delete-btn {
-            background: #ef5350;
+            background: #e74c3c;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            margin-left: 12px;
-            font-weight: 500;
-            transition: background 0.3s ease;
         }
 
-        .delete-btn:hover {
-            background: #e53935;
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .chat-container {
+                margin: 10px;
+                margin-top: 90px;
+                height: calc(100vh - 100px);
+            }
+
+            .message-list {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+                height: calc(100vh - 80px);
+                margin-top: 80px;
+            }
+
+            .message-list {
+                width: 100%;
+                height: 40%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .message-content {
+                height: 60%;
+                padding: 15px;
+                padding-top: 25px;
+            }
+
+            .reply-form {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                margin: 5px;
+                margin-top: 70px;
+                border-radius: 15px;
+            }
+
+            .message-preview {
+                padding: 10px;
+            }
+
+            .avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 12px;
+            }
+
+            .sender-info {
+                font-size: 13px;
+            }
+
+            .message-subject {
+                font-size: 12px;
+            }
+
+            .message-text {
+                font-size: 11px;
+            }
+
+            .reply-btn, .delete-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -202,27 +286,8 @@ $messages = $connector->executeQuery($sql);
     <div class="chat-container">
         <div class="message-list">
             <?php foreach ($messages as $message): ?>
-            <style>
-                .message-preview.new-message {
-                    position: relative;
-                }
-
-                .message-preview.new-message:after {
-                    content: 'NEW';
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    background: #4caf50;
-                    color: white;
-                    padding: 2px 8px;
-                    border-radius: 12px;
-                    font-size: 11px;
-                    font-weight: bold;
-                }
-            </style>
             <div class="message-preview <?php 
-                echo ($message['is_new'] === '0' || $message['status'] === 0) ? 'unread ' : '';
-                echo ($message['is_new'] == 1) ? 'new-message' : 'read';
+                echo ($message['is_new'] === '0' || $message['status'] === 0) ? 'unread' : 'read';
             ?>" 
                 data-message-id="<?php echo htmlspecialchars($message['message_id']); ?>"
                 onclick="showMessage(
@@ -232,11 +297,23 @@ $messages = $connector->executeQuery($sql);
                     '<?php echo htmlspecialchars($message['message_content']); ?>', 
                     '<?php echo isset($message['reply_content']) ? htmlspecialchars($message['reply_content']) : ''; ?>'
                 )">
-
-                <div class="sender-info"><?php echo htmlspecialchars($message['recipient_email']); ?></div>
-                <div class="message-subject"><?php echo htmlspecialchars($message['subject']); ?></div>
-                <div class="message-text"><?php echo substr(htmlspecialchars($message['message_content']), 0, 50) . '...'; ?></div>
-                <div class="message-time"><?php echo date('M d, H:i', strtotime($message['date_sent'])); ?></div>
+                <div class="avatar">
+                    <?php echo strtoupper(substr($message['recipient_email'], 0, 2)); ?>
+                </div>
+                <div class="message-info">
+                    <div class="message-header">
+                        <div class="sender-info"><?php echo htmlspecialchars($message['recipient_email']); ?></div>
+                        <div class="message-time"><?php echo date('M d, H:i', strtotime($message['date_sent'])); ?></div>
+                    </div>
+                    <div class="message-preview-content">
+                        <div class="message-subject"><?php echo htmlspecialchars($message['subject']); ?></div>
+                        <span class="status-indicator <?php 
+                            echo ($message['is_new'] == 1) ? 'status-new' : 
+                                (($message['status'] === 0) ? 'status-unread' : 'status-read'); 
+                        ?>"></span>
+                    </div>
+                    <div class="message-text"><?php echo substr(htmlspecialchars($message['message_content']), 0, 50) . '...'; ?></div>
+                </div>
             </div>
             <?php endforeach; ?>
         </div>
@@ -245,6 +322,7 @@ $messages = $connector->executeQuery($sql);
             <h2>Select a message to view</h2>
         </div>
     </div>
+</div>
 
     <script>
     // Update the showMessage function
@@ -364,3 +442,4 @@ $messages = $connector->executeQuery($sql);
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
+<?php include 'nav/admin_footer.php'; ?>

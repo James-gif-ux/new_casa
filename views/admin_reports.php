@@ -263,17 +263,3 @@ document.getElementById('reportForm').addEventListener('submit', function(e) {
     document.body.appendChild(loadingOverlay);
 });
 </script>
-
-// Update the report card titles
-```php:d%3A%5Cxampp%5Chtdocs%5Cnew_casa%5Cviews%5Cadmin_reports.php
-<div class="report-grid">
-    <div class="report-card">
-        <h4>Total Paid Bookings</h4>
-        <h2><?php echo isset($totalBookings) ? $totalBookings : 0; ?></h2>
-    </div>
-    <div class="report-card">
-        <h4>Total Revenue from Paid Bookings</h4>
-        <h2>₱<?php echo number_format(isset($totalPayments) ? $totalPayments : 0, 2); ?></h2>
-    </div>
-</div>
-```

@@ -127,22 +127,30 @@ usePointStyle: true,
   <!-- Revenue Analytics Card -->
   <div class="col-md-4">
     <div class="card card-round shadow-lg hover-shadow-xl transition-shadow">
-      <div class="card-header bg-gradient-to-r from-green-500 to-green-700 text-white">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="card-title h5">
-            <i class="fas fa-chart-bar me-2"></i>Revenue Analytics
+      <div class="card-header bg-gradient-to-r from-green-500 to-green-700 text-white p-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="card-title h4 mb-0">
+            <i class="fas fa-hotel me-2"></i>Accommodation Revenue
           </div>
-          <span class="badge bg-white text-success">+12.5%</span>
+          <span class="badge bg-white text-success px-3 py-2">+12.5%</span>
         </div>
-        <div class="card-category text-white-50">Monthly Overview</div>
+        <div class="card-category text-white-50 fs-6">Monthly Performance</div>
       </div>
-      <div class="card-body">
-        <div class="mb-4 mt-3 text-center">
-          <h5 class="text-muted">Total Revenue</h5>
-          <h2 class="display-4 text-success fw-bold">₱150,000.00</h2>
-          <p class="text-muted">vs ₱133,500.00 last month</p>
+      <div class="card-body p-4">
+        <div class="mb-4 mt-2 text-center">
+          <div class="revenue-icon mb-3">
+            <i class="fas fa-coins text-success" style="font-size: 2.5rem;"></i>
+          </div>
+          <h5 class="text-muted mb-3">Total Revenue</h5>
+          <h2 class="display-4 text-success fw-bold mb-2">₱45,000.00</h2>
+          <div class="d-flex justify-content-center align-items-center">
+            <i class="fas fa-arrow-up text-success me-2"></i>
+            <p class="text-muted mb-0">
+              <span class="text-success fw-bold">+12.5%</span> vs last month
+            </p>
+          </div>
         </div>
-        <div class="revenue-chart-container" style="height: 250px;">
+        <div class="revenue-chart-container" style="height: 200px;">
           <canvas id="revenueChart"></canvas>
         </div>
       </div>
@@ -237,24 +245,22 @@ usePointStyle: true,
     }
   });
 
-  // Revenue Chart remains the same
+  // Revenue Chart - Monthly Accommodation Revenue
   new Chart(document.getElementById('revenueChart'), {
-    type: 'bar',
+    type: 'line',
     data: {
-      labels: ['Room Service', 'Accommodation', 'Restaurant', 'Events'],
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [{
-        label: 'Revenue',
-        data: [12500, 45000, 25000, 15000],
-        backgroundColor: [
-          'rgba(21, 114, 232, 0.8)',
-          'rgba(46, 184, 92, 0.8)',
-          'rgba(255, 169, 31, 0.8)',
-          'rgba(153, 102, 255, 0.8)'
-        ],
-        borderColor: '#ffffff',
-        borderWidth: 2,
-        borderRadius: 5,
-        barThickness: 25
+        label: 'Monthly Revenue',
+        data: [35000, 38000, 40000, 42000, 40000, 45000],
+        fill: true,
+        borderColor: 'rgba(46, 184, 92, 1)',
+        backgroundColor: 'rgba(46, 184, 92, 0.2)',
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgba(46, 184, 92, 1)',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 2
       }]
     },
     options: {
@@ -266,9 +272,17 @@ usePointStyle: true,
         },
         tooltip: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleFont: {
+            size: 14,
+            weight: 'bold'
+          },
+          bodyFont: {
+            size: 13
+          },
+          padding: 15,
           callbacks: {
             label: function(context) {
-              return `₱${context.raw.toLocaleString()}`;
+              return `Revenue: ₱${context.raw.toLocaleString()}`;
             }
           }
         }
@@ -281,14 +295,22 @@ usePointStyle: true,
             color: 'rgba(0, 0, 0, 0.1)'
           },
           ticks: {
+            font: {
+              size: 11
+            },
             callback: function(value) {
-              return '₱' + value.toLocaleString();
+              return '₱' + (value/1000) + 'k';
             }
           }
         },
         x: {
           grid: {
             display: false
+          },
+          ticks: {
+            font: {
+              size: 11
+            }
           }
         }
       }
