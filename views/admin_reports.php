@@ -200,3 +200,5 @@ document.getElementById('reportForm').addEventListener('submit', function(e) {
     document.body.appendChild(loadingOverlay);
 });
 </script>
+
+<?php include 'nav/admin_footer.php'; ?>

@@ -254,3 +254,5 @@ include 'nav/admin_sidebar.php';
 <!-- Make sure these scripts are included at the end of your file -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php include 'nav/admin_footer.php'; ?>
