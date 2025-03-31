@@ -4,16 +4,78 @@ require_once '../model/server.php';
 $connector = new Connector();
 
 // Remove the duplicate SQL query and update the JOIN query
+// Update the SQL query to include payment information
 $sql = "SELECT r.reservation_id, r.name, r.email, r.phone, r.checkin, r.checkout, 
-               r.status, r.res_services_id, s.services_price, s.services_name 
+               r.status, r.res_services_id, r.message, s.services_price, s.services_name,
+               t.time_in, t.time_out, 
+               COALESCE(p.status, 'partial') as payment_status
         FROM reservations r
         LEFT JOIN services_tb s ON r.res_services_id = s.services_id 
-        WHERE r.status IN ('approved', 'checked in', 'checked out')";
+        LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
+        LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+        WHERE r.status IN ('approved', 'checked in', 'cancelled')
+        ORDER BY r.reservation_id DESC";
 $stmt = $connector->getConnection()->prepare($sql);  
 $stmt->execute();
 $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_in'])) {
+  $timeIn = $_POST['time_in'];
+  $reservationId = $_POST['reservation_id'];
+  
+  try {
+      // First check if record exists
+      $checkSql = "SELECT * FROM time_tb WHERE time_reservation_id = ?";
+      $checkStmt = $connector->getConnection()->prepare($checkSql);
+      $checkStmt->execute([$reservationId]);
+      
+      if ($checkStmt->rowCount() > 0) {
+          // Update existing record
+          $updateSql = "UPDATE time_tb SET time_in = ? WHERE time_reservation_id = ?";
+          $stmt = $connector->getConnection()->prepare($updateSql);
+          $stmt->execute([$timeIn, $reservationId]);
+      } else {
+          // Insert new record
+          $insertSql = "INSERT INTO time_tb (time_in, time_reservation_id) VALUES (?, ?)";
+          $stmt = $connector->getConnection()->prepare($insertSql);
+          $stmt->execute([$timeIn, $reservationId]);
+      }
+      
+      // Update reservation status
+      $statusSql = "UPDATE reservations SET status = 'checked in' WHERE reservation_id = ?";
+      $statusStmt = $connector->getConnection()->prepare($statusSql);
+      $statusStmt->execute([$reservationId]);
+      
+      echo json_encode(['success' => true]);
+      exit;
+  } catch (PDOException $e) {
+      echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+      exit;
+  }
+}
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
+  $timeOut = $_POST['time_out'];
+  $reservationId = $_POST['reservation_id'];
+  
+  try {
+      // Update time_out in time_tb
+      $updateSql = "UPDATE time_tb SET time_out = ? WHERE time_reservation_id = ?";
+      $stmt = $connector->getConnection()->prepare($updateSql);
+      $stmt->execute([$timeOut, $reservationId]);
+      
+      // Update reservation status
+      $statusSql = "UPDATE reservations SET status = 'checked out' WHERE reservation_id = ?";
+      $statusStmt = $connector->getConnection()->prepare($statusSql);
+      $statusStmt->execute([$reservationId]);
+      
+      echo json_encode(['success' => true]);
+      exit;
+  } catch (PDOException $e) {
+      echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+      exit;
+  }
+}
 
 
   include 'nav/admin_sidebar.php';
@@ -47,8 +109,10 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                               <th>Email</th>
                               <th>Number</th>
                               <th>Check In</th>
+                              <th>Time In</th>
                               <th>Check Out</th>
                               <th>Amount</th>
+                              <th>Payment Status</th>
                               <th>Status</th>
                               <th>Action</th>
                             </tr>
@@ -59,8 +123,10 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <th>Email</th>
                                 <th>Number</th>
                                 <th>Check In</th>
+                                <th>Time In</th>
                                 <th>Check Out</th>
                                 <th>Amount</th>
+                                <th>Payment Status</th>
                                 <th>Status</th>
                                 <th>Action</th>
                               </tr>
@@ -72,8 +138,18 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                               <td><?php echo $res['email']?></td>
                               <td><?php echo $res['phone']?></td>
                               <td><?php echo date('M. d, Y', strtotime($res['checkin'])); ?></td>
+                              <td>
+                                  <?php 
+                                      if (!empty($res['time_in'])) {
+                                          echo date('h:i A', strtotime($res['time_in']));
+                                      } else {
+                                          echo '<span class="text-muted">Not set</span>';
+                                      }
+                                  ?>
+                              </td>
                               <td><?php echo date('M. d, Y', strtotime($res['checkout'])); ?></td>
                               <td><?php echo $res['services_price']?></td>
+                              <td><?php echo $res['payment_status']?></td>
                               <td>
                                   <?php 
                                       $status = strtolower($res['status']);
@@ -86,7 +162,7 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                           case 'checked in':
                                               $bgColor = '#93edf1';
                                               break;
-                                          case 'checked out':
+                                          case 'cancelled':
                                               $bgColor = '#f5cc8b';
                                               break;
                                           default:
@@ -97,25 +173,40 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                       <?php echo $res['status']?>
                                   </span>
                               </td>
-                              <td>
-                                <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
-                                  <i class="bi bi-three-dots-vertical p-2"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                  <a href="javascript:void(0)" 
-                                     class="dropdown-item" 
-                                     style="color:rgb(8, 160, 165);"
-                                     onclick="updateReservationStatus(<?php echo $res['reservation_id']?>, 'checkin')">
-                                      <i class="bi bi-box-arrow-in-left"></i> Check In
-                                  </a>
-                                  <a href="javascript:void(0)" 
-                                     class="dropdown-item"
-                                     style="color:rgb(179, 115, 12);" 
-                                     onclick="updateReservationStatus(<?php echo $res['reservation_id']?>, 'checkout')">
-                                      <i class="bi bi-box-arrow-in-right"></i> Check Out
-                                  </a>
-                                </div>
-                              </td>
+                                <td>
+                                    <?php if ($res['status'] !== 'cancelled'): ?>
+                                        <button type="button" class="btn p-0 hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical p-2"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <?php if ($res['status'] !== 'checked in'): ?>
+                                                <a href="javascript:void(0)" 
+                                                    class="dropdown-item" 
+                                                    style="color:rgb(8, 160, 165);"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#checkInModal<?php echo $res['reservation_id']?>">
+                                                    <i class="bi bi-box-arrow-in-left"></i> Check In
+                                                </a>
+                                                <a class="dropdown-item text-danger" href="#"
+                                                    onclick="cancelReservation(<?php echo $res['reservation_id']?>)">
+                                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                                </a>
+                                            <?php endif; ?>
+                                            
+                                            <?php if ($res['status'] === 'checked in'): ?>
+                                                <a href="javascript:void(0)" 
+                                                    class="dropdown-item"
+                                                    style="color:rgb(179, 115, 12);" 
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#checkOutModal<?php echo $res['reservation_id']?>">
+                                                    <i class="bi bi-box-arrow-in-right"></i> Check Out
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-muted">No actions available</span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -123,6 +214,60 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                   </div>
                 </div>
+                <!-- Check In Modal start -->
+                <?php foreach ($reservations as $res) : ?>
+                  <div class="modal fade" id="checkInModal<?php echo $res['reservation_id']?>" tabindex="-1" aria-labelledby="checkInModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="checkInModalLabel">Check In Details</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <form id="checkInForm<?php echo $res['reservation_id']?>">
+                                      <input type="hidden" name="reservation_id" value="<?php echo $res['reservation_id']?>">
+                                      <div class="mb-3">
+                                          <label for="checkInTime" class="form-label">Check In Time</label>
+                                          <input type="time" class="form-control" id="checkInTime<?php echo $res['reservation_id']?>" name="time_in" required>
+                                      </div>
+                                  </form>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary" onclick="submitCheckIn(<?php echo $res['reservation_id']?>)">Submit</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                <?php endforeach; ?>
+                <!-- Check In Modal End -->
+                <!------check out modal start------>
+                <?php foreach ($reservations as $res) : ?>
+                  <div class="modal fade" id="checkOutModal<?php echo $res['reservation_id']?>" tabindex="-1" aria-labelledby="checkOutModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="checkOutModalLabel">Check Out Details</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <form id="checkOutForm<?php echo $res['reservation_id']?>">
+                                      <input type="hidden" name="reservation_id" value="<?php echo $res['reservation_id']?>">
+                                      <div class="mb-3">
+                                          <label for="checkOutTime<?php echo $res['reservation_id']?>" class="form-label">Check Out Time</label>
+                                          <input type="time" class="form-control" id="checkOutTime<?php echo $res['reservation_id']?>" name="time_out" required>
+                                      </div>
+                                  </form>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary" onclick="submitCheckOut(<?php echo $res['reservation_id']?>)">Submit</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                <?php endforeach; ?>
+                <!-----check out modal end------>
               </div>
             </div>
           </div>
@@ -506,5 +651,102 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
               });
           }
       </script>
+      <script>
+        function submitCheckIn(reservationId) {
+            const timeIn = document.getElementById('checkInTime' + reservationId).value;
+            
+            if (!timeIn) {
+                alert('Please enter check-in time');
+                return;
+            }
+        
+            $.ajax({
+                url: window.location.href,
+                type: 'POST',
+                data: {
+                    reservation_id: reservationId,
+                    time_in: timeIn
+                },
+                success: function(response) {
+                    try {
+                        const result = JSON.parse(response);
+                        if(result.success) {
+                            location.reload();
+                        } else {
+                            alert(result.message || 'Failed to update check-in time');
+                        }
+                    } catch(e) {
+                        alert('Error processing response');
+                    }
+                },
+                error: function() {
+                    alert('Error connecting to server');
+                }
+            });
+        }
+        </script>
+        <script>
+          function submitCheckOut(reservationId) {
+              const timeOut = document.getElementById('checkOutTime' + reservationId).value;
+              
+              if (!timeOut) {
+                  alert('Please enter check-out time');
+                  return;
+              }
+
+              $.ajax({
+                  url: window.location.href,
+                  type: 'POST',
+                  data: {
+                      reservation_id: reservationId,
+                      time_out: timeOut,
+                      action: 'checkout'
+                  },
+                  success: function(response) {
+                      try {
+                          const result = JSON.parse(response);
+                          if(result.success) {
+                              location.reload();
+                          } else {
+                              alert(result.message || 'Failed to update check-out time');
+                          }
+                      } catch(e) {
+                          alert('Error processing response');
+                      }
+                  },
+                  error: function() {
+                      alert('Error connecting to server');
+                  }
+              });
+          }
+          </script>
+          <script>
+            function cancelReservation(reservationId) {
+                Swal.fire({
+                    title: 'Confirm Cancellation',
+                    text: 'Are you sure you want to cancel this reservation?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, cancel it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        updateReservationStatus(reservationId, 'cancelled')
+                            .then(() => {
+                                Swal.fire({
+                                    title: 'Cancelled!',
+                                    text: 'The reservation has been cancelled',
+                                    icon: 'success',
+                                    confirmButtonColor: '#d33'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            });
+                    }
+                });
+            }
+          </script>
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
 </html>

@@ -2,61 +2,94 @@
 require_once '../model/server.php';
 $connector = new Connector();
 
+// Add error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Get reservation data if ID is provided
+if (isset($_GET['reservation_id']) || isset($_POST['reservation_id'])) {
+    $reservationId = $_GET['reservation_id'] ?? $_POST['reservation_id'];
+    
+    // Join query to get reservation details with payment method
+    $query = "SELECT r.*, s.services_price as amount, pm.payment_method as payment_method,
+              r.res_method_id, p.payment_id, p.reference_number, p.date_of_payment, 
+              p.proof_of_payment
+              FROM reservations r
+              LEFT JOIN services_tb s ON r.res_services_id = s.services_id
+              LEFT JOIN pay_method pm ON r.res_method_id = pm.method_id
+              LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+              WHERE r.reservation_id = :id";
+              
+    $stmt = $connector->getConnection()->prepare($query);
+    $stmt->execute([':id' => $reservationId]);
+    $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Handle file upload first
+        // Process form submission
+        $reservationId = $_POST['reservation_id'];
+        $referenceNumber = htmlspecialchars($_POST['reference_number']);
+        $dateOfPayment = htmlspecialchars($_POST['date_of_payment']);
+        $status = 'paid';
+
+        // Handle file upload
         $proofOfPayment = '';
         if (isset($_FILES['proof_of_payment']) && $_FILES['proof_of_payment']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/';
+            $uploadDir = '../images/';
             if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
+                mkdir($uploadDir, true);
             }
             
-            $fileName = uniqid() . '_' . basename($_FILES['proof_of_payment']['name']);
+            $fileName = basename($_FILES['proof_of_payment']['name']);
             $targetPath = $uploadDir . $fileName;
             
             if (move_uploaded_file($_FILES['proof_of_payment']['tmp_name'], $targetPath)) {
                 $proofOfPayment = $fileName;
-            } else {
-                throw new Exception("Failed to upload file.");
             }
         }
 
-        // Database insertion
-        $sql = "INSERT INTO payments (name, amount, payment_method, reference_number, date_of_payment, proof_of_payment, status) VALUES (?,?,?,?,?,?,?)";
+        // Get the payment method ID first
+        $methodSql = "SELECT res_method_id FROM reservations WHERE reservation_id = :resId";
+        $methodStmt = $connector->getConnection()->prepare($methodSql);
+        $methodStmt->execute([':resId' => $reservationId]);
+        $methodId = $methodStmt->fetchColumn();
+
+        // Get reservation and service details
+        $detailsSql = "SELECT r.name, s.services_price 
+                       FROM reservations r 
+                       JOIN services_tb s ON r.res_services_id = s.services_id 
+                       WHERE r.reservation_id = :resId";
+        $detailsStmt = $connector->getConnection()->prepare($detailsSql);
+        $detailsStmt->execute([':resId' => $reservationId]);
+        $details = $detailsStmt->fetch(PDO::FETCH_ASSOC);
+
+        // Insert payment record
+        $sql = "INSERT INTO payments (name, amount, reference_number, date_of_payment, 
+                proof_of_payment, status, pay_reservation_id, pay_method_id) 
+                VALUES (:name, :amount, :ref, :date, :proof, :status, :resId, :methodId)";
+        
         $stmt = $connector->getConnection()->prepare($sql);
+        $result = $stmt->execute([
+            ':name' => $details['name'],
+            ':amount' => $details['services_price'],
+            ':ref' => $referenceNumber,
+            ':date' => $dateOfPayment,
+            ':proof' => $proofOfPayment,
+            ':status' => $status,
+            ':resId' => $reservationId,
+            ':methodId' => $methodId
+        ]);
 
-        // Validate and sanitize inputs
-        $name = filter_var($_POST['name'] ?? '', FILTER_SANITIZE_STRING);
-        $amount = filter_var($_POST['amount'] ?? 0, FILTER_VALIDATE_FLOAT);
-        $paymentMethod = filter_var($_POST['payment_method'] ?? 'default_payment_method', FILTER_SANITIZE_STRING);
-        $referenceNumber = filter_var($_POST['reference_number'] ?? '', FILTER_SANITIZE_STRING);
-        $dateOfPayment = filter_var($_POST['date_of_payment'] ?? '', FILTER_SANITIZE_STRING);
-        $status = 'paid';
+        if ($result) {
+            // Update reservation status
+            $updateSql = "UPDATE reservations SET payment_status = 'paid' WHERE reservation_id = :id";
+            $updateStmt = $connector->getConnection()->prepare($updateSql);
+            $updateStmt->execute([':id' => $reservationId]);
 
-        // Bind parameters
-        $stmt->bindParam(1, $name, PDO::PARAM_STR);
-        $stmt->bindParam(2, $amount, PDO::PARAM_STR);
-        $stmt->bindParam(3, $paymentMethod, PDO::PARAM_STR);
-        $stmt->bindParam(4, $referenceNumber, PDO::PARAM_STR);
-        $stmt->bindParam(5, $dateOfPayment, PDO::PARAM_STR);
-        $stmt->bindParam(6, $proofOfPayment, PDO::PARAM_STR);
-        $stmt->bindParam(7, $status, PDO::PARAM_STR);
-
-        // Execute the statement
-        if ($stmt->execute()) {
-            echo "<script>
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Payment recorded successfully',
-                    icon: 'success'
-                });
-            </script>";
-            header('Location: home.php');
-        } else {
-            throw new Exception("Failed to insert payment record.");
+            header("Location: home.php");
+            exit;
         }
-
     } catch (Exception $e) {
         echo "<script>
             Swal.fire({
@@ -156,18 +189,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h2>💳 Payment Method</h2>
     <form method="post" action="" id="paymentForm" enctype="multipart/form-data" onsubmit="return confirmPayment(event)">
-        <div>
-            <label for="payment_method">Select Payment Method:</label>
-            <input type="text" name="payment_method" placeholder="Gcash">
-        </div>
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" name="name" placeholder="Your name">
-        </div>
-        <div>
-            <label for="amount">Amount:</label>
-            <input type="number" name="amount" placeholder="Enter amount" required>
-        </div>
+        <input type="hidden" name="reservation_id" value="<?php echo $_GET['reservation_id'] ?? $_POST['reservation_id'] ?? ''; ?>">
+        
+       
         <div>
             <label for="reference_number">Reference Number:</label>
             <input type="text" name="reference_number" placeholder="Enter reference number" required>

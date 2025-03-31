@@ -63,7 +63,33 @@
             exit();
         }
     }
-
+    if (isset($_GET['services_id'])) {
+        try {
+            $services_id = $_GET['services_id'];
+            
+            // Get the image filename first
+            $sql = "SELECT services_image FROM services_tb WHERE services_id = ?";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$services_id]);
+            $image = $stmt->fetchColumn();
+            
+            // Delete the image file if it exists
+            if ($image && file_exists("../images/" . $image)) {
+                unlink("../images/" . $image);
+            }
+            
+            // Delete the record
+            $sql = "DELETE FROM services_tb WHERE services_id = ?";
+            $stmt = $connector->getConnection()->prepare($sql);
+            $stmt->execute([$services_id]);
+            
+            // Redirect back to the same page
+            echo "<script>window.location.href = 'admin_rooms.php';</script>";
+            exit();
+        } catch (Exception $e) {
+            echo "<script>alert('Error deleting service: " . $e->getMessage() . "');</script>";
+        }
+    }
     // Fetch existing rooms
     $sql = "SELECT * FROM services_tb";
     $stmt = $connector->getConnection()->prepare($sql);
@@ -84,7 +110,7 @@
                     <h5 class="mb-0">Add New Room</h5>
                 </div>
                 <div class="card-body">
-                    <form action="../pages/admin_rooms.php?function=add_services&&sub_page=add_services" method="post" enctype="multipart/form-data">
+                    <form action="" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <input type="text" name="room_name" class="form-control" placeholder="Room Name" aria-label="Room Name" required>
                         </div>
@@ -131,6 +157,11 @@
                                             data-bs-toggle="modal" 
                                             data-bs-target="#editModal<?php echo $srvc['services_id']?>">
                                         Edit
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-danger" 
+                                            onclick="deleteService(<?php echo $srvc['services_id'] ?>)">
+                                        Delete
                                     </button>
                                 </div>
                             </div>
@@ -191,8 +222,15 @@
         </div>
     </div>
 </div>
-    </div>
-    <!-- Inner -->
-</div>
-
+<script>
+function deleteService(serviceId) {
+    if (confirm('Are you sure you want to delete this service?')) {
+        try {
+            window.location.href = 'admin_rooms.php?services_id=' + serviceId;
+        } catch (error) {
+            alert('Error deleting service: ' + error);
+        }
+    }
+}
+</script>
 <?php include 'nav/admin_footer.php'; ?>

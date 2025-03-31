@@ -88,7 +88,7 @@
             <h5 class="card-title mb-0">Add New Food</h5>
             </div>
             <div class="card-body">
-            <form action="../pages/admin_food.php" method="POST" enctype="multipart/form-data">
+            <form action="" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                     <input type="text" name="image_name" class="form-control" placeholder="Food Name" required>
                 </div>
@@ -113,21 +113,21 @@
                 <div class="row">
                     <?php foreach ($images as $img) : ?>
                     <div class="col-lg-4">
-                        <div class="card">
-                        <img src="../images/<?php echo $img['image_img']?>" 
-                             class="card-img-top" 
-                             style="width: 100%; height: 200px; object-fit: cover;" 
-                             alt="Food Image"/>
                         <div class="card-body">
-                            <h5 class="card-title"><?php echo $img['image_name']?></h5>
-                            <p class="card-text">₱<?= number_format($img['image_price'], 2) ?></p>
-                            <button type="button" 
-                                class="btn btn-primary" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#editModal<?php echo $img['image_id']?>">
-                            Edit
-                            </button>
-                        </div>
+                            <img src="../images/<?php echo $img['image_img']?>" 
+                                class="card-img-top" 
+                                style="width: 100%; height: 200px; object-fit: cover;" 
+                                alt="Food Image"/>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo $img['image_name']?></h5>
+                                <p class="card-text">₱<?= number_format($img['image_price'], 2) ?></p>
+                                <button type="button" 
+                                    class="btn btn-primary" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editModal<?php echo $img['image_id']?>">
+                                Edit
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -144,33 +144,33 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                            <form action="" method="POST" enctype="multipart/form-data">
-                                <input type="hidden" name="image_id" value="<?php echo $img['image_id']?>">
-                                <div class="mb-3">
-                                <label class="form-label">Food Name</label>
-                                <input type="text" class="form-control" name="image_name" 
-                                       value="<?php echo $img['image_name']?>">
-                                </div>
-                                <div class="mb-3">
-                                <label class="form-label">Price</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₱</span>
-                                    <input type="number" class="form-control" name="image_price" 
-                                       value="<?php echo $img['image_price']?>">
-                                </div>
-                                </div>
-                                <div class="mb-3">
-                                <label class="form-label">Current Image</label>
-                                <img src="../images/<?php echo $img['image_img']?>" 
-                                     class="img-fluid mb-2" 
-                                     style="max-height: 200px; width: 100%; object-fit: cover;">
-                                <input type="file" class="form-control" name="image_img">
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </div>
-                            </form>
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    <input type="hidden" name="image_id" value="<?php echo $img['image_id']?>">
+                                    <div class="mb-3">
+                                        <label class="form-label">Food Name</label>
+                                        <input type="text" class="form-control" name="image_name" 
+                                            value="<?php echo $img['image_name']?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₱</span>
+                                            <input type="number" class="form-control" name="image_price" 
+                                            value="<?php echo $img['image_price']?>">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                    <label class="form-label">Current Image</label>
+                                        <img src="../images/<?php echo $img['image_img']?>" 
+                                            class="img-fluid mb-2" 
+                                            style="max-height: 200px; width: 100%; object-fit: cover;">
+                                        <input type="file" class="form-control" name="image_img">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                         </div>

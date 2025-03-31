@@ -9,38 +9,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $start_date = date('Y-m-01', strtotime($selected_month));
     $end_date = date('Y-m-t', strtotime($selected_month));
 
-    // Get total bookings
-    $sql = "SELECT COUNT(*) as total FROM reservations 
-            WHERE DATE(checkin) BETWEEN ? AND ?";
+    // Get total checked out and paid bookings
+    $sql = "SELECT COUNT(*) as total FROM reservations r
+            LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+            WHERE r.status = 'checked out' 
+            AND p.status = 'paid'
+            AND DATE(r.checkin) BETWEEN ? AND ?";
     $result = $connector->executeQuery($sql, [$start_date, $end_date]);
     $row = $result->fetch(PDO::FETCH_ASSOC);
     $totalBookings = $row['total'];
 
-    // Get completed bookings
-    $sql = "SELECT COUNT(*) as completed FROM reservations 
-            WHERE status = 'approved' AND DATE(checkin) BETWEEN ? AND ?";
-    $result = $connector->executeQuery($sql, [$start_date, $end_date]);
-    $row = $result->fetch(PDO::FETCH_ASSOC);
-    $completedBookings = $row['completed'];
-
-    // Get total payments
-    $sql = "SELECT SUM(amount) as total_payments FROM payments 
-            WHERE DATE(date_of_payment) BETWEEN ? AND ?";
+    // Get total payments from paid bookings
+    $sql = "SELECT SUM(s.services_price) as total_payments 
+            FROM reservations r
+            LEFT JOIN services_tb s ON r.res_services_id = s.services_id
+            LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+            WHERE r.status = 'checked out' 
+            AND p.status = 'paid'
+            AND DATE(r.checkin) BETWEEN ? AND ?";
+    
+    // Update the detailed statistics query
+    $sql = "SELECT 
+                DATE(r.checkin) as date,
+                r.name as guest_name,
+                r.email,
+                r.phone,
+                DATE_FORMAT(r.checkin, '%M %d, %Y') as checkin_date,
+                DATE_FORMAT(r.checkout, '%M %d, %Y') as checkout_date,
+                TIME_FORMAT(t.time_in, '%h:%i %p') as time_in,
+                TIME_FORMAT(t.time_out, '%h:%i %p') as time_out,
+                s.services_name,
+                s.services_price,
+                p.amount as payment_amount,
+                p.status as payment_status
+            FROM reservations r
+            LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
+            LEFT JOIN services_tb s ON r.res_services_id = s.services_id
+            LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+            WHERE r.status = 'checked out' 
+            AND p.status = 'paid'
+            AND DATE(r.checkin) BETWEEN ? AND ?
+            ORDER BY r.checkin DESC";
     $result = $connector->executeQuery($sql, [$start_date, $end_date]);
     $row = $result->fetch(PDO::FETCH_ASSOC);
     $totalPayments = $row['total_payments'] ?: 0;
 
-    // Get daily statistics
+    // Get detailed daily statistics for checked out bookings
     $sql = "SELECT 
                 DATE(r.checkin) as date,
-                COUNT(r.reservation_id) as bookings,
-                SUM(CASE WHEN r.status = 'approved' THEN 1 ELSE 0 END) as completed,
-                COALESCE(SUM(p.amount), 0) as daily_payments
+                r.name as guest_name,
+                r.email,
+                r.phone,
+                DATE_FORMAT(r.checkin, '%M %d, %Y') as checkin_date,
+                DATE_FORMAT(r.checkout, '%M %d, %Y') as checkout_date,
+                TIME_FORMAT(t.time_in, '%h:%i %p') as time_in,
+                TIME_FORMAT(t.time_out, '%h:%i %p') as time_out,
+                s.services_name,
+                s.services_price,
+                p.amount as payment_amount
             FROM reservations r
-            LEFT JOIN payments p ON DATE(r.checkin) = DATE(p.date_of_payment)
-            WHERE DATE(r.checkin) BETWEEN ? AND ?
-            GROUP BY DATE(r.checkin)
-            ORDER BY date DESC";
+            LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
+            LEFT JOIN services_tb s ON r.res_services_id = s.services_id
+            LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+            WHERE r.status = 'checked out' 
+            AND DATE(r.checkin) BETWEEN ? AND ?
+            ORDER BY r.checkin DESC";
     $results = $connector->executeQuery($sql, [$start_date, $end_date])->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
@@ -119,6 +152,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     #reportResults.show {
         display: block;
     }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .stats-table, .stats-table * {
+            visibility: visible;
+        }
+        .stats-table {
+            position: absolute;
+            left: 27%;
+            top: 0;
+            transform: translateX(-50%);
+            margin: 0 auto;
+            width: 100%;
+        }
+        .print-button {
+            display: none;
+        }
+    }
 </style>
 
 <div class="dashboard-container">
@@ -126,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="date-selector">
             <form method="POST" id="reportForm" class="d-flex">
                 <input type="month" class="form-control" name="month_pick" 
-                       value="<?php echo date('Y-m'); ?>">
+                    value="<?php echo date('Y-m'); ?>">
                 <button type="submit" class="btn btn-primary ms-2">Generate</button>
             </form>
         </div>
@@ -135,15 +188,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="reportResults" <?php echo ($_SERVER["REQUEST_METHOD"] == "POST") ? 'class="show"' : ''; ?>>
         <div class="report-grid">
             <div class="report-card">
-                <h4>Total Bookings</h4>
+                <h4>Total Checked Out Bookings</h4>
                 <h2><?php echo isset($totalBookings) ? $totalBookings : 0; ?></h2>
             </div>
             <div class="report-card">
-                <h4>Completed Bookings</h4>
-                <h2><?php echo isset($completedBookings) ? $completedBookings : 0; ?></h2>
-            </div>
-            <div class="report-card">
-                <h4>Total Payments</h4>
+                <h4>Total Revenue</h4>
                 <h2>₱<?php echo number_format(isset($totalPayments) ? $totalPayments : 0, 2); ?></h2>
             </div>
         </div>
@@ -151,25 +200,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <table class="stats-table">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Bookings</th>
-                    <th>Completed</th>
-                    <th>Payments</th>
+                    <th>Guest Name</th>
+                    <th>Contact Info</th>
+                    <th>Check In</th>
+                    <th>Time In</th>
+                    <th>Check Out</th>
+                    <th>Time Out</th>
+                    <th>Service</th>
+                    <th>Amount Paid</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (isset($results) && !empty($results)): ?>
                     <?php foreach ($results as $row): ?>
                         <tr>
-                            <td><?php echo $row['date']; ?></td>
-                            <td><?php echo $row['bookings']; ?></td>
-                            <td><?php echo $row['completed']; ?></td>
-                            <td>₱<?php echo number_format($row['daily_payments'], 2); ?></td>
+                            <td><?php echo $row['guest_name']; ?></td>
+                            <td>
+                                Email: <?php echo $row['email']; ?><br>
+                                Phone: <?php echo $row['phone']; ?>
+                            </td>
+                            <td><?php echo $row['checkin_date']; ?></td>
+                            <td><?php echo $row['time_in'] ?? 'Not recorded'; ?></td>
+                            <td><?php echo $row['checkout_date']; ?></td>
+                            <td><?php echo $row['time_out'] ?? 'Not recorded'; ?></td>
+                            <td>
+                                <?php echo $row['services_name']; ?><br>
+                                ₱<?php echo number_format($row['services_price'], 2); ?>
+                            </td>
+                            <td>₱<?php echo number_format($row['payment_amount'], 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="4" class="text-center">No data available</td>
+                        <td colspan="8" class="text-center">No checked out bookings for this period</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
@@ -200,3 +263,17 @@ document.getElementById('reportForm').addEventListener('submit', function(e) {
     document.body.appendChild(loadingOverlay);
 });
 </script>
+
+// Update the report card titles
+```php:d%3A%5Cxampp%5Chtdocs%5Cnew_casa%5Cviews%5Cadmin_reports.php
+<div class="report-grid">
+    <div class="report-card">
+        <h4>Total Paid Bookings</h4>
+        <h2><?php echo isset($totalBookings) ? $totalBookings : 0; ?></h2>
+    </div>
+    <div class="report-card">
+        <h4>Total Revenue from Paid Bookings</h4>
+        <h2>₱<?php echo number_format(isset($totalPayments) ? $totalPayments : 0, 2); ?></h2>
+    </div>
+</div>
+```

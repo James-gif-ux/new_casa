@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'approve') {
         $status = 'Approved';
     } else {
-        $status = $action === 'checkin' ? 'Checked In' : 'Checked Out';
+        $status = $action === 'checkin' ? 'Checked In' : 'Cancelled';
     }
     
     try {

@@ -10,7 +10,7 @@
     // Get specific service based on URL parameter
     if (isset($_GET['service_id'])) {
         $service_id = $_GET['service_id'];
-        $sql = "SELECT * FROM services_tb WHERE services_id = :service_id";
+        $sql = "SELECT s.* FROM services_tb s WHERE s.services_id = :service_id";
         $stmt = $connector->getConnection()->prepare($sql);
         $stmt->execute([':service_id' => $service_id]);
         $service = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -40,32 +40,73 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             $connector = new Connector();
+            $pdo = $connector->getConnection();
             
-            // Updated SQL to include res_services_id
-            $sql = "INSERT INTO reservations (name, email, phone, checkin, checkout, message, status, res_services_id) 
-                    VALUES (:name, :email, :phone, :checkin, :checkout, :message, 'pending', :service_id)";
+            // Start transaction
+            $pdo->beginTransaction();
             
-            $stmt = $connector->getConnection()->prepare($sql);
-            $result = $stmt->execute([
-                ':name' => $_POST['name'],
-                ':email' => $_POST['email'],
-                ':phone' => $_POST['phone'],
-                ':checkin' => $_POST['checkin'],
-                ':checkout' => $_POST['checkout'],
-                ':message' => $_POST['message'],
-                ':service_id' => $_POST['service_id'] // This gets the hidden service_id field value
-            ]);
+            try {
+                // Get payment method ID if exists
+                $checkSql = "SELECT method_id FROM pay_method WHERE payment_method = :payment_method";
+                $checkStmt = $pdo->prepare($checkSql);
+                $checkStmt->execute([':payment_method' => $_POST['payment_method']]);
+                $methodId = $checkStmt->fetchColumn();
 
-            if ($result) {
-                echo "<script>alert('Reservation submitted successfully!');</script>";
-                header('location:number.php');
+                // If payment method doesn't exist, insert it
+                if (!$methodId) {
+                    $paymentMethodSql = "INSERT INTO pay_method (payment_method) VALUES (:payment_method)";
+                    $paymentStmt = $pdo->prepare($paymentMethodSql);
+                    $paymentStmt->execute([':payment_method' => $_POST['payment_method']]);
+                    $methodId = $pdo->lastInsertId();
+                }
+
+                // Insert into reservations table
+                $sql = "INSERT INTO reservations (name, email, phone, checkin, checkout, message, status, res_services_id, res_method_id, payment_status) 
+                        VALUES (:name, :email, :phone, :checkin, :checkout, :message, 'pending', :service_id, :method_id, 'unpaid')";
+                
+                $stmt = $pdo->prepare($sql);
+                $result = $stmt->execute([
+                    ':name' => $_POST['name'],
+                    ':email' => $_POST['email'],
+                    ':phone' => $_POST['phone'],
+                    ':checkin' => $_POST['checkin'],
+                    ':checkout' => $_POST['checkout'],
+                    ':message' => $_POST['message'],
+                    ':service_id' => $_POST['service_id'],
+                    ':method_id' => $methodId
+                ]);
+
+                // Get the last inserted reservation ID
+                $reservationId = $pdo->lastInsertId();
+
+                // If everything is successful, commit the transaction
+                $pdo->commit();
+
+                // Store reservation data in session for process.php
+                $_SESSION['reservation_data'] = [
+                    'name' => $_POST['name'],
+                    'service_id' => $_POST['service_id'],
+                    'method_id' => $methodId,
+                    'reservation_id' => $reservationId
+                ];
+
+                // Redirect based on payment method
+                if ($_POST['payment_method'] === 'gcash') {
+                    header('location: process.php?reservation_id=' . $reservationId);
+                } else {
+                    echo "<script>alert('Reservation submitted successfully!');</script>";
+                    header('location: number.php');
+                }
                 exit();
-            } else {
-                echo "<script>alert('Error submitting reservation.');</script>";
+                
+            } catch (Exception $e) {
+                // If there's an error, rollback the changes
+                $pdo->rollBack();
+                throw $e;
             }
             
         } catch (PDOException $e) {
-            echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+            echo "<script>alert('Error: " . addslashes($e->getMessage()) . "');</script>";
         }
     }
     ?>   
@@ -131,8 +172,8 @@
 
                                 <div>
                                     <div class="form-group">
-                                        <label for="payment">Payment Method:</label>
-                                        <select id="payment" name="payment" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Poppins', sans-serif; margin-bottom: 15px;">
+                                        <label for="payment_method">Payment Method:</label>
+                                        <select id="payment_method" name="payment_method" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Poppins', sans-serif; margin-bottom: 15px;">
                                             <option value="">Select Payment Method</option>
                                             <option value="gcash">GCash</option>
                                             <option value="cash">Cash</option>

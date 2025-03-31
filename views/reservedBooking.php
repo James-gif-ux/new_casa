@@ -4,13 +4,27 @@ $connector = new Connector();
 // At the top of the file, update the reservation fetch
 
 $sql = "SELECT r.reservation_id, r.name, r.email, r.phone, r.checkin, r.checkout, 
-               r.status, r.res_services_id, r.message, s.services_price, s.services_name 
+               r.status, r.res_services_id, r.message, s.services_price, s.services_name,
+               t.time_in, t.time_out
         FROM reservations r
         LEFT JOIN services_tb s ON r.res_services_id = s.services_id 
+        LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
         WHERE r.status IN ('pending', 'cancelled')";
 $stmt = $connector->getConnection()->prepare($sql);  
 $stmt->execute();
 $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$sql ="INSERT INTO time_tb (time_in, time_out, time_reservation_id) VALUES (?, ?, ?)";
+$stmt = $connector->getConnection()->prepare($sql);
+// Validate and sanitize inputs
+$timeIn = isset($_POST['time_in']) ? $_POST['time_in'] : '';
+$timeOut = isset($_POST['time_out'])? $_POST['time_out'] : '';
+if (!empty($timeIn) && !empty($timeOut)) {
+    $stmt->bindParam(1, $timeIn, PDO::PARAM_STR);
+    $stmt->bindParam(2, $timeOut, PDO::PARAM_STR);
+    $stmt->bindParam(3, $reservationId, PDO::PARAM_INT);
+    $stmt->execute();
+}
 
 include 'nav/admin_sidebar.php'; 
 ?>
