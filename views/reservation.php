@@ -75,7 +75,7 @@
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Reservred Booking</title>
+                <title>RESERVATION</title>
                 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@500&display=swap" rel="stylesheet">
                 <link rel="stylesheet" href="../assets/css/reservation.css">
             </head>
@@ -93,7 +93,7 @@
                 <!-- Reservation Form Section -->
                 <div class="reservation-container">
                     <div class="right-section">
-                        <h2>Make a Reservation</h2>
+                        <h3>Make a Reservation</h3>
                         <form method="POST" action="" class="reservation-form">
                             <div class="form-group">
                                 <label for="name">Full Name:</label>
@@ -124,18 +124,30 @@
 
                                 <div class="form-group">
                                     <label for="message">Special Requests:</label>
-                                    <textarea id="message" name="message" rows="4"></textarea>
+                                    <textarea id="message" name="message" rows="2"></textarea>
                                 </div>
 
                                 <input type="hidden" name="service_id" value="<?= htmlspecialchars($service_id) ?>">
 
+                                <div>
+                                    <div class="form-group">
+                                        <label for="payment">Payment Method:</label>
+                                        <select id="payment" name="payment" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Poppins', sans-serif; margin-bottom: 15px;">
+                                            <option value="">Select Payment Method</option>
+                                            <option value="gcash">GCash</option>
+                                            <option value="cash">Cash</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div style="display: flex; gap: 10px; justify-content: space-between;">
-                                    <button type="submit" class="submit-btn" style="width: 48%;">Make Reservation</button>
                                     <button type="button" onclick="window.location.href='roombooking.php'" 
-                                        class="submit-btn" 
-                                        style="width: 48%; background-color: #8B7355;">
-                                        Cancel
+                                            class="submit-btn" 
+                                            style="width: 48%; background-color:rgb(201, 174, 141);">
+                                            Cancel
                                     </button>
+                                    <button type="submit" class="submit-btn" style="width: 48%;">Make Reservation</button>
+                                   
                                 </div>
                             </form>
                         </div>

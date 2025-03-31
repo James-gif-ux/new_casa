@@ -111,6 +111,13 @@
                             <div class="about-video">
                                 <div class="about-video-img" style="background-image: url(../assets/images/abouts.jpg);">
                                 </div>
+                                <div class="play-btn-wp">
+                                    <a href="../images/casa.mp4" data-fancybox="video" class="play-btn">
+                                        <i class="uil uil-play"></i>
+
+                                    </a>
+                                    <span>Casa Marcos View</span>
+                                </div>
                             </div>
                         </div>
                     </div>

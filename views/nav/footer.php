@@ -11,7 +11,7 @@
                                                 <img src="logo.png" alt="">
                                             </a>
                                         </div>
-                                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Mollitia, tenetur.
+                                        Welcome to Casa Marcos. Visit us for authentic Mexican flavors in a cozy atmosphere.
                                         </p>
                                         <div class="social-icon">
                                             <ul>
@@ -23,11 +23,6 @@
                                                 <li>
                                                     <a href="https://www.instagram.com/">
                                                         <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="https://github.com/James-gif-ux/new_casa">
-                                                        <i class="uil uil-github-alt"></i>
                                                     </a>
                                                 </li>
                                                 <li>
