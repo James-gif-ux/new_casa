@@ -38,11 +38,12 @@ $messages = $connector->executeQuery($sql);
 <html>
 <head>
     <title>Messages</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .chat-container {
+            margin: 20px;
             margin-top: 100px;
             max-width: 1585px;
-            margin-left: 30px;
             background: white;
             border-radius: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
@@ -52,138 +53,136 @@ $messages = $connector->executeQuery($sql);
         }
 
         .message-list {
-            width: 400px;
+            width: 350px;
             border-right: 1px solid #e0e0e0;
             overflow-y: auto;
-            background: #f8f9fa;
-            border-top-left-radius: 25px;
-            border-bottom-left-radius: 25px;
+            background: #ffffff;
             height: 100%;
-            padding: 20px;
+            padding-top: 20px;
         }
 
         .message-preview {
-            padding: 2px;
-            border: 1px solid #e0e0e0;
+            padding: 15px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            background: white;
-            position: relative;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .message-preview:hover {
-            background: #f5f5f5;
-            transform: translateX(5px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #f8f9fa;
         }
 
         .message-preview.unread {
+            background: #f0f7ff;
+        }
+
+        .message-preview.active {
             background: #e3f2fd;
-            border-left: 4px solid #1976d2;
         }
 
-        .message-preview.read {
-            opacity: 0.8;
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #e1e1e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            flex-shrink: 0;
         }
 
-        .message-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            background: #fff;
-            border-top-right-radius: 25px;
-            border-bottom-right-radius: 25px;
+        .message-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
         }
 
         .sender-info {
-            font-size: 14px;
-            color: #1976d2;
-            margin-bottom: 8px;
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #95a5a6;
+            flex-shrink: 0;
+        }
+
+        .message-preview-content {
             display: flex;
             align-items: center;
-            font-weight: 600;
+            gap: 5px;
         }
 
         .message-subject {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #263238;
-            font-size: 16px;
+            font-weight: 500;
+            color: #34495e;
+            font-size: 14px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .message-text {
-            color: #546e7a;
-            font-size: 14px;
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            color: #7f8c8d;
+            font-size: 13px;
+            white-space: nowrap;
             overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .message-time {
-            font-size: 12px;
-            color: #78909c;
-            position: absolute;
-            top: 15px;
-            right: 15px;
-        }
-
-        .message-status {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
+            text-overflow: ellipsis;
         }
 
         .status-indicator {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            margin-right: 5px;
+            margin-left: auto;
+            flex-shrink: 0;
         }
 
-        .status-new {
-            background: #4caf50;
-        }
+        .status-new { background: #2ecc71; }
+        .status-unread { background: #3498db; }
+        .status-read { background: #bdc3c7; }
 
-        .status-unread {
-            background: #1976d2;
-        }
-
-        .status-read {
-            background: #9e9e9e;
+        .message-content {
+            flex: 1;
+            padding: 30px;
+            padding-top: 40px;
+            overflow-y: auto;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
         }
 
         .reply-form {
-            margin-top: 30px;
-            background: #f8f9fa;
-            border-radius: 15px;
+            margin-top: auto;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-top: 1px solid #f0f0f0;
+            background: #ffffff;
         }
 
         .reply-form textarea {
             width: 100%;
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             resize: none;
             margin-bottom: 15px;
             font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .reply-form textarea:focus {
-            outline: none;
-            border-color: #1976d2;
-            box-shadow: 0 0 0 3px rgba(25,118,210,0.1);
         }
 
         .button-group {
@@ -192,30 +191,94 @@ $messages = $connector->executeQuery($sql);
         }
 
         .reply-btn, .delete-btn {
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.3s ease;
             border: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .reply-btn {
-            background: #1976d2;
+            background: #3498db;
             color: white;
         }
 
         .delete-btn {
-            background: #ef5350;
+            background: #e74c3c;
             color: white;
         }
 
-        .reply-btn:hover, .delete-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .chat-container {
+                margin: 10px;
+                margin-top: 90px;
+                height: calc(100vh - 100px);
+            }
+
+            .message-list {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+                height: calc(100vh - 80px);
+                margin-top: 80px;
+            }
+
+            .message-list {
+                width: 100%;
+                height: 40%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .message-content {
+                height: 60%;
+                padding: 15px;
+                padding-top: 25px;
+            }
+
+            .reply-form {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                margin: 5px;
+                margin-top: 70px;
+                border-radius: 15px;
+            }
+
+            .message-preview {
+                padding: 10px;
+            }
+
+            .avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 12px;
+            }
+
+            .sender-info {
+                font-size: 13px;
+            }
+
+            .message-subject {
+                font-size: 12px;
+            }
+
+            .message-text {
+                font-size: 11px;
+            }
+
+            .reply-btn, .delete-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -234,24 +297,22 @@ $messages = $connector->executeQuery($sql);
                     '<?php echo htmlspecialchars($message['message_content']); ?>', 
                     '<?php echo isset($message['reply_content']) ? htmlspecialchars($message['reply_content']) : ''; ?>'
                 )">
-                <div class="message-time"><?php echo date('M d, H:i', strtotime($message['date_sent'])); ?></div>
-                <div class="sender-info">
-                    <span class="status-indicator <?php 
-                        echo ($message['is_new'] == 1) ? 'status-new' : 
-                            (($message['status'] === 0) ? 'status-unread' : 'status-read'); 
-                    ?>"></span>
-                    <?php echo htmlspecialchars($message['recipient_email']); ?>
+                <div class="avatar">
+                    <?php echo strtoupper(substr($message['recipient_email'], 0, 2)); ?>
                 </div>
-                <div class="message-subject"><?php echo htmlspecialchars($message['subject']); ?></div>
-                <div class="message-text"><?php echo substr(htmlspecialchars($message['message_content']), 0, 100) . '...'; ?></div>
-                <div class="message-status">
-                    <?php if ($message['is_new'] == 1): ?>
-                        <span style="color: #4caf50;">New</span>
-                    <?php elseif ($message['status'] === 0): ?>
-                        <span style="color: #1976d2;">Unread</span>
-                    <?php else: ?>
-                        <span style="color: #9e9e9e;">Read</span>
-                    <?php endif; ?>
+                <div class="message-info">
+                    <div class="message-header">
+                        <div class="sender-info"><?php echo htmlspecialchars($message['recipient_email']); ?></div>
+                        <div class="message-time"><?php echo date('M d, H:i', strtotime($message['date_sent'])); ?></div>
+                    </div>
+                    <div class="message-preview-content">
+                        <div class="message-subject"><?php echo htmlspecialchars($message['subject']); ?></div>
+                        <span class="status-indicator <?php 
+                            echo ($message['is_new'] == 1) ? 'status-new' : 
+                                (($message['status'] === 0) ? 'status-unread' : 'status-read'); 
+                        ?>"></span>
+                    </div>
+                    <div class="message-text"><?php echo substr(htmlspecialchars($message['message_content']), 0, 50) . '...'; ?></div>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -261,7 +322,7 @@ $messages = $connector->executeQuery($sql);
             <h2>Select a message to view</h2>
         </div>
     </div>
-</div>>
+</div>
 
     <script>
     // Update the showMessage function
