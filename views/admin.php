@@ -1,7 +1,24 @@
 
 <?php
   include 'nav/admin_sidebar.php';
-  
+  require_once '../model/server.php';
+$connector = new Connector();
+// Get booking statistics
+$bookingStats = "SELECT 
+    COUNT(*) as total_reservations,
+    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_bookings,
+    SUM(CASE WHEN status = 'checked in' THEN 1 ELSE 0 END) as checkedin,
+    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
+    FROM reservations";
+
+try {
+    $statsStmt = $connector->getConnection()->prepare($bookingStats);
+    $statsStmt->execute();
+    $stats = $statsStmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Booking statistics error: " . $e->getMessage());
+    $stats = ['total_reservations' => 0, 'approved_bookings' => 0, 'checkedin' => 0, 'pending' => 0];
+}
 ?>
 
         <div class="container">
@@ -11,7 +28,7 @@
             </div>
             <div class="row">
               <div class="col-sm-6 col-md-3">
-              <a href="customers.php" class="text-decoration-none">
+              <a  class="text-decoration-none">
                 <div class="card card-stats card-round">
                 <div class="card-body">
                   <div class="row align-items-center">
@@ -23,7 +40,7 @@
                   <div class="col col-stats ms-3 ms-sm-0">
                     <div class="numbers">
                     <p class="card-category">Customers</p>
-                    <h4 class="card-title">0</h4>
+                    <h4 class="card-title"><?php echo $stats['total_reservations']; ?></h4>
                     </div>
                   </div>
                   </div>
@@ -44,7 +61,7 @@
                   <div class="col col-stats ms-3 ms-sm-0">
                     <div class="numbers">
                     <p class="card-category">Total Bookings</p>
-                    <h4 class="card-title">0</h4>
+                    <h4 class="card-title"><?php echo $stats['approved_bookings']; ?></h4>
                     </div>
                   </div>
                   </div>
@@ -65,7 +82,7 @@
                   <div class="col col-stats ms-3 ms-sm-0">
                     <div class="numbers">
                     <p class="card-category">Pending Bookings</p>
-                    <h4 class="card-title">0</h4>
+                    <h4 class="card-title"><?php echo $stats['pending']; ?></h4>
                     </div>
                   </div>
                   </div>
@@ -74,7 +91,7 @@
               </a>
               </div>
               <div class="col-sm-6 col-md-3">
-              <a href="checkin.php" class="text-decoration-none">
+              <a href="../pages/admin.php?sub_page=admin_booking" class="text-decoration-none">
                 <div class="card card-stats card-round">
                 <div class="card-body">
                   <div class="row align-items-center">
@@ -86,7 +103,7 @@
                   <div class="col col-stats ms-3 ms-sm-0">
                     <div class="numbers">
                     <p class="card-category">Check in</p>
-                    <h4 class="card-title">0</h4>
+                    <h4 class="card-title"><?php echo $stats['checkedin']; ?></h4>
                     </div>
                   </div>
                   </div>
@@ -95,84 +112,132 @@
               </a>
               </div>
             </div>
-<div class="row">
-  <!-- Booking Statistics Card -->
-  <div class="col-md-8">
-    <div class="card card-round shadow-lg hover-shadow-xl transition-shadow">
-      <div class="card-header bg-gradient-to-r from-blue-500 to-blue-700 text-black">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="card-title h5">
-            <i class="fas fa-chart-line me-2"></i>Booking Trends
-          </div>
-          <div class="dropdown">
-            <button class="btn btn-link text-black" type="button" id="timeRangeDropdown" data-bs-toggle="dropdown">
-              <i class="fas fa-calendar-alt"></i>
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
-              <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
-              <li><a class="dropdown-item" href="#">This Year</a></li>
-            </ul>
+<?php
+require_once '../model/server.php';
+$connector = new Connector();
+// Get booking statistics
+$bookingStats = "SELECT 
+    COUNT(*) as total_reservations,
+    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_bookings,
+    SUM(CASE WHEN status = 'checked in' THEN 1 ELSE 0 END) as checkedin
+    FROM reservations";
+
+try {
+    $statsStmt = $connector->getConnection()->prepare($bookingStats);
+    $statsStmt->execute();
+    $stats = $statsStmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Booking statistics error: " . $e->getMessage());
+    $stats = ['total_reservations' => 0, 'approved_bookings' => 0, 'checkedin' => 0];
+}
+?>
+
+<div class="container-fluid px-4">
+  <div class="row g-4">
+    <!-- Booking Statistics Card -->
+    <div class="col-lg-7">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary bg-gradient text-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-chart-line me-2"></i>Booking Statistics
+            </h5>
           </div>
         </div>
-      </div>
-      <div class="card-body">
-        <div class="chart-container" style="min-height: 400px; padding: 20px;">
-          <canvas id="bookingStatsChart"></canvas>
+        <div class="card-body p-4">
+          <div class="chart-container" style="height: 400px;">
+            <canvas id="bookingStatsChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Revenue Analytics Card -->
-  <div class="col-md-4">
-    <div class="card card-round shadow-lg hover-shadow-xl transition-shadow">
-      <div class="card-header bg-gradient-to-r from-green-500 to-green-700 text-white p-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <div class="card-title h4 mb-0">
-            <i class="fas fa-hotel me-2"></i>Accommodation Revenue
+
+    <!-- Revenue Analytics Card -->
+    <div class="col-lg-5">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-success bg-gradient text-white py-3">
+          <?php
+            require_once '../model/server.php';
+            $connector = new Connector();
+
+            $sql = "SELECT 
+                      SUM(p.amount) as total_revenue,
+                      (SELECT SUM(amount) 
+                       FROM payments 
+                       WHERE MONTH(date_of_payment) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+                      ) as last_month_revenue
+                    FROM payments p
+                    JOIN reservations r ON p.pay_reservation_id = r.reservation_id
+                    WHERE r.payment_status IN ('paid', 'partially_paid')";
+            
+            try {
+                $stmt = $connector->getConnection()->prepare($sql);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $totalRevenue = $result['total_revenue'] ?? 0;
+                $lastMonthRevenue = $result['last_month_revenue'] ?? 0;
+                
+                $percentChange = 0;
+                if ($lastMonthRevenue > 0) {
+                    $percentChange = (($totalRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100;
+                }
+            } catch (PDOException $e) {
+                error_log("Revenue calculation error: " . $e->getMessage());
+                $totalRevenue = 0;
+                $percentChange = 0;
+            }
+          ?>
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-hotel me-2"></i>Accommodation Revenue
+            </h5>
+            <span class="badge bg-white text-<?php echo $percentChange >= 0 ? 'success' : 'danger'; ?>">
+              <?php echo ($percentChange >= 0 ? '+' : '') . number_format($percentChange, 1); ?>%
+            </span>
           </div>
-          <span class="badge bg-white text-success px-3 py-2">+12.5%</span>
+          <div class="text-white-50 small">Monthly Performance</div>
         </div>
-        <div class="card-category text-white-50 fs-6">Monthly Performance</div>
-      </div>
-      <div class="card-body p-4">
-        <div class="mb-4 mt-2 text-center">
-          <div class="revenue-icon mb-3">
-            <i class="fas fa-coins text-success" style="font-size: 2.5rem;"></i>
+
+        <div class="card-body p-4">
+          <div class="text-center mb-4">
+            <div class="mb-3">
+              <i class="fas fa-coins text-success" style="font-size: 2rem;"></i>
+            </div>
+            <h6 class="text-muted">Total Revenue</h6>
+            <h3 class="text-success fw-bold">₱<?php echo number_format($totalRevenue, 2); ?></h3>
+            <div class="d-flex justify-content-center align-items-center small">
+              <i class="fas fa-<?php echo $percentChange >= 0 ? 'arrow-up text-success' : 'arrow-down text-danger'; ?> me-2"></i>
+              <span class="text-<?php echo $percentChange >= 0 ? 'success' : 'danger'; ?> fw-bold">
+                <?php echo ($percentChange >= 0 ? '+' : '') . number_format($percentChange, 1); ?>%
+              </span> 
+              <span class="text-muted ms-1">vs last month</span>
+            </div>
           </div>
-          <h5 class="text-muted mb-3">Total Revenue</h5>
-          <h2 class="display-4 text-success fw-bold mb-2">₱45,000.00</h2>
-          <div class="d-flex justify-content-center align-items-center">
-            <i class="fas fa-arrow-up text-success me-2"></i>
-            <p class="text-muted mb-0">
-              <span class="text-success fw-bold">+12.5%</span> vs last month
-            </p>
+          
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="revenueChart"></canvas>
           </div>
-        </div>
-        <div class="revenue-chart-container" style="height: 200px;">
-          <canvas id="revenueChart"></canvas>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Include required libraries -->
+<!-- Charts Dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/luxon"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 
 <script>
   <?php
-    // Get your data from database here
     $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
-    $customers = [65, 59, 80, 81, 56, 55, 40]; // Replace with actual customer data
-    $bookings = [28, 48, 40, 19, 86, 27, 90];  // Replace with actual booking data
-    $checkin = [20, 35, 30, 15, 70, 25, 80];  // Replace with actual check-in data
+    $customers = [65, 59, 80, 81, 56, 55, 40];
+    $bookings = [28, 48, 40, 19, 86, 27, 90];
+    $checkin = [20, 35, 30, 15, 70, 25, 80];
   ?>
 
-  // Booking Statistics Chart - Line Chart
+  // Booking Statistics Chart
   new Chart(document.getElementById('bookingStatsChart'), {
     type: 'line',
     data: {
@@ -211,21 +276,15 @@
         legend: {
           position: 'top',
           labels: {
-            padding: 20,
-            font: {
-              size: 12
-            }
+            padding: 15,
+            font: { size: 11 }
           }
         },
         tooltip: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          padding: 12,
-          titleFont: {
-            size: 14
-          },
-          bodyFont: {
-            size: 13
-          }
+          padding: 10,
+          titleFont: { size: 13 },
+          bodyFont: { size: 12 }
         }
       },
       scales: {
@@ -237,15 +296,13 @@
           }
         },
         x: {
-          grid: {
-            display: false
-          }
+          grid: { display: false }
         }
       }
     }
   });
 
-  // Revenue Chart - Monthly Accommodation Revenue
+  // Revenue Chart
   new Chart(document.getElementById('revenueChart'), {
     type: 'line',
     data: {
@@ -257,7 +314,7 @@
         borderColor: 'rgba(46, 184, 92, 1)',
         backgroundColor: 'rgba(46, 184, 92, 0.2)',
         tension: 0.4,
-        pointRadius: 4,
+        pointRadius: 3,
         pointBackgroundColor: 'rgba(46, 184, 92, 1)',
         pointBorderColor: '#ffffff',
         pointBorderWidth: 2
@@ -267,19 +324,12 @@
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false
-        },
+        legend: { display: false },
         tooltip: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          titleFont: {
-            size: 14,
-            weight: 'bold'
-          },
-          bodyFont: {
-            size: 13
-          },
-          padding: 15,
+          titleFont: { size: 13, weight: 'bold' },
+          bodyFont: { size: 12 },
+          padding: 12,
           callbacks: {
             label: function(context) {
               return `Revenue: ₱${context.raw.toLocaleString()}`;
@@ -295,22 +345,16 @@
             color: 'rgba(0, 0, 0, 0.1)'
           },
           ticks: {
-            font: {
-              size: 11
-            },
+            font: { size: 10 },
             callback: function(value) {
               return '₱' + (value/1000) + 'k';
             }
           }
         },
         x: {
-          grid: {
-            display: false
-          },
+          grid: { display: false },
           ticks: {
-            font: {
-              size: 11
-            }
+            font: { size: 10 }
           }
         }
       }
