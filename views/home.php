@@ -73,7 +73,7 @@
                                        We look forward to exceeding your expectations!
                                     </p>
                                     <div class="banner-btn mt-4">
-                                        <a href="roombooking.php" class="sec-btn">Book Now</a>
+                                        <a href="roombooking.php" class="sec-btn">Reserve Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -87,6 +87,72 @@
                     </div>
                 </div>
             </section>
+
+            <div class="container" style="margin-bottom: 40px;">
+                <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
+                    <form method="post" class="booking-form">
+                        <div class="row justify-content-center">
+                            <div class="col-md-3 mb-3">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Check In</label>
+                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
+                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        <input type="date" name="checkin" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Check Out</label>
+                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
+                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        <input type="date" name="checkout" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Guests</label>
+                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
+                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <select name="guests" class="form-select" required>
+                                            <?php for($i = 1; $i <= 10; $i++): ?>
+                                                <option value="<?php echo $i; ?>"><?php echo $i; ?> Person<?php echo $i > 1 ? 's' : ''; ?></option>
+                                            <?php endfor; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Room Type</label>
+                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
+                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="fas fa-bed"></i></span>
+                                        <select name="room_type" class="form-select" required>
+                                            <option value="">Select Room</option>
+                                            <option value="standard">Standard</option>
+                                            <option value="deluxe">Deluxe</option>
+                                            <option value="suite">Suite</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary w-100" style="height: 38px;">
+                                        Check Availability
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
 
             <section class="about-sec section" id="about">
