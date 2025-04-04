@@ -1,102 +1,92 @@
  <!-- footer starts  -->
- <footer class="site-footer" id="contact">
-                <div class="top-footer section">
-                    <div class="sec-wp">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <div class="footer-info">
-                                        <div class="footer-logo">
-                                            <a href="index.html">
-                                                <img src="logo.png" alt="">
-                                            </a>
-                                        </div>
-                                        Welcome to Casa Marcos. Visit us for authentic Mexican flavors in a cozy atmosphere.
-                                        </p>
-                                        <div class="social-icon">
-                                            <ul>
-                                                <li>
-                                                    <a href="https://www.facebook.com/">
-                                                        <i class="uil uil-facebook-f"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="https://www.instagram.com/">
-                                                        <i class="uil uil-instagram"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="https://www.youtube.com/">
-                                                        <i class="uil uil-youtube"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-8">
-                                    <div class="footer-flex-box">
-                                        <div class="footer-table-info">
-                                            <h3 class="h3-title">open hours</h3>
-                                            <ul>
-                                                <li><i class="uil uil-clock"></i> Mon-Thurs : 9am - 22pm</li>
-                                                <li><i class="uil uil-clock"></i> Fri-Sun : 11am - 22pm</li>
-                                            </ul>
-                                        </div>
-                                        <div class="footer-menu food-nav-menu">
-                                            <h3 class="h3-title">Links</h3>
-                                            <ul class="column-2">
-                                                <?php 
-                                                $current_page = basename($_SERVER['PHP_SELF']);
-                                                $menu_items = [
-                                                    'home.php' => 'Home',
-                                                    'about.php' => 'About',
-                                                    'menu.php' => 'Food Menu',
-                                                    'rooms.php' => 'Our Rooms',
-                                                    'contact.php' => 'Contact'
-                                                ];
-                                                
-                                                foreach ($menu_items as $page => $label) {
-                                                    $active_class = ($current_page === $page) ? 'footer-active-menu' : '';
-                                                    echo "<li><a href=\"$page\" class=\"$active_class\">$label</a></li>";
-                                                }
-                                                ?>
-                                            </ul>
-                                        </div>
-                                        <div class="footer-menu">
-                                            <h3 class="h3-title">Company</h3>
-                                            <ul>
-                                                <li><a href="#">Terms & Conditions</a></li>
-                                                <li><a href="#">Privacy Policy</a></li>
-                                                <li><a href="#">Cookie Policy</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+<footer class="site-footer" id="contact" style="display: flex; flex-direction: column; justify-content: center;">
+    <div class="top-footer section">
+        <div class="sec-wp">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-4">
+                        <div class="footer-info text-center">
+                            <div class="footer-logo">
+                                <a href="index.html">
+                                    <img src="logo.png" alt="">
+                                </a>
+                            </div>
+                            Welcome to Casa Marcos. Visit us for authentic Mexican flavors in a cozy atmosphere.
+                            </p>
+                            <div class="social-icon">
+                                <ul class="d-flex justify-content-center">
+                                    <li>
+                                        <a href="https://www.facebook.com/">
+                                            <i class="uil uil-facebook-f"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.instagram.com/">
+                                            <i class="uil uil-instagram"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.youtube.com/">
+                                            <i class="uil uil-youtube"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="footer-flex-box d-flex justify-content-center">
+                            <div class="footer-table-info text-center mx-4">
+                                <h3 class="h3-title">open hours</h3>
+                                <ul>
+                                    <li><i class="uil uil-clock"></i> Mon-Thurs : 9am - 22pm</li>
+                                    <li><i class="uil uil-clock"></i> Fri-Sun : 11am - 22pm</li>
+                                </ul>
+                            </div>
+                            <div class="footer-menu food-nav-menu text-center mx-4">
+                                <h3 class="h3-title">Links</h3>
+                                <ul class="column-2">
+                                    <?php 
+                                    $current_page = basename($_SERVER['PHP_SELF']);
+                                    $menu_items = [
+                                        'home.php' => 'Home',
+                                        'about.php' => 'About',
+                                        'menu.php' => 'Food Menu',
+                                        'rooms.php' => 'Our Rooms',
+                                        'contact.php' => 'Contact'
+                                    ];
+                                    
+                                    foreach ($menu_items as $page => $label) {
+                                        $active_class = ($current_page === $page) ? 'footer-active-menu' : '';
+                                        echo "<li><a href=\"$page\" class=\"$active_class\">$label</a></li>";
+                                    }
+                                    ?>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bottom-footer">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-12 text-center">
-                                <div class="copyright-text">
-                                    <p>Copyright &copy; 2021 <span class="name">TechieCoder.</span>All Rights Reserved.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="scrolltop"><i class="uil uil-angle-up"></i></button>
-                    </div>
-                </div>
-            </footer>
-
-
-
+            </div>
         </div>
     </div>
+    <div class="bottom-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="copyright-text d-flex justify-content-between align-items-center">
+                        <p>Copyright &copy; 2021 <span class="name">TechieCoder.</span>All Rights Reserved.</p>
+                        <p class="name"><a href="termC.php" style="color: #ff8243;">Terms & Conditions</a></p>
+                    </div>
+                </div>
+            </div>
+            <button class="scrolltop"><i class="uil uil-angle-up"></i></button>
+        </div>
+     </div>
+</footer>
 
+
+
+       
 
 
 

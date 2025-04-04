@@ -1364,19 +1364,6 @@ p {
     margin-bottom: 23px;
 }
 
-.footer-menu ul li a {
-    color: #0d0d25;
-    transition: 0.3s;
-    text-transform: capitalize;
-}
-
-.footer-menu ul li a:hover, .footer-menu ul li .footer-active-menu {
-    color: #ff8243;
-}
-
-.footer-menu ul li {
-    margin-bottom: 8px;
-}
 
 .footer-table-info ul li {
     margin-bottom: 10px;

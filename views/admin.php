@@ -1,4 +1,4 @@
-usePointStyle: true,
+
 <?php
   include 'nav/admin_sidebar.php';
   
