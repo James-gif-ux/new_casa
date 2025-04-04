@@ -108,10 +108,10 @@
                             <p>Food Menu</p>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_inquires' ? 'active' : ''; ?>">
-                        <a href="../pages/admin.php?sub_page=admin_inquires">
-                            <i class="bi bi-envelope-arrow-up"></i>
-                            <p>Inquires</p>
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_reports' ? 'active' : ''; ?>">
+                        <a href="../pages/admin.php?sub_page=admin_reports">
+                            <i class="bi bi-calendar3"></i>
+                            <p>Reports</p>
                         </a>
                     </li>
                     <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_payments' ? 'active' : ''; ?>">
@@ -120,10 +120,10 @@
                             <p>Payments</p>
                         </a>
                     </li>
-                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_reports' ? 'active' : ''; ?>">
-                        <a href="../pages/admin.php?sub_page=admin_reports">
-                            <i class="bi bi-calendar3"></i>
-                            <p>Reports</p>
+                    <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_inquires' ? 'active' : ''; ?>">
+                        <a href="../pages/admin.php?sub_page=admin_inquires">
+                            <i class="bi bi-envelope-arrow-up"></i>
+                            <p>Inquires</p>
                         </a>
                     </li>
                 </ul>
