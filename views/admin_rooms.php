@@ -165,7 +165,7 @@
                                         </p>
                                     </div>
                                     <div class="card-footer bg-transparent border-0 p-3">
-                                        <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2 flex-wrap">
                                             <button type="button" 
                                                     class="btn btn-outline-dark btn-sm flex-grow-1" 
                                                     data-bs-toggle="modal" 
@@ -177,6 +177,18 @@
                                                     onclick="deleteService(<?php echo $srvc['services_id'] ?>)">
                                                 <i class="fas fa-trash-alt me-1"></i>Delete
                                             </button>
+                                            <div class="dropdown flex-grow-1">
+                                                <button class="btn btn-outline-primary btn-sm w-100 dropdown-toggle" 
+                                                        type="button" 
+                                                        data-bs-toggle="dropdown" 
+                                                        aria-expanded="false">
+                                                    <i class="fas fa-sync-alt me-1"></i>Status
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Available')">Available</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Occupied')">Occupied</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
