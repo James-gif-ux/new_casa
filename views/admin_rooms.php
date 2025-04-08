@@ -13,14 +13,40 @@
 
     // Handle form submission for adding new room
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
         // Check if the required POST variables exist
-        $description = isset($_POST['description']) ? $_POST['description'] : '';
-        $name = isset($_POST['room_name']) ? $_POST['room_name'] : '';
-        $price = isset($_POST['services_price']) ? $_POST['services_price'] : 0;
-        
+        // Check if this is a status update
+        if (isset($_POST['update_status'])) {
+            $services_id = $_POST['services_id'];
+            $new_status = $_POST['new_status'];
+            $status_note = $_POST['status_note'];
+
+            try {
+                // Validate status value
+                $allowed_statuses = ['available', 'booked', 'maintenance'];
+                if (in_array($new_status, $allowed_statuses)) {
+                    // Remove this duplicate status update query
+                    $sql = "UPDATE services_tb SET status = ?, status_note = ? WHERE services_id = ?";
+                    $stmt = $connector->getConnection()->prepare($sql);
+                    $stmt->execute([$new_status, $status_note, $services_id]);
+                    
+                    // Redirect with success message
+                    echo "<script>
+                        window.location.href = 'admin_rooms.php?status_updated=1';
+                    </script>";
+                    exit();
+                }
+            } catch (Exception $e) {
+                echo "<script>alert('Error updating status: " . $e->getMessage() . "');</script>";
+            }
+        }
+
         if (isset($_POST['services_id'])) {
             // Edit operation
             $services_id = $_POST['services_id'];
+            $description = isset($_POST['description']) ? $_POST['description'] : '';
+            $name = isset($_POST['room_name']) ? $_POST['room_name'] : '';
+            $price = isset($_POST['services_price']) ? $_POST['services_price'] : 0;
             
             // Get current image
             $sql = "SELECT services_image FROM services_tb WHERE services_id = ?";
@@ -96,6 +122,12 @@
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $services = $services->get_service();
+
+    // Remove this section that resets all booked rooms to available
+    // $sql = "UPDATE services_tb SET status = 'available' WHERE status = 'booked'";
+    // $stmt = $connector->getConnection()->prepare($sql);
+    // $stmt->execute();
+    // $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <link rel="stylesheet" href="../assets/css/admin_rooms.css">
@@ -177,83 +209,38 @@
                                                     onclick="deleteService(<?php echo $srvc['services_id'] ?>)">
                                                 <i class="fas fa-trash-alt me-1"></i>Delete
                                             </button>
-<div class="dropdown flex-grow-1">
-    <button class="btn btn-outline-primary btn-sm w-100 dropdown-toggle" 
-            type="button" 
-            data-bs-toggle="dropdown" 
-            aria-expanded="false">
-        <i class="fas fa-sync-alt me-1"></i>Status
-    </button>
-    <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Available', this)">
-            <i class="fas fa-check-circle text-success me-2"></i>Available
-            <?php if(isset($srvc['status']) && $srvc['status'] == 'Available'): ?>
-                <i class="fas fa-check text-success ms-2"></i>
-            <?php endif; ?>
-        </a></li>
-        <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Occupied', this)">
-            <i class="fas fa-times-circle text-danger me-2"></i>Occupied
-            <?php if(isset($srvc['status']) && $srvc['status'] == 'Occupied'): ?>
-                <i class="fas fa-check text-success ms-2"></i>
-            <?php endif; ?>
-        </a></li>
-    </ul>
-</div>
+                                            <div class="card-header">
+                                                    <h5 class="card-title">Room Status Management</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <!-- Current Status Badge -->
+                                                    <div class="mb-3">
+                                                        <span class="badge rounded-pill 
+                                                            <?php 
+                                                                switch($srvc['status']) {
+                                                                    case 'available': echo 'bg-success'; break;
+                                                                    case 'booked': echo 'bg-warning'; break;
+                                                                    case 'maintenance': echo 'bg-danger'; break;
+                                                                    default: echo 'bg-secondary';
+                                                                }
+                                                            ?>">
+                                                            <?php echo ucfirst($srvc['status']); ?>
+                                                        </span>
+                                                    </div>
 
-<script>
-function updateRoomStatus(serviceId, status, element) {
-    fetch('update_room_status.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `services_id=${serviceId}&status=${status}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            // Update UI to show current status
-            const dropdownItems = element.closest('.dropdown-menu').querySelectorAll('.dropdown-item');
-            dropdownItems.forEach(item => {
-                item.querySelector('.fa-check')?.remove();
-            });
-            
-            // Add check mark to selected status
-            const checkIcon = document.createElement('i');
-            checkIcon.className = 'fas fa-check text-success ms-2';
-            element.appendChild(checkIcon);
-            
-            // Show success message
-            Swal.fire({
-                icon: 'success',
-                title: 'Status Updated',
-                text: `Room status has been updated to ${status}`,
-                showConfirmButton: false,
-                timer: 1500
-            });
-            
-            // Refresh the page after a short delay
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to update room status'
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while updating the status'
-        });
-    });
-}
-</script>
+                                                <form action="" method="POST" class="mb-3">
+                                                    <input type="hidden" name="services_id" value="<?php echo $srvc['services_id']; ?>">
+                                                    <div class="input-group">
+                                                        <select name="new_status" class="form-select">
+                                                            <option value="available" <?php echo $srvc['status'] == 'available' ? 'selected' : ''; ?>>Available</option>
+                                                            <option value="booked" <?php echo $srvc['status'] == 'booked' ? 'selected' : ''; ?>>Booked</option>
+                                                            <option value="maintenance" <?php echo $srvc['status'] == 'maintenance' ? 'selected' : ''; ?>>Maintenance</option>
+                                                        </select>
+                                                        <input type="text" name="status_note" class="form-control" placeholder="Add note (optional)">
+                                                        <button type="submit" name="update_status" class="btn btn-primary">Update Status</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -376,5 +363,59 @@ function updateRoomStatus(serviceId, status, element) {
     }
 </script> 
 
+
+<script>
+    function updateRoomStatus(serviceId, status, element) {
+    fetch('update_room_status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `services_id=${serviceId}&status=${status}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            // Update UI to show current status
+            const dropdownItems = element.closest('.dropdown-menu').querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                item.querySelector('.fa-check')?.remove();
+            });
+            
+            // Add check mark to selected status
+            const checkIcon = document.createElement('i');
+            checkIcon.className = 'fas fa-check text-success ms-2';
+            element.appendChild(checkIcon);
+            
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Status Updated',
+                text: `Room status has been updated to ${status}`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            
+            // Redirect to refresh the page
+            window.location.href = window.location.pathname;
+            exit();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to update room status'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while updating the status'
+        });
+    });
+    }
+    </script>
 
 <?php include 'nav/admin_footer.php'; ?>

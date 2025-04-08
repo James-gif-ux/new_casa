@@ -88,6 +88,7 @@
                 </div>
             </section>
 <section class="availability-checker">
+<div id="availabilityResult" class="mt-3">
     <div class="container">
         <div class="booking-card" style="
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -227,6 +228,7 @@
                             <i class="fas fa-search me-2"></i>Check Now
                         </button>
                     </div>
+                </div>
                 </div>
             </form>
         </div>
@@ -759,5 +761,67 @@
                 </div>
             </section>
 
+            <script>
+document.querySelector('.booking-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const checkin = document.getElementById('checkinDate').value;
+    const checkout = document.getElementById('checkoutDate').value;
+    const roomId = document.getElementById('roomSelect').value;
 
+    // AJAX request to check availability
+    fetch('check_availability.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            checkin: checkin,
+            checkout: checkout,
+            room_id: roomId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultDiv = document.getElementById('availabilityResult');
+        if (data.available) {
+            resultDiv.innerHTML = `
+                <div class="alert alert-success">
+                    Room is available for the selected dates!
+                    <button type="button" class="btn btn-success ms-3" onclick="proceedToBooking()">
+                        Proceed to Booking
+                    </button>
+                </div>`;
+            showAvailabilityCalendar(roomId, data.calendar_data);
+        } else {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    Sorry, room is not available for the selected dates.
+                    Available dates are shown in the calendar below.
+                </div>`;
+            showAvailabilityCalendar(roomId, data.calendar_data);
+        }
+    });
+});
+
+function showAvailabilityCalendar(roomId, calendarData) {
+    // Initialize calendar if not already initialized
+    if (!window.availabilityCalendar) {
+        window.availabilityCalendar = new FullCalendar.Calendar(
+            document.getElementById('availabilityCalendar'), {
+                initialView: 'dayGridMonth',
+                events: calendarData,
+                eventContent: function(arg) {
+                    return {
+                        html: `<div class="fc-content">
+                                <div class="fc-title">${arg.event.title}</div>
+                                <div class="fc-status">${arg.event.extendedProps.status}</div>
+                              </div>`
+                    };
+                }
+            });
+    }
+    window.availabilityCalendar.render();
+}
+</script>
        <?php include 'nav/footer.php'; ?>
