@@ -177,18 +177,83 @@
                                                     onclick="deleteService(<?php echo $srvc['services_id'] ?>)">
                                                 <i class="fas fa-trash-alt me-1"></i>Delete
                                             </button>
-                                            <div class="dropdown flex-grow-1">
-                                                <button class="btn btn-outline-primary btn-sm w-100 dropdown-toggle" 
-                                                        type="button" 
-                                                        data-bs-toggle="dropdown" 
-                                                        aria-expanded="false">
-                                                    <i class="fas fa-sync-alt me-1"></i>Status
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Available')">Available</a></li>
-                                                    <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Occupied')">Occupied</a></li>
-                                                </ul>
-                                            </div>
+<div class="dropdown flex-grow-1">
+    <button class="btn btn-outline-primary btn-sm w-100 dropdown-toggle" 
+            type="button" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false">
+        <i class="fas fa-sync-alt me-1"></i>Status
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Available', this)">
+            <i class="fas fa-check-circle text-success me-2"></i>Available
+            <?php if(isset($srvc['status']) && $srvc['status'] == 'Available'): ?>
+                <i class="fas fa-check text-success ms-2"></i>
+            <?php endif; ?>
+        </a></li>
+        <li><a class="dropdown-item" href="#" onclick="updateRoomStatus(<?php echo $srvc['services_id'] ?>, 'Occupied', this)">
+            <i class="fas fa-times-circle text-danger me-2"></i>Occupied
+            <?php if(isset($srvc['status']) && $srvc['status'] == 'Occupied'): ?>
+                <i class="fas fa-check text-success ms-2"></i>
+            <?php endif; ?>
+        </a></li>
+    </ul>
+</div>
+
+<script>
+function updateRoomStatus(serviceId, status, element) {
+    fetch('update_room_status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `services_id=${serviceId}&status=${status}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            // Update UI to show current status
+            const dropdownItems = element.closest('.dropdown-menu').querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                item.querySelector('.fa-check')?.remove();
+            });
+            
+            // Add check mark to selected status
+            const checkIcon = document.createElement('i');
+            checkIcon.className = 'fas fa-check text-success ms-2';
+            element.appendChild(checkIcon);
+            
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Status Updated',
+                text: `Room status has been updated to ${status}`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            
+            // Refresh the page after a short delay
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to update room status'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while updating the status'
+        });
+    });
+}
+</script>
                                         </div>
                                     </div>
                                 </div>

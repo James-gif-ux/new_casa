@@ -87,72 +87,169 @@
                     </div>
                 </div>
             </section>
-
-            <div class="container" style="margin-bottom: 40px;">
-                <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
-                    <form method="post" class="booking-form">
-                        <div class="row justify-content-center">
-                            <div class="col-md-3 mb-3">
-                                <div style="margin-bottom: 15px;">
-                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Check In</label>
-                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
-                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        <input type="date" name="checkin" class="form-control" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3 mb-3">
-                                <div style="margin-bottom: 15px;">
-                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Check Out</label>
-                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
-                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        <input type="date" name="checkout" class="form-control" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 mb-3">
-                                <div style="margin-bottom: 15px;">
-                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Guests</label>
-                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
-                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="fas fa-user"></i></span>
-                                        <select name="guests" class="form-select" required>
-                                            <?php for($i = 1; $i <= 10; $i++): ?>
-                                                <option value="<?php echo $i; ?>"><?php echo $i; ?> Person<?php echo $i > 1 ? 's' : ''; ?></option>
-                                            <?php endfor; ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 mb-3">
-                                <div style="margin-bottom: 15px;">
-                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">Room Type</label>
-                                    <div class="input-group" style="border-radius: 5px; overflow: hidden;">
-                                        <span style="background-color: #f8f9fa; border: 1px solid #ced4da;" class="input-group-text"><i class="fas fa-bed"></i></span>
-                                        <select name="room_type" class="form-select" required>
-                                            <option value="">Select Room</option>
-                                            <option value="standard">Standard</option>
-                                            <option value="deluxe">Deluxe</option>
-                                            <option value="suite">Suite</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 mb-3">
-                                <div style="margin-bottom: 15px;">
-                                    <label style="font-weight: 500; margin-bottom: 8px; color: #333;" class="control-label">&nbsp;</label>
-                                    <button type="submit" class="btn btn-primary w-100" style="height: 38px;">
-                                        Check Availability
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+<section class="availability-checker">
+    <div class="container">
+        <div class="booking-card" style="
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 80px auto;
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+        ">
+            <div class="text-center mb-5">
+                <h2 class="booking-title" style="
+                    color: #2c3e50;
+                    font-weight: 700;
+                    font-size: 2.5rem;
+                    margin-bottom: 15px;
+                ">Check Room Availability</h2>
+                <p style="
+                    color: #7f8c8d;
+                    font-size: 1.1rem;
+                    font-weight: 300;
+                ">Discover your perfect getaway with us</p>
             </div>
+
+            <form method="post" class="booking-form">
+                <div class="row justify-content-center align-items-end g-4">
+                    <!-- Check In Date -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-floating">
+                            <input type="date" 
+                                   name="checkin" 
+                                   class="form-control custom-input" 
+                                   id="checkinDate"
+                                   required
+                                   style="
+                                       height: 60px;
+                                       border-radius: 12px;
+                                       border: 2px solid #e0e0e0;
+                                       transition: all 0.3s ease;
+                                       font-size: 1rem;
+                                   ">
+                            <label for="checkinDate" style="padding-left: 15px;">
+                                <i class="far fa-calendar-alt me-2"></i>Check In Date
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Check Out Date -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-floating">
+                            <input type="date" 
+                                   name="checkout" 
+                                   class="form-control custom-input" 
+                                   id="checkoutDate"
+                                   required
+                                   style="
+                                       height: 60px;
+                                       border-radius: 12px;
+                                       border: 2px solid #e0e0e0;
+                                       transition: all 0.3s ease;
+                                       font-size: 1rem;
+                                   ">
+                            <label for="checkoutDate" style="padding-left: 15px;">
+                                <i class="far fa-calendar-alt me-2"></i>Check Out Date
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Number of Guests -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="form-floating">
+                            <select name="guests" 
+                                    class="form-select custom-select" 
+                                    id="guestsSelect"
+                                    required
+                                    style="
+                                        height: 60px;
+                                        border-radius: 12px;
+                                        border: 2px solid #e0e0e0;
+                                        transition: all 0.3s ease;
+                                        font-size: 1rem;
+                                    ">
+                                <?php for($i = 1; $i <= 10; $i++): ?>
+                                    <option value="<?php echo $i; ?>">
+                                        <?php echo $i; ?> Guest<?php echo $i > 1 ? 's' : ''; ?>
+                                    </option>
+                                <?php endfor; ?>
+                            </select>
+                            <label for="guestsSelect" style="padding-left: 15px;">
+                                <i class="fas fa-user me-2"></i>Guests
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Room Selection -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="form-floating">
+                            <select name="service_id" 
+                                    class="form-select custom-select" 
+                                    id="roomSelect"
+                                    required
+                                    style="
+                                        height: 60px;
+                                        border-radius: 12px;
+                                        border: 2px solid #e0e0e0;
+                                        transition: all 0.3s ease;
+                                        font-size: 1rem;
+                                    ">
+                                <option value="">Select Room</option>
+                                <?php foreach($services as $service): ?>
+                                    <option value="<?php echo $service['services_id']; ?>">
+                                        <?php echo $service['services_name']; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <label for="roomSelect" style="padding-left: 15px;">
+                                <i class="fas fa-bed me-2"></i>Room Type
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Check Availability Button -->
+                    <div class="col-lg-2 col-md-6">
+                        <button type="submit" 
+                                class="btn btn-primary w-100"
+                                style="
+                                    height: 60px;
+                                    border-radius: 12px;
+                                    font-weight: 600;
+                                    text-transform: uppercase;
+                                    letter-spacing: 1.5px;
+                                    transition: all 0.3s ease;
+                                    background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+                                    border: none;
+                                    box-shadow: 0 4px 15px rgba(0,86,179,0.2);
+                                ">
+                            <i class="fas fa-search me-2"></i>Check Now
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .custom-input:focus,
+        .custom-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,86,179,0.3);
+        }
+
+        .form-floating > label {
+            color: #495057;
+            font-weight: 500;
+        }
+    </style>
+</section>
 
 
             <section class="about-sec section" id="about">
