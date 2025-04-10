@@ -85,12 +85,14 @@
                             <ul class="nav nav-collapse">
                                 <li class="<?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_booking' ? 'active' : ''; ?>">
                                     <a href="../pages/admin.php?sub_page=admin_booking">
-                                        <span class="sub-item">Approved Bookings</span>
+                                        <span class="sub-item" >Approved Bookings</span>
                                     </a>
                                 </li>
                                 <li class="<?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'reservedBooking' ? 'active' : ''; ?>">
                                     <a href="../pages/admin.php?sub_page=reservedBooking">
-                                        <span class="sub-item">Reserved Bookings</span>
+                                        <span class="sub-item">Reserved Bookings
+                                          <span class="badge badge-danger">new</span>
+                                        </span>
                                     </a>
                                 </li>
                             </ul>
@@ -117,23 +119,25 @@
                     <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_payments' ? 'active' : ''; ?>">
                         <a href="../pages/admin.php?sub_page=admin_payments">
                             <i class="bi bi-wallet"></i>
-                            <p>Payments</p>
+                            <p>Payments
+                              <span class="badge badge-danger">new</span>
+                            </p>
                         </a>
                     </li>
                     <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_inquires' ? 'active' : ''; ?>">
                       <a href="../pages/admin.php?sub_page=admin_inquires">
                         <i class="bi bi-envelope-arrow-up"></i>
                         <p>Inquires 
-                          <span class="badge badge-danger" style="<?php 
+                          <span class="badge badge-danger"  style="<?php 
                             require_once('../model/server.php');
                             $connector = new Connector();
-                            // Get count of unread messages
-                            $sql = "SELECT COUNT(*) as count FROM messages WHERE status = 0";
+                            $sql = "SELECT COUNT(*) as count FROM messages WHERE status = 'unread'";
                             $stmt = $connector->getConnection()->prepare($sql);
                             $stmt->execute();
-                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                            echo ($row['count'] > 0 ? 'display:inline-block' : 'display:none');
+                            $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+                            echo ($count > 0) ? 'display:inline-block' : 'display:none';
                           ?>">
+                          <?php echo $count; ?>
                             <span>new</span>
                           </span>
                           </span>

@@ -13,9 +13,10 @@
   // Check if there are new messages
 
 
+  // At the top of the file, remove these lines as they're causing incorrect counting
   // When a new message is sent
   $unread_count++;
-
+  
   // When an existing message is read
   $unread_count--;
   if ($unread_count < 0) {
@@ -327,7 +328,19 @@ $messages = $connector->executeQuery($sql);
     // Update the showMessage function
         function showMessage(messageId, email, subject, content, replyContent) {
         const messageContent = document.getElementById('messageContent');
+        const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
         
+        // Update UI first
+        if (messageElement) {
+            messageElement.classList.remove('unread');
+            messageElement.classList.add('read');
+            const statusIndicator = messageElement.querySelector('.status-indicator');
+            if (statusIndicator) {
+                statusIndicator.className = 'status-indicator status-read';
+            }
+        }
+        
+        // Update message content
         let replySection = '';
         if (replyContent && replyContent !== 'null') {
             replySection = `
@@ -353,13 +366,22 @@ $messages = $connector->executeQuery($sql);
                 </form>
             </div>
         `;
-
-        const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
-        if (messageElement) {
-            messageElement.classList.remove('new-message');
-        }
-
-        markAsRead(messageId);
+    
+        // Mark as read in database
+        const formData = new FormData();
+        formData.append('message_id', messageId);
+    
+        // Update both status and viewed_status
+        Promise.all([
+            fetch('../model/update_message_status.php', {
+                method: 'POST',
+                body: formData
+            }),
+            fetch('../model/update_message_new_status.php', {
+                method: 'POST',
+                body: formData
+            })
+        ]).catch(error => console.error('Error updating message status:', error));
     }
 
     function markAsRead(messageId) {
