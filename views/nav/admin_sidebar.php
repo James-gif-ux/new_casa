@@ -121,10 +121,24 @@
                         </a>
                     </li>
                     <li class="nav-item <?php echo isset($_GET['sub_page']) && $_GET['sub_page'] == 'admin_inquires' ? 'active' : ''; ?>">
-                        <a href="../pages/admin.php?sub_page=admin_inquires">
-                            <i class="bi bi-envelope-arrow-up"></i>
-                            <p>Inquires</p>
-                        </a>
+                      <a href="../pages/admin.php?sub_page=admin_inquires">
+                        <i class="bi bi-envelope-arrow-up"></i>
+                        <p>Inquires 
+                          <span class="badge badge-danger" style="<?php 
+                            require_once('../model/server.php');
+                            $connector = new Connector();
+                            // Get count of unread messages
+                            $sql = "SELECT COUNT(*) as count FROM messages WHERE status = 0";
+                            $stmt = $connector->getConnection()->prepare($sql);
+                            $stmt->execute();
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                            echo ($row['count'] > 0 ? 'display:inline-block' : 'display:none');
+                          ?>">
+                            <span>new</span>
+                          </span>
+                          </span>
+                        </p>
+                      </a>
                     </li>
                 </ul>
             </div>

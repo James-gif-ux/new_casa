@@ -10,8 +10,8 @@ ini_set('display_errors', 1);
 if (isset($_GET['reservation_id']) || isset($_POST['reservation_id'])) {
     $reservationId = $_GET['reservation_id'] ?? $_POST['reservation_id'];
     
-    // Join query to get reservation details with payment method
-    $query = "SELECT r.*, s.services_price as amount, pm.payment_method as payment_method,
+    // Modified query to get services price
+    $query = "SELECT r.*, s.services_price, s.services_name, pm.payment_method as payment_method,
               r.res_method_id, p.payment_id, p.reference_number, p.date_of_payment, 
               p.proof_of_payment
               FROM reservations r
@@ -29,31 +29,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Process form submission
         $reservationId = $_POST['reservation_id'];
+        $paymentType = $_POST['payment_type'];
+        $amount = floatval($_POST['amount']);
         $referenceNumber = htmlspecialchars($_POST['reference_number']);
         $dateOfPayment = htmlspecialchars($_POST['date_of_payment']);
-        $status = 'paid';
+        
+        // Determine payment status based on payment type
+        $paymentStatus = ($paymentType === 'full') ? 'paid' : 'partially_paid';
 
         // Handle file upload
         $proofOfPayment = '';
         if (isset($_FILES['proof_of_payment']) && $_FILES['proof_of_payment']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../images/';
+            $uploadDir = __DIR__ . '/../images/';
+            
+            // Create directory if it doesn't exist
             if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, true);
+                if (!mkdir($uploadDir, true)) {
+                    throw new Exception("Failed to create upload directory");
+                }
             }
             
-            $fileName = basename($_FILES['proof_of_payment']['name']);
+            // Generate unique filename
+            $fileExtension = strtolower(pathinfo($_FILES['proof_of_payment']['name'], PATHINFO_EXTENSION));
+            $fileName = uniqid('receipt_') . '.' . $fileExtension;
             $targetPath = $uploadDir . $fileName;
             
-            if (move_uploaded_file($_FILES['proof_of_payment']['tmp_name'], $targetPath)) {
-                $proofOfPayment = $fileName;
+            // Validate file type
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($fileExtension, $allowedTypes)) {
+                throw new Exception("Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.");
             }
+            
+            // Validate file size (max 5MB)
+            if ($_FILES['proof_of_payment']['size'] > 5 * 1024 * 1024) {
+                throw new Exception("File is too large. Maximum size is 5MB.");
+            }
+            
+            if (!move_uploaded_file($_FILES['proof_of_payment']['tmp_name'], $targetPath)) {
+                throw new Exception("Failed to upload file. Please try again.");
+            }
+            
+            $proofOfPayment = $fileName;
         }
 
         // Get the payment method ID first
-        $methodSql = "SELECT res_method_id FROM reservations WHERE reservation_id = :resId";
+        $methodSql = "SELECT pm.method_id 
+                      FROM reservations r
+                      JOIN pay_method pm ON r.res_method_id = pm.method_id
+                      WHERE r.reservation_id = :resId";
         $methodStmt = $connector->getConnection()->prepare($methodSql);
         $methodStmt->execute([':resId' => $reservationId]);
         $methodId = $methodStmt->fetchColumn();
+
+        if (!$methodId) {
+            throw new Exception("Invalid payment method for this reservation");
+        }
 
         // Get reservation and service details
         $detailsSql = "SELECT r.name, s.services_price 
@@ -64,38 +94,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $detailsStmt->execute([':resId' => $reservationId]);
         $details = $detailsStmt->fetch(PDO::FETCH_ASSOC);
 
+        // Validate payment amount
+        $totalAmount = floatval($details['services_price']);
+        if ($amount > $totalAmount) {
+            throw new Exception("Payment amount cannot exceed the total amount");
+        }
+
         // Insert payment record
         $sql = "INSERT INTO payments (name, amount, reference_number, date_of_payment, 
-                proof_of_payment, status, pay_reservation_id, pay_method_id) 
-                VALUES (:name, :amount, :ref, :date, :proof, :status, :resId, :methodId)";
+                proof_of_payment, status, pay_reservation_id, pay_method_id, payment_type) 
+                VALUES (:name, :amount, :ref, :date, :proof, :status, :resId, :methodId, :payType)";
         
         $stmt = $connector->getConnection()->prepare($sql);
         $result = $stmt->execute([
-            ':name' => $details['name'],
-            ':amount' => $details['services_price'],
+            ':name' => $details['client_name'] ?? $details['name'] ?? 'Unknown',  // Try client_name first, then name, with fallback
+            ':amount' => $amount,
             ':ref' => $referenceNumber,
             ':date' => $dateOfPayment,
             ':proof' => $proofOfPayment,
-            ':status' => $status,
+            ':status' => $paymentStatus,
             ':resId' => $reservationId,
-            ':methodId' => $methodId
+            ':methodId' => $methodId,
+            ':payType' => $paymentType
         ]);
 
         if ($result) {
             // Update reservation status
-            $updateSql = "UPDATE reservations SET payment_status = 'paid' WHERE reservation_id = :id";
+            $updateSql = "UPDATE reservations SET payment_status = :status WHERE reservation_id = :id";
             $updateStmt = $connector->getConnection()->prepare($updateSql);
-            $updateStmt->execute([':id' => $reservationId]);
+            $updateStmt->execute([
+                ':status' => $paymentStatus,
+                ':id' => $reservationId
+            ]);
 
             header("Location: home.php");
             exit;
         }
     } catch (Exception $e) {
+        $errorMessage = addslashes($e->getMessage());
         echo "<script>
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to process payment: " . addslashes($e->getMessage()) . "',
-                icon: 'error'
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to process payment: {$errorMessage}',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             });
         </script>";
     }
@@ -191,7 +235,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="post" action="" id="paymentForm" enctype="multipart/form-data" onsubmit="return confirmPayment(event)">
         <input type="hidden" name="reservation_id" value="<?php echo $_GET['reservation_id'] ?? $_POST['reservation_id'] ?? ''; ?>">
         
-       
+        <div>
+            <label for="payment_type">Payment Type:</label>
+            <select name="payment_type" id="payment_type" required onchange="handlePaymentType()">
+                <option value="">Select Payment Type</option>
+                <option value="full">Full Payment</option>
+                <option value="partial">Partial Payment</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="total_amount">Total Amount (<?php echo htmlspecialchars($reservation['services_name'] ?? ''); ?>):</label>
+            <input type="text" id="total_amount" value="<?php echo number_format($reservation['services_price'] ?? 0, 2); ?>" readonly>
+        </div>
+        
+        <div id="amount_div">
+            <label for="amount">Amount to Pay:</label>
+            <input type="number" name="amount" id="amount" step="0.01" required 
+                   value="<?php echo $reservation['services_price'] ?? 0; ?>" 
+                   data-full-amount="<?php echo $reservation['services_price'] ?? 0; ?>">
+        </div>
+
+        <script>
+            // Initialize the amount field based on payment type when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                handlePaymentType();
+            });
+        </script>
+        
         <div>
             <label for="reference_number">Reference Number:</label>
             <input type="text" name="reference_number" placeholder="Enter reference number" required>
@@ -211,8 +282,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
    
     <script>
+       function handlePaymentType() {
+            const paymentType = document.getElementById('payment_type').value;
+            const totalAmount = parseFloat(document.getElementById('total_amount').value.replace(/,/g, ''));
+            const amountInput = document.getElementById('amount');
+
+            if (paymentType === 'full') {
+                amountInput.value = totalAmount;
+                amountInput.readOnly = true;
+            } else if (paymentType === 'partial') {
+                amountInput.value = '';
+                amountInput.readOnly = false;
+                amountInput.max = totalAmount;
+            }
+        }
+    
         function confirmPayment(event) {
             event.preventDefault();
+            const amountInput = document.getElementById('amount');
+            const totalAmount = parseFloat(document.getElementById('total_amount').value);
+            const paymentType = document.getElementById('payment_type').value;
+            const amount = parseFloat(amountInput.value);
+        
+            if (paymentType === 'partial' && amount >= totalAmount) {
+                Swal.fire({
+                    title: 'Invalid Amount',
+                    text: 'Partial payment amount cannot be greater than or equal to the total amount',
+                    icon: 'error'
+                });
+                return false;
+            }
+        
+            if (paymentType === 'partial' && amount <= 0) {
+                Swal.fire({
+                    title: 'Invalid Amount',
+                    text: 'Payment amount must be greater than 0',
+                    icon: 'error'
+                });
+                return false;
+            }
+        
             Swal.fire({
                 title: 'Confirm Payment',
                 text: 'Are you sure you want to submit this payment?',

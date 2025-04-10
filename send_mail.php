@@ -1,64 +1,85 @@
-    <?php
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
+<?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-    require 'PHPMailer/src/Exception.php';
-    require 'PHPMailer/src/PHPMailer.php';
-    require 'PHPMailer/src/SMTP.php';
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
-    header('Content-Type: application/json');
+// Set JSON header before any output
+header('Content-Type: application/json');
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $recipient = $_POST['email'];
+// Prevent any HTML error output
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    try {
+        // Get reservation ID and fetch email details
+        $reservation_id = $_POST['reservation_id'] ?? null;
+        
+        if (!$reservation_id) {
+            throw new Exception('Email sent successfully!');
+        }
+
+        // Connect to database and get reservation details
+        require_once 'model/server.php';
+        $connector = new Connector();
+        
+        $sql = "SELECT r.email, r.name, r.checkin, r.checkout, s.services_name 
+                FROM reservations r
+                LEFT JOIN services_tb s ON r.res_services_id = s.services_id
+                WHERE r.reservation_id = ?";
+        
+        $stmt = $connector->getConnection()->prepare($sql);
+        $stmt->execute([$reservation_id]);
+        $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$reservation) {
+            throw new Exception('Reservation not found');
+        }
+
+        $recipient = $reservation['email'];
         $subject = $_POST['subject'];
         $message = $_POST['message'];
+
+        // Add reservation details to message
+        $fullMessage = "Dear " . $reservation['name'] . ",\n\n";
+        $fullMessage .= $message . "\n\n";
+        $fullMessage .= "Reservation Details:\n";
+        $fullMessage .= "Check-in: " . date('F d, Y', strtotime($reservation['checkin'])) . "\n";
+        $fullMessage .= "Check-out: " . date('F d, Y', strtotime($reservation['checkout'])) . "\n";
+        $fullMessage .= "Service: " . $reservation['services_name'] . "\n\n";
+        $fullMessage .= "Best regards,\nCasa Marcos Team";
 
         $mail = new PHPMailer(true);
 
-        try {
-            // SMTP Configuration
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com'; // Change for Yahoo, Outlook, etc.
-            $mail->SMTPAuth = true;
-            $mail->Username = 'jjbright0402@gmail.com'; // Your email
-            $mail->Password = 'tuyh dazt wthj flio'; // Use an App Password
-            $mail->SMTPSecure = 'tls'; // Use 'ssl' for port 465
-            $mail->Port = 587; // Use 465 for SSL
+        // SMTP Configuration
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'jjbright0402@gmail.com';
+        $mail->Password = 'tuyh dazt wthj flio';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
 
-            // Email Settings
-            $mail->setFrom('jjbright0402@gmail.com', 'CASA MARCOS'); 
-            $mail->addAddress($recipient); 
+        // Email Settings
+        $mail->setFrom('jjbright0402@gmail.com', 'CASA MARCOS');
+        $mail->addAddress($recipient);
+        $mail->Subject = $subject;
+        $mail->Body = $fullMessage; // Use the full message with reservation details
 
-            $mail->Subject = $subject;
-            $mail->Body    = $message;
-
-            // Send Email
-            if ($mail->send()) {
-                echo json_encode(['success' => true, 'message' => 'Email sent successfully!']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to send email.']);
-            }
-            
-        } catch (Exception $e) {
-            echo json_encode(['success' => false, 'message' => 'Mailer Error: ' . $mail->ErrorInfo]);
-        }
-        exit();
-    }
-		/**$to = $_POST['email'];
-        $headers = "From: casa-marcos@gmail.com" . "\r\n" . "CC: ".$to;
-        $subject = $_POST['subject'];
-        $message = $_POST['message'];
-
-        if (mail($to, $subject, $message, $headers)){
+        // Send Email
+        if ($mail->send()) {
             echo json_encode(['success' => true, 'message' => 'Email sent successfully!']);
         } else {
-            //echo json_encode(['success' => false, 'message' => 'Failed to send email.']);
-            $error = error_get_last();
-            if (isset($error['message'])) {
-                echo json_encode(['success' => false, 'message' => $error['message']]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'No specific error details available.']);
-            }
+            throw new Exception('Failed to send email');
         }
-        exit();**/
-    ?>
+    } catch (Exception $e) {
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Error: ' . strip_tags($e->getMessage())
+        ]);
+    }
+    exit();
+}

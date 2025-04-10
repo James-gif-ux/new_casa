@@ -95,7 +95,7 @@
                     header('location: process.php?reservation_id=' . $reservationId);
                 } else {
                     echo "<script>alert('Reservation submitted successfully!');</script>";
-                    header('location: number.php');
+                    header('location: call.php');
                 }
                 exit();
                 
@@ -138,13 +138,13 @@
                         <form method="POST" action="" class="reservation-form">
                             <div class="form-group">
                                 <label for="name">Full Name:</label>
-                                <input type="text" id="name" name="name" required onblur="checkDuplicate('name', this.value)">
+                                <input type="text" id="name" name="name" required >
                                 <span id="name-error" class="error-message"></span>
                             </div>
 
                                 <div class="form-group">
                                     <label for="email">Email:</label>
-                                    <input type="email" id="email" name="email" required onblur="checkDuplicate('email', this.value)">
+                                    <input type="email" id="email" name="email" required >
                                     <span id="email-error" class="error-message"></span>
                                 </div>
 
@@ -231,31 +231,31 @@
                             });
                     }
 
-                    function validateForm() {
-                        const name = document.getElementById('name').value;
-                        const email = document.getElementById('email').value;
+                    // function validateForm() {
+                    //     const name = document.getElementById('name').value;
+                    //     const email = document.getElementById('email').value;
                         
-                        // Check both fields one last time before submission
-                        return new Promise((resolve) => {
-                            Promise.all([
-                                fetch(`../pages/check_duplicate.php?field=name&value=${encodeURIComponent(name)}`),
-                                fetch(`../pages/check_duplicate.php?field=email&value=${encodeURIComponent(email)}`)
-                            ])
-                            .then(responses => Promise.all(responses.map(res => res.json())))
-                            .then(([nameData, emailData]) => {
-                                if (nameData.exists || emailData.exists) {
-                                    alert('Please fix the duplicate entries before submitting');
-                                    resolve(false);
-                                } else {
-                                    resolve(true);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Validation error:', error);
-                                resolve(false);
-                            });
-                        });
-                    }
+                    //     // Check both fields one last time before submission
+                    //     return new Promise((resolve) => {
+                    //         Promise.all([
+                    //             fetch(`../pages/check_duplicate.php?field=name&value=${encodeURIComponent(name)}`),
+                    //             fetch(`../pages/check_duplicate.php?field=email&value=${encodeURIComponent(email)}`)
+                    //         ])
+                    //         .then(responses => Promise.all(responses.map(res => res.json())))
+                    //         .then(([nameData, emailData]) => {
+                    //             if (nameData.exists || emailData.exists) {
+                    //                 alert('Please fix the duplicate entries before submitting');
+                    //                 resolve(false);
+                    //             } else {
+                    //                 resolve(true);
+                    //             }
+                    //         })
+                    //         .catch(error => {
+                    //             console.error('Validation error:', error);
+                    //             resolve(false);
+                    //         });
+                    //     });
+                    // }
                 
                   
                 </script>
