@@ -23,9 +23,8 @@
 
             try {
                 // Validate status value
-                $allowed_statuses = ['available', 'booked', 'maintenance'];
+                $allowed_statuses = ['available', 'occupied', 'maintenance'];
                 if (in_array($new_status, $allowed_statuses)) {
-                    // Remove this duplicate status update query
                     $sql = "UPDATE services_tb SET status = ?, status_note = ? WHERE services_id = ?";
                     $stmt = $connector->getConnection()->prepare($sql);
                     $stmt->execute([$new_status, $status_note, $services_id]);
@@ -219,7 +218,7 @@
                                                             <?php 
                                                                 switch($srvc['status']) {
                                                                     case 'available': echo 'bg-success'; break;
-                                                                    case 'booked': echo 'bg-warning'; break;
+                                                                    case 'occupied': echo 'bg-warning'; break;
                                                                     case 'maintenance': echo 'bg-danger'; break;
                                                                     default: echo 'bg-secondary';
                                                                 }
@@ -233,7 +232,7 @@
                                                     <div class="input-group">
                                                         <select name="new_status" class="form-select">
                                                             <option value="available" <?php echo $srvc['status'] == 'available' ? 'selected' : ''; ?>>Available</option>
-                                                            <option value="booked" <?php echo $srvc['status'] == 'booked' ? 'selected' : ''; ?>>Booked</option>
+                                                            <option value="occupied" <?php echo $srvc['status'] == 'occupied' ? 'selected' : ''; ?>>occupied</option>
                                                             <option value="maintenance" <?php echo $srvc['status'] == 'maintenance' ? 'selected' : ''; ?>>Maintenance</option>
                                                         </select>
                                                         <input type="text" name="status_note" class="form-control" placeholder="Add note (optional)">

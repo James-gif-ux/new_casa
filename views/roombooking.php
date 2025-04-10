@@ -51,20 +51,33 @@
             <div class="rooms-container">
                 <section id="services" class="services section">
                     <div class="service-list">
-                        <?php foreach ($services as $srvc): ?>
+                        <?php foreach ($services as $srvc): 
+                            // Check room status from services_tb
+                            $sql = "SELECT status FROM services_tb 
+                                   WHERE services_id = :service_id";
+                            $stmt = $connector->getConnection()->prepare($sql);
+                            $stmt->execute([':service_id' => $srvc['services_id']]);
+                            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                            $isAvailable = ($result['status'] === 'available');
+                        ?>
                             <div class="service-item">
                                 <img src="../images/<?= $srvc['services_image'] ?>" alt="<?= $srvc['services_name'] ?>" class="service-image">
                                 <div class="service-content">
                                     <div>
                                         <h3><?= $srvc['services_name'] ?></h3>
                                         <p class="description"><?= $srvc['services_description'] ?></p>
+                                        <div class="status-badge <?= $isAvailable ? 'available' : ($result['status'] === 'maintenance' ? 'maintenance' : 'occupied') ?>">
+                                        <?= ($isAvailable ? 'Available' : ($result['status'] === 'maintenance' ? 'Maintenance' : 'Occupied')) ?>    
+                                        </div>
                                     </div>
                                     <div>
                                         <div class="service-price">
-                                            <?= number_format($srvc['services_price'], 2) ?>
+                                            ₱<?= number_format($srvc['services_price'], 2) ?>
                                         </div>
-                                        <a href="reservation.php?service_id=<?= $srvc['services_id'] ?>" class="readmore">
-                                            <span>Reserve Now</span>
+                                        <a href="reservation.php?service_id=<?= $srvc['services_id'] ?>" 
+                                           class="readmore <?= !$isAvailable ? 'disabled' : '' ?>"
+                                           <?= !$isAvailable ? 'onclick="return false"' : '' ?>>
+                                            <span><?= $isAvailable ? 'Reserve Now' : 'Not Available' ?></span>
                                         </a>
                                     </div>
                                 </div>
@@ -75,4 +88,32 @@
             </div>
         </div>
 
-    <?php include 'nav/footer.php'; ?>   
+        <style>
+            .status-badge {
+                display: inline-block;
+                padding: 5px 12px;
+                border-radius: 15px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                margin-top: 10px;
+            }
+            .status-badge.available {
+                background-color: #28a745;
+                color: white;
+            }
+            .status-badge.occupied {
+                background-color:rgb(224, 125, 59);
+                color: white;
+            }
+            .status-badge.maintenance {
+                background-color: #dc3545;
+                color: white;
+            }
+            .readmore.disabled {
+                background-color: #6c757d;
+                cursor: not-allowed;
+                opacity: 0.65;
+            }
+        </style>
+
+    <?php include 'nav/footer.php'; ?>

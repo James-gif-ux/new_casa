@@ -236,5 +236,11 @@ class Booking_Model {
             return null;
         }
     }
+    public function get_service_by_id($id) {
+        $sql = "SELECT * FROM services_tb WHERE services_id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
 ?>

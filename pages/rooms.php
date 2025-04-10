@@ -40,6 +40,8 @@
 		function rooms(){
 			include '../views/rooms.php';
 		}
-        
+        function matrimonialPlus(){
+			include '../views/matrimonialPlus.php';
+		}
 	}
 ?>
