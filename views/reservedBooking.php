@@ -1,16 +1,26 @@
 <?php 
 require_once '../model/server.php';
 $connector = new Connector();
-// At the top of the file, update the reservation fetch
+
+// Get reservation_id from URL if provided
+$reservation_id = isset($_GET['reservation_id']) ? intval($_GET['reservation_id']) : null;
 
 $sql = "SELECT r.reservation_id, r.name, r.email, r.phone, r.checkin, r.checkout, 
                r.status, r.res_services_id, r.message, s.services_price, s.services_name,
-               t.time_in, t.time_out
+               t.time_in, t.time_out, p.payment_type, p.amount as amount
         FROM reservations r
         LEFT JOIN services_tb s ON r.res_services_id = s.services_id 
         LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
-        WHERE r.status IN ('pending', 'cancelled')";
-$stmt = $connector->getConnection()->prepare($sql);  
+        LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+        WHERE r.status IN ('pending') " . 
+        ($reservation_id ? "AND r.reservation_id = :reservation_id " : "") .
+        "ORDER BY CASE WHEN r.status = 'pending' THEN 0 ELSE 1 END,
+         r.checkin ASC, r.checkout ASC";
+
+$stmt = $connector->getConnection()->prepare($sql);
+if ($reservation_id) {
+    $stmt->bindParam(':reservation_id', $reservation_id, PDO::PARAM_INT);
+}
 $stmt->execute();
 $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -55,11 +65,11 @@ include 'nav/admin_sidebar.php';
                             <tr>
                               <th>Name</th>
                               <th>Email</th>
-                              <th>Number</th>
+                              <th>Contact</th>
                               <th>Check In</th>
                               <th>Check Out</th>
-                              <th>Messages</th>
-                              <th>Price</th>
+                              <th>Payment Type</th>
+                              <th>Paid Amount</th>
                               <th>Status</th>
                               <th>Action</th>
                             </tr>
@@ -68,11 +78,11 @@ include 'nav/admin_sidebar.php';
                               <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Number</th>
+                                <th>Contact</th>
                                 <th>Check In</th>
                                 <th>Check Out</th>
-                                <th>Messages</th>
-                                <th>Price</th>
+                                <th>Payment Type</th>
+                                <th>Paid Amount</th>
                                 <th>Status</th>
                                 <th>Action</th>
                               </tr>
@@ -85,8 +95,8 @@ include 'nav/admin_sidebar.php';
                                 <td><?php echo $res['phone']?></td>
                                 <td><?php echo date('M. d, Y', strtotime($res['checkin'])); ?></td>
                                 <td><?php echo date('M. d, Y', strtotime($res['checkout'])); ?></td>
-                                <td><?php echo $res['message'] ?? 'No message'; ?></td>
-                                <td><?php echo number_format($res['services_price'], 2); ?></td>
+                                <td><?php echo $res['payment_type'] ?? 'Not paid'; ?></td>
+                                <td><?php echo $res['amount'] ? number_format($res['amount'], 2) : '0.00'; ?></td>
                                 <td>
                                   <?php 
                                       $status = strtolower($res['status']);
@@ -503,13 +513,15 @@ include 'nav/admin_sidebar.php';
               });
           }
       </script>
-  </body>
-</html>
-
+      
 <!-- Add this in the head section or before closing body tag -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Add this to your JavaScript section -->
+<script>
+    // Include the email modal layout
+    <?php include 'sendMail_layout.php'; ?>
+</script>
+
 <script>
 function approveReservation(reservationId) {
     Swal.fire({
@@ -522,14 +534,54 @@ function approveReservation(reservationId) {
         confirmButtonText: 'Yes, approve it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            updateReservationStatus(reservationId, 'approved');
-            Swal.fire({
-                title: 'Approved!',
-                text: 'Check approved booking to see the reserved books',
-                icon: 'success',
-                confirmButtonColor: '#3085d6'
-            }).then(() => {
-                location.reload();
+            // Show email modal
+            $('#sendMailModal').modal('show');
+            
+            // Handle email form submission
+            $('#emailForm').off('submit').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                formData.append('reservation_id', reservationId);
+                
+                // Send email
+                $.ajax({
+                    url: '../send_mail.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#sendMailModal').modal('hide');
+                        
+                        // After successful email, update status
+                        updateReservationStatus(reservationId, 'approved')
+                            .then(() => {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Email sent and reservation has been approved',
+                                    icon: 'success',
+                                    confirmButtonColor: '#3085d6'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Failed to update status: ' + error,
+                                    icon: 'error'
+                                });
+                            });
+                    },
+                    error: function(xhr, status, error) {
+                        $('#sendMailModal').modal('hide');
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to send email: ' + error,
+                            icon: 'error'
+                        });
+                    }
+                });
             });
         }
     });
@@ -562,3 +614,9 @@ function cancelReservation(reservationId) {
     });
 }
 </script>
+
+  </body>
+</html>
+
+<!-- Then include sendMail_layout.php -->
+<?php include 'sendMail_layout.php'; ?>

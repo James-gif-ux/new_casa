@@ -8,13 +8,21 @@ $connector = new Connector();
 $sql = "SELECT r.reservation_id, r.name, r.email, r.phone, r.checkin, r.checkout, 
                r.status, r.res_services_id, r.message, s.services_price, s.services_name,
                t.time_in, t.time_out, 
-               COALESCE(p.status, 'partial') as payment_status
+               COALESCE(p.status, 'partial') as payment_status,
+               p.amount as paid_amount
         FROM reservations r
         LEFT JOIN services_tb s ON r.res_services_id = s.services_id 
         LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
         LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
-        WHERE r.status IN ('approved', 'checked in', 'cancelled')
-        ORDER BY r.reservation_id DESC";
+        WHERE r.status IN ('approved', 'checked in')      
+       ORDER BY 
+          CASE 
+              WHEN r.status = 'approved' THEN 1
+              WHEN r.status = 'checked in' THEN 2
+              ELSE 3
+          END,
+            r.checkin ASC,
+            r.reservation_id DESC";
 $stmt = $connector->getConnection()->prepare($sql);  
 $stmt->execute();
 $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -55,26 +63,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_in'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
-  $timeOut = $_POST['time_out'];
-  $reservationId = $_POST['reservation_id'];
-  
-  try {
-      // Update time_out in time_tb
-      $updateSql = "UPDATE time_tb SET time_out = ? WHERE time_reservation_id = ?";
-      $stmt = $connector->getConnection()->prepare($updateSql);
-      $stmt->execute([$timeOut, $reservationId]);
-      
-      // Update reservation status
-      $statusSql = "UPDATE reservations SET status = 'checked out' WHERE reservation_id = ?";
-      $statusStmt = $connector->getConnection()->prepare($statusSql);
-      $statusStmt->execute([$reservationId]);
-      
-      echo json_encode(['success' => true]);
-      exit;
-  } catch (PDOException $e) {
-      echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-      exit;
-  }
+    $timeOut = $_POST['time_out'];
+    $reservationId = $_POST['reservation_id'];
+    
+    try {
+        // Check for unpaid balance with SUM of all payments
+        $balanceCheckSql = "SELECT s.services_price, COALESCE(SUM(p.amount), 0) as total_paid 
+                           FROM reservations r
+                           LEFT JOIN services_tb s ON r.res_services_id = s.services_id
+                           LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
+                           WHERE r.reservation_id = ?
+                           GROUP BY r.reservation_id, s.services_price";
+        $balanceStmt = $connector->getConnection()->prepare($balanceCheckSql);
+        $balanceStmt->execute([$reservationId]);
+        $paymentInfo = $balanceStmt->fetch(PDO::FETCH_ASSOC);
+        
+        $totalAmount = $paymentInfo['services_price'];
+        $paidAmount = $paymentInfo['total_paid'];
+        $balance = $totalAmount - $paidAmount;
+
+        if ($balance > 0) {
+            echo json_encode([
+                'success' => false, 
+                'needsPayment' => true,
+                'totalAmount' => $totalAmount,
+                'paidAmount' => $paidAmount,
+                'balance' => $balance,
+                'message' => 'Cannot proceed with check-out. Outstanding balance: ₱' . number_format($balance, 2)
+            ]);
+            exit;
+        }
+
+        // If no balance, proceed with check-out
+        $updateSql = "UPDATE time_tb SET time_out = ? WHERE time_reservation_id = ?";
+        $stmt = $connector->getConnection()->prepare($updateSql);
+        $stmt->execute([$timeOut, $reservationId]);
+        
+        $statusSql = "UPDATE reservations SET status = 'checked out' WHERE reservation_id = ?";
+        $statusStmt = $connector->getConnection()->prepare($statusSql);
+        $statusStmt->execute([$reservationId]);
+        
+        echo json_encode(['success' => true]);
+        exit;
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
+    }
 }
 
 
@@ -107,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
                             <tr>
                               <th>Name</th>
                               <th>Email</th>
-                              <th>Number</th>
                               <th>Check In</th>
                               <th>Time In</th>
                               <th>Check Out</th>
@@ -121,7 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
                               <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Number</th>
                                 <th>Check In</th>
                                 <th>Time In</th>
                                 <th>Check Out</th>
@@ -136,7 +168,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
                               <tr>
                               <td><?php echo $res['name']?></td>
                               <td><?php echo $res['email']?></td>
-                              <td><?php echo $res['phone']?></td>
                               <td><?php echo date('M. d, Y', strtotime($res['checkin'])); ?></td>
                               <td>
                                   <?php 
@@ -148,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
                                   ?>
                               </td>
                               <td><?php echo date('M. d, Y', strtotime($res['checkout'])); ?></td>
-                              <td><?php echo $res['services_price']?></td>
+                              <td><?php echo $res['paid_amount'] ? number_format($res['paid_amount'], 2) : '0.00'; ?></td>
                               <td><?php echo $res['payment_status']?></td>
                               <td>
                                   <?php 
@@ -250,12 +281,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
                                   <h5 class="modal-title" id="checkOutModalLabel">Check Out Details</h5>
                                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
+                              <!-- In the checkout modal -->
                               <div class="modal-body">
                                   <form id="checkOutForm<?php echo $res['reservation_id']?>">
                                       <input type="hidden" name="reservation_id" value="<?php echo $res['reservation_id']?>">
                                       <div class="mb-3">
                                           <label for="checkOutTime<?php echo $res['reservation_id']?>" class="form-label">Check Out Time</label>
                                           <input type="time" class="form-control" id="checkOutTime<?php echo $res['reservation_id']?>" name="time_out" required>
+                                      </div>
+                                      <div class="mb-3">
+                                          <label for="paymentAmount<?php echo $res['reservation_id']?>" class="form-label">Payment Amount</label>
+                                          <input type="number" step="0.01" class="form-control" id="paymentAmount<?php echo $res['reservation_id']?>" name="amount" >
+                                      </div>
+                                      <div class="mb-3">
+                                          <label for="paymentType<?php echo $res['reservation_id']?>" class="form-label">Payment Type</label>
+                                          <select class="form-select" id="paymentType<?php echo $res['reservation_id']?>" name="payment_type" >
+                                              <option value="">Select payment type</option>
+                                              <option value="cash">Cash</option>
+                                              <option value="gcash">GCash</option>
+                                          </select>
                                       </div>
                                   </form>
                               </div>
@@ -685,68 +729,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_out'])) {
             });
         }
         </script>
-        <script>
+       <script>
+        
           function submitCheckOut(reservationId) {
               const timeOut = document.getElementById('checkOutTime' + reservationId).value;
+              const amount = document.getElementById('paymentAmount' + reservationId).value;
+              const paymentType = document.getElementById('paymentType' + reservationId).value;
               
               if (!timeOut) {
-                  alert('Please enter check-out time');
+                  Swal.fire({
+                      title: 'Error!',
+                      text: 'Please enter check-out time',
+                      icon: 'error'
+                  });
                   return;
               }
 
+              // if (!amount) {
+              //     Swal.fire({
+              //         title: 'Error!',
+              //         text: 'Please enter payment amount',
+              //         icon: 'error'
+              //     });
+              //     return;
+              // }
+
+              if (!paymentType) {
+                  Swal.fire({
+                      title: 'Error!',
+                      text: 'Please select payment type',
+                      icon: 'error'
+                  });
+                  return;
+              }
+
+              Swal.fire({
+                  title: 'Processing...',
+                  text: 'Please wait while we process the check-out',
+                  allowOutsideClick: false,
+                  didOpen: () => {
+                      Swal.showLoading();
+                  }
+              });
+
               $.ajax({
-                  url: window.location.href,
+                  url: '../pages/process_checkout_payment.php',
                   type: 'POST',
                   data: {
                       reservation_id: reservationId,
                       time_out: timeOut,
-                      action: 'checkout'
+                      amount: amount,
+                      payment_type: paymentType
                   },
                   success: function(response) {
                       try {
                           const result = JSON.parse(response);
-                          if(result.success) {
-                              location.reload();
+                          if (result.success) {
+                              Swal.fire({
+                                  title: 'Success!',
+                                  text: 'Check-out and payment processed successfully',
+                                  icon: 'success'
+                              }).then(() => {
+                                  $('#checkOutModal' + reservationId).modal('hide');
+                                  location.reload();
+                              });
                           } else {
-                              alert(result.message || 'Failed to update check-out time');
+                              Swal.fire({
+                                  title: 'Error!',
+                                  text: result.message || 'Failed to process check-out and payment',
+                                  icon: 'error'
+                              });
                           }
                       } catch(e) {
-                          alert('Error processing response');
+                          console.error('Parse error:', e);
+                          Swal.fire({
+                              title: 'Error!',
+                              text: 'Error processing response',
+                              icon: 'error'
+                          });
                       }
                   },
-                  error: function() {
-                      alert('Error connecting to server');
+                  error: function(xhr, status, error) {
+                      console.error('Ajax error:', error);
+                      Swal.fire({
+                          title: 'Error!',
+                          text: 'Error connecting to server',
+                          icon: 'error'
+                      });
                   }
               });
           }
-          </script>
-          <script>
-            function cancelReservation(reservationId) {
-                Swal.fire({
-                    title: 'Confirm Cancellation',
-                    text: 'Are you sure you want to cancel this reservation?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, cancel it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        updateReservationStatus(reservationId, 'cancelled')
-                            .then(() => {
-                                Swal.fire({
-                                    title: 'Cancelled!',
-                                    text: 'The reservation has been cancelled',
-                                    icon: 'success',
-                                    confirmButtonColor: '#d33'
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            });
-                    }
-                });
-            }
-          </script>
+       </script>
           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
 </html>
+

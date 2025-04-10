@@ -58,7 +58,6 @@ $messages = $connector->executeQuery($sql);
             overflow-y: auto;
             background: #ffffff;
             height: 100%;
-            padding-top: 20px;
         }
 
         .message-preview {
@@ -442,4 +441,5 @@ $messages = $connector->executeQuery($sql);
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
+
 <?php include 'nav/admin_footer.php'; ?>

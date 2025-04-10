@@ -20,14 +20,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $totalBookings = $row['total'];
 
     // Get total payments from paid bookings
-    $sql = "SELECT SUM(s.services_price) as total_payments 
+    $sql = "SELECT COALESCE(SUM(p.amount), 0) as total_payments 
             FROM reservations r
-            LEFT JOIN services_tb s ON r.res_services_id = s.services_id
             LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
             WHERE r.status = 'checked out' 
             AND p.status = 'paid'
             AND DATE(r.checkin) BETWEEN ? AND ?";
-    
+    $result = $connector->executeQuery($sql, [$start_date, $end_date]);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $totalPayments = floatval($row['total_payments']);
+
     // Update the detailed statistics query
     $sql = "SELECT 
                 DATE(r.checkin) as date,
@@ -39,8 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 TIME_FORMAT(t.time_in, '%h:%i %p') as time_in,
                 TIME_FORMAT(t.time_out, '%h:%i %p') as time_out,
                 s.services_name,
-                s.services_price,
-                p.amount as payment_amount,
+                COALESCE(s.services_price, 0) as services_price,
+                COALESCE(p.amount, 0) as payment_amount,
                 p.status as payment_status
             FROM reservations r
             LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
@@ -48,30 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
             WHERE r.status = 'checked out' 
             AND p.status = 'paid'
-            AND DATE(r.checkin) BETWEEN ? AND ?
-            ORDER BY r.checkin DESC";
-    $result = $connector->executeQuery($sql, [$start_date, $end_date]);
-    $row = $result->fetch(PDO::FETCH_ASSOC);
-    $totalPayments = $row['total_payments'] ?: 0;
-
-    // Get detailed daily statistics for checked out bookings
-    $sql = "SELECT 
-                DATE(r.checkin) as date,
-                r.name as guest_name,
-                r.email,
-                r.phone,
-                DATE_FORMAT(r.checkin, '%M %d, %Y') as checkin_date,
-                DATE_FORMAT(r.checkout, '%M %d, %Y') as checkout_date,
-                TIME_FORMAT(t.time_in, '%h:%i %p') as time_in,
-                TIME_FORMAT(t.time_out, '%h:%i %p') as time_out,
-                s.services_name,
-                s.services_price,
-                p.amount as payment_amount
-            FROM reservations r
-            LEFT JOIN time_tb t ON r.reservation_id = t.time_reservation_id
-            LEFT JOIN services_tb s ON r.res_services_id = s.services_id
-            LEFT JOIN payments p ON r.reservation_id = p.pay_reservation_id
-            WHERE r.status = 'checked out' 
             AND DATE(r.checkin) BETWEEN ? AND ?
             ORDER BY r.checkin DESC";
     $results = $connector->executeQuery($sql, [$start_date, $end_date])->fetchAll(PDO::FETCH_ASSOC);
@@ -263,3 +241,5 @@ document.getElementById('reportForm').addEventListener('submit', function(e) {
     document.body.appendChild(loadingOverlay);
 });
 </script>
+
+<?php include 'nav/admin_footer.php'; ?>
